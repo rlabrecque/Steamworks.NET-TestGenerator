@@ -3,120 +3,148 @@ import sys
 import yaml
 from SteamworksParser import steamworksparser
 
-def main(parser, outputDir):
-	algamationinclude = []
-	algamationdecl = []
-	algamationinit = []
-	algamationrunframe = []
+g_csharptypemap = {
+	'uint32': 'uint',
+}
 
+class State:
+	def __init__(self):
+		self.config = None
+		self.interfacename = ''
+		self.csharp_callbackdecl = []
+		self.csharp_callbackcreation = []
+		self.csharp_callbacks = []
+		self.csharp_functions = []
+		self.csharp_variables = []
+		self.csharp_variablesdisplay = []
+		self.csharp_onenablecode = []
+
+	def LoadConfig(self):
+		with open("configs/" + self.interfacename + ".yaml") as stream:
+			self.config = yaml.load(stream)
+
+	def ParseVariables(self):
+		self.ParseVariablesCSharp()
+
+	def ParseVariablesCSharp(self):
+		if "variables" in self.config:
+			for var in self.config["variables"]:
+				self.csharp_variables.append('private {0} {1};'.format(var[0], var[1]))
+				self.csharp_variablesdisplay.append('GUILayout.Label("{0}: " + {0});'.format(var[1]))
+
+	def ParseOnEnableCode(self):
+		if 'onenablecode' in self.config:
+			self.csharp_onenablecode.extend(self.config['onenablecode'])
+
+	def ParseCallbackCSharp(self, callback):
+		self.csharp_callbackdecl.append('protected Callback<{0}> m_{1};'.format(callback.name, callback.name[:-2]))
+		self.csharp_callbackcreation.append('m_{1} = Callback<{0}>.Create(On{1});'.format(callback.name, callback.name[:-2]))
+
+		if callback.fields:
+			fields = ' - " + pCallback.'
+			fields += ' + " ++ " + pCallback.'.join([x.name for x in callback.fields])
+		else:
+			fields = '"'
+
+		callbackfunction = 'void On{1}({0} pCallback) {{\n'.format(callback.name, callback.name[:-2])
+		callbackfunction += '\t\tDebug.Log("[" + {0}.k_iCallback + " - {1}]{2});\n'.format(callback.name, callback.name[:-2], fields)
+		callbackfunction += '\t}'
+		self.csharp_callbacks.append(callbackfunction)
+
+	def ParseFunctionCSharp(self, func):
+		label = False
+		args = ''
+		precall = ''
+		postcall = ''
+		printadditional = '"'
+
+		if func.returntype != 'void':
+			ret = g_csharptypemap.get(func.returntype, func.returntype) + ' ret = '
+			printadditional = ' : " + ret'
+		else:
+			ret = ''
+
+		if 'functions' in self.config and func.name in self.config['functions']:
+			funcconfig = self.config['functions'][func.name]
+			label = funcconfig.get('label', False)
+			if 'args' in funcconfig:
+				args = ', '.join(funcconfig['args'])
+			if 'precall' in funcconfig:
+				precall += '\t\t\t' + funcconfig['precall'] + '\n'
+			if 'postcall' in funcconfig:
+				postcall += '\t\t\t' + funcconfig['postcall'] + '\n'
+			if 'outargs' in funcconfig:
+				precall += '\t\t\t' + funcconfig['outargs'][0] + ' ' + funcconfig['outargs'][1] + ';\n'
+				printadditional += ' + " -- " + ' + funcconfig['outargs'][1]
+
+		function = ''
+		if label:
+			if precall or postcall:
+				function += '{\n'
+				function += precall
+				function += '\t\t\t{0}{1}.{2}({3});\n'.format(ret, self.interfacename, func.name, args)
+				function += '\t\t\tGUILayout.Label("{0}({1}){2});\n'.format(func.name, args, printadditional)
+				function += postcall
+				function += '\t\t}'
+			else:
+				function += 'GUILayout.Label("{1}({2}) : " + {0}.{1}({2}));\n'.format(self.interfacename, func.name, args)
+		else:
+			function += 'if (GUILayout.Button("{0}({1})")) {{\n'.format(func.name, args)
+			function +=  precall
+			function += '\t\t\t{0}{1}.{2}({3});\n'.format(ret, self.interfacename, func.name, args)
+			function += '\t\t\tprint("{0}.{1}({2}){3});\n'.format(self.interfacename, func.name, args, printadditional)
+			function +=  postcall
+			function += '\t\t}'
+		self.csharp_functions.append(function)
+
+def main(parser, outputDir):
 	for f in parser.files:
-		if f.name != "isteamscreenshots.h":
-		#and f.name != "isteamutils.h":
+		if f.name != 'isteamscreenshots.h' and f.name != 'isteamapplist.h': # and f.name != 'isteamapps.h':
 			continue
 
-		cppname = f.name[:-2] + ".cpp"
-		algamationinclude.append("#include \"" + cppname + "\"")
+		state = State()
 
-		functionsOutput = []
 		for interface in f.interfaces:
-			classname = "CS" + interface.name[2:]
-			globalname = "g_s" + interface.name[2:]
-
-			algamationdecl.append(classname + " *" + globalname + ";")
-			algamationinit.append("\t" + globalname + " = new " + classname + "();")
-			algamationrunframe.append("\t" + globalname + "->RunFrame();")
+			state.interfacename = interface.name[1:]
+			state.LoadConfig()
+			state.ParseVariables()
+			state.ParseOnEnableCode()
 
 			for func in interface.functions:
 				if func.private:
 					continue
 
-				functionOutput = []
+				state.ParseFunctionCSharp(func)
 
-				functionOutput.append("\tif(ImGui::Button(\"" + func.name + "\")) {")
-				functionOutput.append("\t\t" + interface.name[1:] + "()->" + func.name + "();")
-				functionOutput.append("\t}")
-
-				functionsOutput.append(functionOutput)
-
-
-		callbackdecl = []
-		callbackimpl = []
 		for callback in f.callbacks:
-			callbackdecl.append("\tSTEAM_CALLBACK(" + classname + ", On" + callback.name + ", " + callback.name + ");")
-			impl = []
-			impl.append("void " + classname + "::On" + callback.name + "(" + callback.name + " *pCallback) {")
-			impl.append("\tPlayground_Print(\"" + callback.name + "\");")
-			impl.append("}")
-			callbackimpl.append(impl)
+			state.ParseCallbackCSharp(callback)
 
-		with open(outputDir + cppname, "w") as out:
-			print("#include \"renameme.h\"", file=out)
-			print(file=out)
-			print("class " + classname + " {", file=out)
-			print("public:", file=out)
-			#print("\t" + classname + "()", file=out)
-			print("\tvoid RunFrame();", file=out)
-			print(file=out)
-			print("private:", file=out)
+		if f.interfaces:
+			OutputCSharpFile(outputDir, state)
 
-			for line in callbackdecl:
-				print(line, file=out)
+def OutputCSharpFile(outputDir, state):
+	with open('template_csharp.txt', 'r') as stream:
+		template = stream.read()
 
-			print("};", file=out)
-			print(file=out)
-			print("void " + classname + "::RunFrame() {", file=out)
-			print("\tImGui::SetNextWindowSize(ImVec2(1271, 527), ImGuiSetCond_Always);", file=out)
-			print("\tImGui::SetNextWindowPos(ImVec2(3, 3), ImGuiSetCond_Always);", file=out)
-			print("\tImGui::Begin(\"" + classname + "\");", file=out)
+	template = template.replace('[[INTERFACENAME]]', state.interfacename)
 
-			for functionOutput in functionsOutput:
-				for line in functionOutput:
-					print(line, file=out)
+	template = template.replace('[[ONENABLECODE]]', '\n\t\t'.join(state.csharp_onenablecode))
 
-			print("\tImGui::End();", file=out)
-			print("}", file=out)
-			print(file=out)
+	template = template.replace('[[VARIABLES]]', '\n\t'.join(state.csharp_variables))
+	template = template.replace('[[VARIABLESDISPLAY]]', '\n\t\t'.join(state.csharp_variablesdisplay))
 
-			for impl in callbackimpl:
-				for line in impl:
-					print(line, file=out)
-				print(file=out)
+	template = template.replace('[[CALLBACKDECL]]', '\n\t'.join(state.csharp_callbackdecl))
+	template = template.replace('[[CALLBACKCREATION]]', '\n\t\t'.join(state.csharp_callbackcreation))
+	template = template.replace('[[CALLBACKS]]', '\n\n\t'.join(state.csharp_callbacks))
 
-	with open(outputDir + "algamation.cpp", "w") as out:
-		for line in algamationinclude:
-			print(line, file=out)
+	template = template.replace('[[FUNCTIONS]]', '\n\n\t\t'.join(state.csharp_functions))
 
-		print(file=out)
+	with open(outputDir + state.interfacename + 'Test.cs', 'w') as out:
+		out.write(template)
 
-		for line in algamationdecl:
-			print(line, file=out)
-
-		print(file=out)
-		print("void Gen_Init() {", file=out)
-		
-		for line in algamationinit:
-			print(line, file=out)
-
-		print("}", file=out)
-		print(file=out)
-		print("void Gen_RunFrame() {", file=out)	
-
-		for line in algamationrunframe:
-			print(line, file=out)
-
-		print("}", file=out)
-
-def ParseCallbacks():
-	pass
-
-def OutputCSharpFile(outputDir, ):
-
-	with open(outputDir + "test", "w") as out:
-		out.write()
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     if len(sys.argv) != 3:
-        print("TODO: Usage Instructions")
+        print('TODO: Usage Instructions')
         exit()
 
     main(steamworksparser.parse(sys.argv[1]), sys.argv[2])

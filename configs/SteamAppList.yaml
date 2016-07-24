@@ -1,0 +1,23 @@
+variables:
+  - ["AppId_t[]", "m_AppList"]
+
+functions:
+  GetNumInstalledApps:
+    label: True
+  GetInstalledApps:
+    label: True
+    args: ["m_AppList", "1"]
+  GetAppName:
+    label: True
+    outargs: ["string", "Name"]
+    args: ["m_AppList[0]", "out Name", "256"]
+  GetAppInstallDir:
+    label: True
+    outargs: ["string", "Directory"]
+    args: ["m_AppList[0]", "out Directory", "260"]
+  GetAppBuildId:
+    label: True
+    args: ["m_AppList[0]"]
+
+onenablecode:
+  - "m_AppList = new AppId_t[1];"

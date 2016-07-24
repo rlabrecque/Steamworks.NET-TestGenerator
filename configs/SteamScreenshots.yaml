@@ -1,0 +1,8 @@
+variables:
+  - ["ScreenshotHandle", "m_ScreenshotHandle"]
+  - ["bool", "m_Hooked"]
+
+functions:
+  HookScreenshots:
+    args: ["!m_Hooked"]
+    postcall: "m_Hooked = !m_Hooked;"

@@ -2,23 +2,24 @@ using UnityEngine;
 using System.Collections;
 using Steamworks;
 
-public class {{INTERFACENAME}}Test : MonoBehaviour {
-	{{VARIABLES}}
+public class [[INTERFACENAME]]Test : MonoBehaviour {
+	[[VARIABLES]]
 
-	{{CALLBACKDECLARATION}}
+	[[CALLBACKDECL]]
 
 	public void OnEnable() {
-		{{CALLBACKCREATION}}
+		[[ONENABLECODE]]
+		[[CALLBACKCREATION]]
 	}
 
 	public void RenderOnGUI() {
 		GUILayout.BeginArea(new Rect(Screen.width - 120, 0, 120, Screen.height));
 		GUILayout.Label("Variables:");
-		{{VARIABLESDISPLAY}}
+		[[VARIABLESDISPLAY]]
 		GUILayout.EndArea();
 
-		{{FUNCTIONS}}
+		[[FUNCTIONS]]
 	}
 
-	{{CALLBACKS}}
+	[[CALLBACKS]]
 }
