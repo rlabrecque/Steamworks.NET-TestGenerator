@@ -1,6 +1,6 @@
 import os
 import sys
-import yaml
+import json
 from SteamworksParser import steamworksparser
 
 g_csharptypemap = {
@@ -20,8 +20,8 @@ class State:
 		self.csharp_onenablecode = []
 
 	def LoadConfig(self):
-		with open("configs/" + self.interfacename + ".yaml") as stream:
-			self.config = yaml.load(stream)
+		with open("configs/" + self.interfacename + ".json") as stream:
+			self.config = json.load(stream)
 
 	def ParseVariables(self):
 		self.ParseVariablesCSharp()
@@ -42,7 +42,7 @@ class State:
 
 		if callback.fields:
 			fields = ' - " + pCallback.'
-			fields += ' + " ++ " + pCallback.'.join([x.name for x in callback.fields])
+			fields += ' + " -- " + pCallback.'.join([x.name for x in callback.fields])
 		else:
 			fields = '"'
 
@@ -54,6 +54,8 @@ class State:
 	def ParseFunctionCSharp(self, func):
 		label = False
 		args = ''
+		guiargs = ''
+		printargs = ''
 		precall = ''
 		postcall = ''
 		printadditional = '"'
@@ -68,31 +70,38 @@ class State:
 			funcconfig = self.config['functions'][func.name]
 			label = funcconfig.get('label', False)
 			if 'args' in funcconfig:
-				args = ', '.join(funcconfig['args'])
+				args += ', '.join(funcconfig['args'])
+				guiargs += ', '.join([x.replace('"', '\\"') for x in funcconfig['args']])
+				printargs += '" + '
+				printargs += ' + ", " + '.join(funcconfig['args'])
+				printargs += ' + "'
 			if 'precall' in funcconfig:
-				precall += '\t\t\t' + funcconfig['precall'] + '\n'
+				for elem in funcconfig['precall']:
+					precall += '\t\t\t' + elem + '\n'
 			if 'postcall' in funcconfig:
-				postcall += '\t\t\t' + funcconfig['postcall'] + '\n'
+				for elem in funcconfig['postcall']:
+					postcall += '\t\t\t' + elem + '\n'
 			if 'outargs' in funcconfig:
-				precall += '\t\t\t' + funcconfig['outargs'][0] + ' ' + funcconfig['outargs'][1] + ';\n'
-				printadditional += ' + " -- " + ' + funcconfig['outargs'][1]
+				for elem in funcconfig['outargs']:
+					precall += '\t\t\t' + elem[0] + ' ' + elem[1] + ';\n'
+					printadditional += ' + " -- " + ' + elem[1]
 
 		function = ''
 		if label:
 			if precall or postcall:
 				function += '{\n'
 				function += precall
-				function += '\t\t\t{0}{1}.{2}({3});\n'.format(ret, self.interfacename, func.name, args)
-				function += '\t\t\tGUILayout.Label("{0}({1}){2});\n'.format(func.name, args, printadditional)
+				function += '\t\t\t{1}{0}.{2}({3});\n'.format(self.interfacename, ret, func.name, args)
+				function += '\t\t\tGUILayout.Label("{0}({1}){2});\n'.format(func.name, guiargs, printadditional)
 				function += postcall
 				function += '\t\t}'
 			else:
-				function += 'GUILayout.Label("{1}({2}) : " + {0}.{1}({2}));\n'.format(self.interfacename, func.name, args)
+				function += 'GUILayout.Label("{1}({2}) : " + {0}.{1}({2}));\n'.format(self.interfacename, func.name, guiargs)
 		else:
-			function += 'if (GUILayout.Button("{0}({1})")) {{\n'.format(func.name, args)
+			function += 'if (GUILayout.Button("{0}({1})")) {{\n'.format(func.name, guiargs)
 			function +=  precall
-			function += '\t\t\t{0}{1}.{2}({3});\n'.format(ret, self.interfacename, func.name, args)
-			function += '\t\t\tprint("{0}.{1}({2}){3});\n'.format(self.interfacename, func.name, args, printadditional)
+			function += '\t\t\t{1}{0}.{2}({3});\n'.format(self.interfacename, ret, func.name, args)
+			function += '\t\t\tprint("{0}.{1}({2}){3});\n'.format(self.interfacename, func.name, printargs, printadditional)
 			function +=  postcall
 			function += '\t\t}'
 		self.csharp_functions.append(function)
