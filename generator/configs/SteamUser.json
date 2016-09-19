@@ -1,0 +1,252 @@
+{
+    "variables":
+    [
+        ["byte[]", "m_Ticket"],
+        ["uint", "m_pcbTicket"],
+        ["HAuthTicket", "m_HAuthTicket"],
+        ["GameObject", "m_VoiceLoopback"]
+    ],
+
+    "functions":
+    [
+        {
+            "name": "GetHSteamUser",
+            "label": true
+        },
+        {
+            "name": "BLoggedOn",
+            "label": true
+        },
+        {
+            "name": "GetSteamID",
+            "label": true
+        },
+        {
+            "name": "InitiateGameConnection",
+            "override": ["//GUILayout.Label(\"InitiateGameConnection() : \" + SteamUser.InitiateGameConnection()); // N/A - Too Hard to test like this."]
+        },
+        {
+            "name": "TerminateGameConnection",
+            "override": ["//GUILayout.Label(\"TerminateGameConnection() : \" + SteamUser.TerminateGameConnection()); // ^"]
+        },
+        {
+            "name": "TrackAppUsageEvent",
+            "override": ["//GUILayout.Label(\"TrackAppUsageEvent() : \" + SteamUser.TrackAppUsageEvent()); // Legacy function with no documentation"]
+        },
+        {
+            "name": "GetUserDataFolder",
+            "label": true,
+            "outargs": [["string", "Buffer"]],
+            "args": ["out Buffer", "260"]
+        },
+        {
+            "name": "StartVoiceRecording"
+        },
+        {
+            "name": "StopVoiceRecording"
+        },
+        {
+            "name": "GetAvailableVoice",
+            "override":
+            [
+                "{",
+                "\tuint Compressed;",
+                "\tuint Uncompressed;",
+                "\tEVoiceResult ret = SteamUser.GetAvailableVoice(out Compressed, out Uncompressed, 11025);",
+                "\tGUILayout.Label(\"GetAvailableVoice(out Compressed, out Uncompressed, 11025) : \" + ret + \" -- \" + Compressed + \" -- \" + Uncompressed);"
+            ]
+        },
+        {
+            "name": "GetVoice",
+            "override":
+            [
+
+                "\tif (ret == EVoiceResult.k_EVoiceResultOK && Compressed > 0) {",
+                "\t\tbyte[] DestBuffer = new byte[1024];",
+                "\t\tbyte[] UncompressedDestBuffer = new byte[1024];",
+                "\t\tuint BytesWritten;",
+                "\t\tuint UncompressedBytesWritten;",
+                "\t\tret = SteamUser.GetVoice(true, DestBuffer, 1024, out BytesWritten, true, UncompressedDestBuffer, (uint)DestBuffer.Length, out UncompressedBytesWritten, 11025);",
+                "\t\t//print(\"SteamUser.GetVoice(true, DestBuffer, 1024, out BytesWritten, true, UncompressedDestBuffer, (uint)DestBuffer.Length, out UncompressedBytesWritten, 11025) : \" + ret + \" -- \" + BytesWritten + \" -- \" + UncompressedBytesWritten);"
+            ]
+        },
+        {
+            "name": "DecompressVoice",
+            "override":
+            [
+                "\t\tif (ret == EVoiceResult.k_EVoiceResultOK && BytesWritten > 0) {",
+                "\t\t\tbyte[] DestBuffer2 = new byte[11025 * 2];",
+                "\t\t\tuint BytesWritten2;",
+                "\t\t\tret = SteamUser.DecompressVoice(DestBuffer, BytesWritten, DestBuffer2, (uint)DestBuffer2.Length, out BytesWritten2, 11025);",
+                "\t\t\t//print(\"SteamUser.DecompressVoice(DestBuffer, BytesWritten, DestBuffer2, (uint)DestBuffer2.Length, out BytesWritten2, 11025) - \" + ret + \" -- \" + BytesWritten2);",
+                "",
+                "\t\t\tif (ret == EVoiceResult.k_EVoiceResultOK && BytesWritten2 > 0) {",
+                "\t\t\t\tAudioSource source;",
+                "\t\t\t\tif (!m_VoiceLoopback) {",
+                "\t\t\t\t\tm_VoiceLoopback = new GameObject(\"Voice Loopback\");",
+                "\t\t\t\t\tsource = m_VoiceLoopback.AddComponent<AudioSource>();",
+                "\t\t\t\t\tsource.clip = AudioClip.Create(\"Testing!\", 11025, 1, 11025, false, false);",
+                "\t\t\t\t}",
+                "\t\t\t\telse {",
+                "\t\t\t\t\tsource = m_VoiceLoopback.GetComponent<AudioSource>();",
+                "\t\t\t\t}",
+                "",
+                "\t\t\t\tfloat[] test = new float[11025];",
+                "\t\t\t\tfor (int i = 0; i < test.Length; ++i) {",
+                "\t\t\t\t\ttest[i] = (short)(DestBuffer2[i * 2] | DestBuffer2[i * 2 + 1] << 8) / 32768.0f;",
+                "\t\t\t\t}",
+                "\t\t\t\tsource.clip.SetData(test, 0);",
+                "\t\t\t\tsource.Play();",
+                "\t\t\t}",
+                "\t\t}",
+                "\t}",
+                "}"
+            ]
+        },
+        {
+            "name": "GetVoiceOptimalSampleRate",
+            "label": true
+        },
+        {
+            "name": "GetAuthSessionTicket",
+            "override":
+            [
+                "{",
+                "\tif (GUILayout.Button(\"GetAuthSessionTicket(Ticket, 1024, out pcbTicket)\")) {",
+                "\t\tm_Ticket = new byte[1024];",
+                "\t\tm_HAuthTicket = SteamUser.GetAuthSessionTicket(m_Ticket, 1024, out m_pcbTicket);",
+                "\t\tprint(\"SteamUser.GetAuthSessionTicket(Ticket, 1024, out pcbTicket) - \" + m_HAuthTicket + \" -- \" + m_pcbTicket);",
+                "\t}"
+            ]
+        },
+        {
+            "name": "BeginAuthSession",
+            "override":
+            [
+                "\tif (GUILayout.Button(\"BeginAuthSession(m_Ticket, (int)m_pcbTicket, SteamUser.GetSteamID())\")) {",
+                "\t\tif (m_HAuthTicket != HAuthTicket.Invalid && m_pcbTicket != 0) {",
+                "\t\t\tEBeginAuthSessionResult ret = SteamUser.BeginAuthSession(m_Ticket, (int)m_pcbTicket, SteamUser.GetSteamID());",
+                "\t\t\tprint(\"SteamUser.BeginAuthSession(m_Ticket, \" + (int)m_pcbTicket + \", \" + SteamUser.GetSteamID() + \") - \" + ret);",
+                "\t\t}",
+                "\t\telse {",
+                "\t\t\tprint(\"Call GetAuthSessionTicket first!\");",
+                "\t\t}",
+                "\t}",
+                "}"
+            ]
+        },
+        {
+            "name": "EndAuthSession",
+            "args": ["SteamUser.GetSteamID()"]
+        },
+        {
+            "name": "CancelAuthTicket",
+            "args": ["m_HAuthTicket"]
+        },
+        {
+            "name": "UserHasLicenseForApp",
+            "label": true,
+            "args": ["SteamUser.GetSteamID()", "SteamUtils.GetAppID()"]
+        },
+        {
+            "name": "BIsBehindNAT",
+            "label": true
+        },
+        {
+            "name": "AdvertiseGame",
+            "args": ["CSteamID.NonSteamGS", "2130706433", "27015"]
+        },
+        {
+            "name": "RequestEncryptedAppTicket",
+            "args": ["k_unSecretData", "sizeof(uint)"],
+            "precall": ["byte[] k_unSecretData = System.BitConverter.GetBytes(0x5444);"],
+            "postcall": ["OnEncryptedAppTicketResponseCallResult.Set(ret);"]
+        },
+        {
+            "name": "GetEncryptedAppTicket",
+            "args": ["rgubTicket", "1024", "out cubTicket"],
+            "outargs": [["uint", "cubTicket"]],
+            "precall": ["byte[] rgubTicket = new byte[1024];"]
+        },
+        {
+            "name": "GetGameBadgeLevel",
+            "override": ["//GUILayout.Label(\"GetGameBadgeLevel(1, false) : \" + SteamUser.GetGameBadgeLevel(1, false)); // SpaceWar does not have trading cards, so this function will only ever return 0 and produce an annoying warning."]
+        },
+        {
+            "name": "GetPlayerSteamLevel",
+            "label": true
+        },
+        {
+            "name": "RequestStoreAuthURL",
+            "args": ["\"https://steampowered.com\""],
+            "postcall": ["OnStoreAuthURLResponseCallResult.Set(handle);"]
+        },
+        {
+            "name": "BIsPhoneVerified",
+            "label": true
+        },
+        {
+            "name": "BIsTwoFactorEnabled",
+            "label": true
+        }
+    ],
+
+    "callresults":
+    [
+        "EncryptedAppTicketResponse_t",
+        "StoreAuthURLResponse_t"
+    ],
+
+    "callbacks":
+    {
+        "EncryptedAppTicketResponse_t":
+        {
+            "customcode":
+            [
+                "// This code is taken directly from SteamworksExample/SpaceWar",
+                "if (pCallback.m_eResult == EResult.k_EResultOK) {",
+                "\tbyte[] rgubTicket = new byte[1024];",
+                "\tuint cubTicket;",
+                "\tSteamUser.GetEncryptedAppTicket(rgubTicket, 1024, out cubTicket);",
+                "",
+                "\t// normally at this point you transmit the encrypted ticket to the service that knows the decryption key",
+                "\t// this code is just to demonstrate the ticket cracking library",
+                "",
+                "\t// included is the \"secret\" key for spacewar. normally this is secret",
+                "\tbyte[] rgubKey = new byte[32] { 0xed, 0x93, 0x86, 0x07, 0x36, 0x47, 0xce, 0xa5, 0x8b, 0x77, 0x21, 0x49, 0x0d, 0x59, 0xed, 0x44, 0x57, 0x23, 0xf0, 0xf6, 0x6e, 0x74, 0x14, 0xe1, 0x53, 0x3b, 0xa3, 0x3c, 0xd8, 0x03, 0xbd, 0xbd };       ",
+                "",
+                "\tbyte[] rgubDecrypted = new byte[1024];",
+                "\tuint cubDecrypted = 1024;",
+                "\tif (!SteamEncryptedAppTicket.BDecryptTicket(rgubTicket, cubTicket, rgubDecrypted, ref cubDecrypted, rgubKey, rgubKey.Length)) {",
+                "\t\tDebug.Log(\"Ticket failed to decrypt\");",
+                "\t\treturn;",
+                "\t}",
+                "",
+                "\tif (!SteamEncryptedAppTicket.BIsTicketForApp(rgubDecrypted, cubDecrypted, SteamUtils.GetAppID())) {",
+                "\t\tDebug.Log(\"Ticket for wrong app id\");",
+                "\t}",
+                "",
+                "\tCSteamID steamIDFromTicket;",
+                "\tSteamEncryptedAppTicket.GetTicketSteamID(rgubDecrypted, cubDecrypted, out steamIDFromTicket);",
+                "\tif (steamIDFromTicket != SteamUser.GetSteamID()) {",
+                "\t\tDebug.Log(\"Ticket for wrong user\");",
+                "\t}",
+                "",
+                "\tuint cubData;",
+                "\tbyte[] punSecretData = SteamEncryptedAppTicket.GetUserVariableData(rgubDecrypted, cubDecrypted, out cubData);",
+                "\tif(cubData != sizeof(uint)) {",
+                "\t\tDebug.Log(\"Secret data size is wrong.\");",
+                "\t}",
+                "\tDebug.Log(punSecretData.Length);",
+                "\tDebug.Log(System.BitConverter.ToUInt32(punSecretData, 0));",
+                "\tif (System.BitConverter.ToUInt32(punSecretData, 0) != 0x5444) {",
+                "\t\tDebug.Log(\"Failed to retrieve secret data\");",
+                "\t\treturn;",
+                "\t}",
+                "",
+                "\tDebug.Log(\"Successfully retrieved Encrypted App Ticket\");",
+                "}"
+            ]
+        }
+    }
+}

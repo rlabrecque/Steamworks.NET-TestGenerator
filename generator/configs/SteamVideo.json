@@ -1,0 +1,15 @@
+{
+    "functions":
+    [
+        {
+            "name": "GetVideoURL",
+            "args": ["343450"]
+        },
+        {
+            "name": "IsBroadcasting",
+            "label": true,
+            "outargs": [["int", "NumViewers"]],
+            "args": ["out NumViewers"]
+        }
+    ]
+}

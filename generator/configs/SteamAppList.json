@@ -4,38 +4,38 @@
         ["AppId_t[]", "m_AppList"]
     ],
 
+    "onenablecode":
+    [
+        "m_AppList = new AppId_t[1];"
+    ],
+
     "functions":
-    {
-        "GetNumInstalledApps":
+    [
         {
+            "name": "GetNumInstalledApps",
             "label": true
         },
-        "GetInstalledApps":
         {
+            "name": "GetInstalledApps",
             "label": true,
-            "args": ["m_AppList", "1"]
+            "args": ["m_AppList", "m_AppList.Length"]
         },
-        "GetAppName":
         {
+            "name": "GetAppName",
             "label": true,
             "outargs": [["string", "Name"]],
             "args": ["m_AppList[0]", "out Name", "256"]
         },
-        "GetAppInstallDir":
         {
+            "name": "GetAppInstallDir",
             "label": true,
             "outargs": [["string", "Directory"]],
             "args": ["m_AppList[0]", "out Directory", "260"]
         },
-        "GetAppBuildId":
         {
+            "name": "GetAppBuildId",
             "label": true,
             "args": ["m_AppList[0]"]
         }
-    },
-
-    "onenablecode":
-    [
-        "m_AppList = new AppId_t[1];"
     ]
 }

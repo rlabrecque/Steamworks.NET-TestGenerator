@@ -1,0 +1,176 @@
+{
+    "variables":
+    [
+        ["Texture2D", "m_Image"]
+    ],
+
+    "functions":
+    [
+        {
+            "name": "GetSecondsSinceAppActive",
+            "label": true
+        },
+        {
+            "name": "GetSecondsSinceComputerActive",
+            "label": true
+        },
+        {
+            "name": "GetConnectedUniverse",
+            "label": true
+        },
+        {
+            "name": "GetServerRealTime",
+            "label": true
+        },
+        {
+            "name": "GetIPCountry",
+            "label": true
+        },
+        {
+            "name": "GetImageSize",
+            "override":
+            [
+                "{",
+                "\tuint ImageWidth = 0;",
+                "\tuint ImageHeight = 0;",
+                "\tbool ret = SteamUtils.GetImageSize(1, out ImageWidth, out ImageHeight);",
+                "\tGUILayout.Label(\"SteamUtils.GetImageSize(1, out ImageWidth, out ImageHeight) : \" + ret + \" -- \" + ImageWidth + \" -- \" + ImageHeight);"
+            ]
+        },
+        {
+            "name": "GetImageRGBA",
+            "override":
+            [
+                "\tif (GUILayout.Button(\"SteamUtils.GetImageRGBA(1, Image, (int)(ImageWidth * ImageHeight * 4)\")) {",
+                "\t\tif (ImageWidth > 0 && ImageHeight > 0) {",
+                "\t\t\tbyte[] Image = new byte[ImageWidth * ImageHeight * 4];",
+                "\t\t\tret = SteamUtils.GetImageRGBA(1, Image, (int)(ImageWidth * ImageHeight * 4));",
+                "\t\t\tprint(\"SteamUtils.GetImageRGBA(1, \" + Image + \", \" + (int)(ImageWidth * ImageHeight * 4) + \") - \" + ret + \" -- \" + ImageWidth + \" -- \" + ImageHeight);",
+                "\t\t\tif (ret) {",
+                "\t\t\t\tm_Image = new Texture2D((int)ImageWidth, (int)ImageHeight, TextureFormat.RGBA32, false, true);",
+                "\t\t\t\tm_Image.LoadRawTextureData(Image);",
+                "\t\t\t\tm_Image.Apply();",
+                "\t\t\t}",
+                "\t\t}",
+                "\t}",
+                "}"
+            ]
+        },
+        {
+            "name": "GetCSERIPPort",
+            "label": true,
+            "outargs": [["uint", "IP"], ["ushort", "Port"]],
+            "args": ["out IP", "out Port"]
+        },
+        {
+            "name": "GetCurrentBatteryPower",
+            "label": true
+        },
+        {
+            "name": "GetAppID",
+            "label": true
+        },
+        {
+            "name": "SetOverlayNotificationPosition",
+            "args": ["ENotificationPosition.k_EPositionTopRight"]
+        },
+        {
+            "name": "IsAPICallCompleted",
+            "override": ["//GUILayout.Label(\"SteamUtils.IsAPICallCompleted() : \" + SteamUtils.IsAPICallCompleted()); // N/A - These 3 functions are used to dispatch CallResults."]
+        },
+        {
+            "name": "GetAPICallFailureReason",
+            "override": ["//GUILayout.Label(\"SteamUtils.GetAPICallFailureReason() : \" + SteamUtils.GetAPICallFailureReason()); // N/A"]
+        },
+        {
+            "name": "GetAPICallResult",
+            "override": ["//GUILayout.Label(\"SteamUtils.GetAPICallResult() : \" + SteamUtils.GetAPICallResult()); // N/A"]
+        },
+        {
+            "name": "GetIPCCallCount",
+            "label": true
+        },
+        {
+            "name": "SetWarningMessageHook",
+            "override": ["//GUILayout.Label(\"SteamUtils.SetWarningMessageHook() : \" + SteamUtils.SetWarningMessageHook()); // N/A - Check out SteamTest.cs for example usage."]
+        },
+        {
+            "name": "IsOverlayEnabled",
+            "label": true
+        },
+        {
+            "name": "BOverlayNeedsPresent",
+            "label": true
+        },
+        {
+            "name": "CheckFileSignature",
+            "args":["\"FileNotFound.txt\""],
+            "postcall": ["OnCheckFileSignatureCallResult.Set(handle);"]
+        },
+        {
+            "name": "ShowGamepadTextInput",
+            "args":["EGamepadTextInputMode.k_EGamepadTextInputModeNormal", "EGamepadTextInputLineMode.k_EGamepadTextInputLineModeSingleLine", "\"Description Test!\"", "32", "\"test\""]
+        },
+        {
+            "name": "GetEnteredGamepadTextLength",
+            "override":
+            [
+                "// Only called from within GamepadTextInputDismissed_t Callback!",
+                "/*GUILayout.Label(\"SteamUtils.GetEnteredGamepadTextLength() : \" + SteamUtils.GetEnteredGamepadTextLength());"
+            ]
+        },
+        {
+            "name": "GetEnteredGamepadTextInput",
+            "override":
+            [
+                "{",
+                "\tstring Text;",
+                "\tbool ret = SteamUtils.GetEnteredGamepadTextInput(out Text, 32);",
+                "\tGUILayout.Label(\"SteamUtils.GetEnteredGamepadTextInput(out Text, 32) - \" + ret + \" -- \" + Text);",
+                "}*/"
+            ]
+        },
+        {
+            "name": "GetSteamUILanguage",
+            "label": true
+        },
+        {
+            "name": "IsSteamRunningInVR",
+            "label": true
+        },
+        {
+            "name": "SetOverlayNotificationInset",
+            "args": ["400", "400"]
+        },
+        {
+            "name": "IsSteamInBigPictureMode",
+            "label": true
+        },
+        {
+            "name": "StartVRDashboard"
+        }
+    ],
+
+    "callresults":
+    [
+        "CheckFileSignature_t"
+    ],
+
+    "callbacks":
+    {
+        "GamepadTextInputDismissed_t":
+        {
+            "customcode":
+            [
+                "if(pCallback.m_bSubmitted) {",
+                "\tuint Length = SteamUtils.GetEnteredGamepadTextLength();",
+                "\tDebug.Log(\"SteamUtils.GetEnteredGamepadTextLength() - \" + Length);",
+                "",
+                "\tstring Text;",
+                "\tbool ret = SteamUtils.GetEnteredGamepadTextInput(out Text, pCallback.m_unSubmittedText + 1);",
+                "\tDebug.Log(\"SteamUtils.GetEnteredGamepadTextInput(out Text, pCallback.m_unSubmittedText + 1) - \" + ret + \" -- \" + Text);",
+                "}"
+            ]
+        }
+    }
+}

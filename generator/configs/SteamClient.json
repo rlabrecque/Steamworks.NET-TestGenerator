@@ -1,0 +1,142 @@
+{
+    "variables":
+    [
+        ["HSteamPipe", "m_Pipe"],
+        ["HSteamUser", "m_GlobalUser"],
+        ["HSteamPipe", "m_LocalPipe"],
+        ["HSteamUser", "m_LocalUser"]
+    ],
+
+    "functions":
+    [
+        {
+            "name": "CreateSteamPipe",
+            "postprint": ["m_Pipe = ret;"]
+        },
+        {
+            "name": "BReleaseSteamPipe",
+            "args": ["m_Pipe"]
+        },
+        {
+            "name": "ConnectToGlobalUser",
+            "args": ["m_Pipe"],
+            "postprint": ["m_GlobalUser = ret;"]
+        },
+        {
+            "name": "CreateLocalUser",
+            "args": ["out m_LocalPipe", "EAccountType.k_EAccountTypeGameServer"],
+            "postprint": ["m_LocalUser = ret;"]
+        },
+        {
+            "name": "ReleaseUser",
+            "args": ["m_LocalPipe", "m_LocalUser"]
+        },
+        {
+            "name": "GetISteamUser",
+            "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMUSER_INTERFACE_VERSION"]
+        },
+        {
+            "name": "GetISteamGameServer",
+            "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMGAMESERVER_INTERFACE_VERSION"]
+        },
+        {
+            "name": "SetLocalIPBinding",
+            "args": ["2130706433", "27015"]
+        },
+        {
+            "name": "GetISteamFriends",
+            "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMFRIENDS_INTERFACE_VERSION"]
+        },
+        {
+            "name": "GetISteamUtils",
+            "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMUTILS_INTERFACE_VERSION"]
+        },
+        {
+            "name": "GetISteamMatchmaking",
+            "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMMATCHMAKING_INTERFACE_VERSION"]
+        },
+        {
+            "name": "GetISteamMatchmakingServers",
+            "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMMATCHMAKINGSERVERS_INTERFACE_VERSION"]
+        },
+        {
+            "name": "GetISteamGenericInterface",
+            "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMAPPTICKET_INTERFACE_VERSION"]
+        },
+        {
+            "name": "GetISteamUserStats",
+            "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMUSERSTATS_INTERFACE_VERSION"]
+        },
+        {
+            "name": "GetISteamGameServerStats",
+            "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMGAMESERVERSTATS_INTERFACE_VERSION"]
+        },
+        {
+            "name": "GetISteamApps",
+            "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMAPPS_INTERFACE_VERSION"]
+        },
+        {
+            "name": "GetISteamNetworking",
+            "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMNETWORKING_INTERFACE_VERSION"]
+        },
+        {
+            "name": "GetISteamRemoteStorage",
+            "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMREMOTESTORAGE_INTERFACE_VERSION"]
+        },
+        {
+            "name": "GetISteamScreenshots",
+            "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMSCREENSHOTS_INTERFACE_VERSION"]
+        },
+        {
+            "name": "GetIPCCallCount",
+            "label": true
+        },
+        {
+            "name": "SetWarningMessageHook",
+            "override": ["//GUILayout.Label(\"SteamClient.SetWarningMessageHook : \" + SteamClient.SetWarningMessageHook()); // N/A - Check out SteamTest.cs for example usage."]
+        },
+        {
+            "name": "BShutdownIfAllPipesClosed"
+        },
+        {
+            "name": "GetISteamHTTP",
+            "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMHTTP_INTERFACE_VERSION"]
+        },
+        {
+            "name": "GetISteamUnifiedMessages",
+            "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMUNIFIEDMESSAGES_INTERFACE_VERSION"]
+        },
+        {
+            "name": "GetISteamController",
+            "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMCONTROLLER_INTERFACE_VERSION"]
+        },
+        {
+            "name": "GetISteamUGC",
+            "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMUGC_INTERFACE_VERSION"]
+        },
+        {
+            "name": "GetISteamAppList",
+            "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMAPPLIST_INTERFACE_VERSION"]
+        },
+        {
+            "name": "GetISteamMusic",
+            "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMMUSIC_INTERFACE_VERSION"]
+        },
+        {
+            "name": "GetISteamMusicRemote",
+            "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMMUSICREMOTE_INTERFACE_VERSION"]
+        },
+        {
+            "name": "GetISteamHTMLSurface",
+            "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMHTMLSURFACE_INTERFACE_VERSION"]
+        },
+        {
+            "name": "GetISteamInventory",
+            "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMINVENTORY_INTERFACE_VERSION"]
+        },
+        {
+            "name": "GetISteamVideo",
+            "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMVIDEO_INTERFACE_VERSION"]
+        }
+    ]
+}

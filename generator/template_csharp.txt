@@ -4,20 +4,16 @@ using Steamworks;
 
 public class [[INTERFACENAME]]Test : MonoBehaviour {
 	[[VARIABLES]]
-
 	[[CALLBACKDECL]]
-
+	[[CALLRESULTDECL]]
 	public void OnEnable() {
 		[[ONENABLECODE]]
 		[[CALLBACKCREATION]]
+		[[CALLRESULTCREATION]]
 	}
 
 	public void RenderOnGUI() {
-		GUILayout.BeginArea(new Rect(Screen.width - 120, 0, 120, Screen.height));
-		GUILayout.Label("Variables:");
 		[[VARIABLESDISPLAY]]
-		GUILayout.EndArea();
-
 		[[FUNCTIONS]]
 	}
 

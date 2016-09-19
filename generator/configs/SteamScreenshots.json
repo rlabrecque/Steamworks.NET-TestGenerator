@@ -1,14 +1,14 @@
 {
-	"variables":
-	[
-		["ScreenshotHandle", "m_ScreenshotHandle"],
-		["bool", "m_Hooked"]
-	],
+    "variables":
+    [
+        ["ScreenshotHandle", "m_ScreenshotHandle"],
+        ["bool", "m_Hooked"]
+    ],
 
-	"functions":
-	{
-        "WriteScreenshot":
+    "functions":
+    [
         {
+            "name": "WriteScreenshot",
             "precall":
             [
                 "// We start a Coroutine with the actual implementation of this test because Texture2D.ReadPixels() has to be called at the end of the frame.",
@@ -16,8 +16,8 @@
             ],
             "args": ["RGB", "(uint)RGB.Length", "Screen.width", "Screen.height"]
         },
-        "AddScreenshotToLibrary":
         {
+            "name": "AddScreenshotToLibrary",
             "precall":
             [
                 "Application.CaptureScreenshot(\"screenshot.png\");",
@@ -26,22 +26,25 @@
             ],
             "args": ["Application.dataPath + \"/screenshot.png\", \"\"", "Screen.width", "Screen.height"]
         },
-		"HookScreenshots":
-		{
-			"args": ["!m_Hooked"],
-			"postcall": ["m_Hooked = !m_Hooked;"]
-		},
-        "SetLocation":
         {
+            "name": "TriggerScreenshot"
+        },
+        {
+            "name": "HookScreenshots",
+            "args": ["!m_Hooked"],
+            "postprint": ["m_Hooked = !m_Hooked;"]
+        },
+        {
+            "name": "SetLocation",
             "args": ["m_ScreenshotHandle", "\"LocationTest\""]
         },
-        "TagUser":
         {
+            "name": "TagUser",
             "args": ["m_ScreenshotHandle", "(CSteamID)76561197991230424"]
         },
-        "TagPublishedFile":
         {
+            "name": "TagPublishedFile",
             "args": ["m_ScreenshotHandle", "(PublishedFileId_t)0"]
         }
-	}
+    ]
 }

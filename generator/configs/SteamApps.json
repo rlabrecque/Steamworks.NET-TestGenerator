@@ -1,0 +1,143 @@
+{
+    "functions":
+    [
+        {
+            "name": "BIsSubscribed",
+            "label": true
+        },
+        {
+            "name": "BIsLowViolence",
+            "label": true
+        },
+        {
+            "name": "BIsCybercafe",
+            "label": true
+        },
+        {
+            "name": "BIsVACBanned",
+            "label": true
+        },
+        {
+            "name": "GetCurrentGameLanguage",
+            "label": true
+        },
+        {
+            "name": "GetAvailableGameLanguages",
+            "label": true
+        },
+        {
+            "name": "BIsSubscribedApp",
+            "label": true,
+            "args": ["SteamUtils.GetAppID()"]
+        },
+        {
+            "name": "BIsDlcInstalled",
+            "label": true,
+            "args": ["(AppId_t)110902"]
+        },
+        {
+            "name": "GetEarliestPurchaseUnixTime",
+            "label": true,
+            "args": ["SteamUtils.GetAppID()"]
+        },
+        {
+            "name": "BIsSubscribedFromFreeWeekend",
+            "label": true
+        },
+        {
+            "name": "GetDLCCount",
+            "label": true
+        },
+        {
+            "name": "BGetDLCDataByIndex",
+            "override":
+            [
+                "for (int iDLC = 0; iDLC < SteamApps.GetDLCCount(); ++iDLC) {",
+                "\tAppId_t AppID;",
+                "\tbool Available;",
+                "\tstring Name;",
+                "\tbool ret = SteamApps.BGetDLCDataByIndex(iDLC, out AppID, out Available, out Name, 128);",
+                "\tGUILayout.Label(\"BGetDLCDataByIndex(\" + iDLC + \", out AppID, out Available, out Name, 128) : \" + ret + \" -- \" + AppID + \" -- \" + Available + \" -- \" + Name);",
+                "}"
+            ]
+        },
+        {
+            "name": "InstallDLC",
+            "args": ["(AppId_t)110902"]
+        },
+        {
+            "name": "UninstallDLC",
+            "args": ["(AppId_t)110902"]
+        },
+        {
+            "name": "RequestAppProofOfPurchaseKey",
+            "args": ["SteamUtils.GetAppID()"]
+        },
+        {
+            "name": "GetCurrentBetaName",
+            "label": true,
+            "outargs": [["string", "Name"]],
+            "args": ["out Name", "128"],
+            "postcall": [
+                "if (Name == null) {",
+                "\tName = \"\";",
+                "}"
+            ]
+        },
+        {
+            "name": "MarkContentCorrupt",
+            "args": ["true"]
+        },
+        {
+            "name": "GetInstalledDepots",
+            "override": [
+                "if (GUILayout.Button(\"SteamApps.GetInstalledDepots(SteamUtils.GetAppID(), Depots, 32)\")) {",
+                "\tDepotId_t[] Depots = new DepotId_t[32];",
+                "\tuint ret = SteamApps.GetInstalledDepots(SteamUtils.GetAppID(), Depots, 32);",
+                "\tfor (int i = 0; i < ret; ++i) {",
+                "\t\tprint(\"SteamApps.GetInstalledDepots(SteamUtils.GetAppID(), Depots, 32) : \" + ret + \" -- #\" + i + \" -- \" + Depots[i]);",
+                "\t}",
+                "}"
+            ]
+        },
+        {
+            "name": "GetAppInstallDir",
+            "label": true,
+            "outargs": [["string", "Folder"]],
+            "args": ["SteamUtils.GetAppID()", "out Folder", "260"],
+            "postcall": [
+                "if (Folder == null) {",
+                "\tFolder = \"\";",
+                "}"
+            ]
+        },
+        {
+            "name": "BIsAppInstalled",
+            "label": true,
+            "args": ["SteamUtils.GetAppID()"]
+        },
+        {
+            "name": "GetAppOwner",
+            "label": true
+        },
+        {
+            "name": "GetLaunchQueryParam",
+            "label": true,
+            "precall": ["// Run the test and then use steam://run/480//?test=testing;param2=value2; in your browser to try this out"]
+        },
+        {
+            "name": "GetDlcDownloadProgress",
+            "label": true,
+            "outargs": [["ulong", "BytesDownloaded"], ["ulong", "BytesTotal"]],
+            "args": ["(AppId_t)110902", "out BytesDownloaded", "out BytesTotal"]
+        },
+        {
+            "name": "GetAppBuildId",
+            "label": true
+        },
+        {
+            "name": "RequestAllProofOfPurchaseKeys",
+            "label": true
+        }
+    ]
+}
