@@ -3,6 +3,7 @@ using System.Collections;
 using Steamworks;
 
 public class [[INTERFACENAME]]Test : MonoBehaviour {
+	[[CONSTANTS]]
 	[[VARIABLES]]
 	[[CALLBACKDECL]]
 	[[CALLRESULTDECL]]
@@ -12,6 +13,7 @@ public class [[INTERFACENAME]]Test : MonoBehaviour {
 		[[CALLRESULTCREATION]]
 	}
 
+	[[EXTRAFUNCTIONS]]
 	public void RenderOnGUI() {
 		[[VARIABLESDISPLAY]]
 		[[FUNCTIONS]]

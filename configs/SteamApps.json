@@ -138,6 +138,16 @@
         {
             "name": "RequestAllProofOfPurchaseKeys",
             "label": true
+        },
+        {
+            "name": "GetFileDetails",
+            "args": ["\"steam_api.dll\""],
+            "postcall": ["OnFileDetailsResultCallResult.Set(ret);"]
         }
+    ],
+
+    "callresults":
+    [
+        "FileDetailsResult_t"
     ]
 }

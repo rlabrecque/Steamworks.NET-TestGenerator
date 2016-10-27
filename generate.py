@@ -20,18 +20,26 @@ class State:
 		self.csharp_callresultdecl = []
 		self.csharp_callresultcreation = []
 		self.csharp_functions = []
+		self.csharp_constants = []
 		self.csharp_variables = []
 		self.csharp_variablesdisplay = []
 		self.csharp_onenablecode = []
+		self.csharp_extrafunctions = []
 
 	def LoadConfig(self, configDir):
-		with open(configDir + self.interfacename + ".json") as stream:
-			self.config = json.load(stream)
+		try:
+			with open(configDir + self.interfacename + ".json") as stream:
+				self.config = json.load(stream)
+			return True
+		except OSError:
+			return False
+
+	def ParseConstants(self):
+		if "constants" in self.config:
+			for var in self.config["constants"]:
+				self.csharp_constants.append('const {0} {1} = {2};'.format(var[0], var[1], var[2]))
 
 	def ParseVariables(self):
-		self.ParseVariablesCSharp()
-
-	def ParseVariablesCSharp(self):
 		if "variables" in self.config:
 			self.csharp_variablesdisplay.append('GUILayout.BeginArea(new Rect(Screen.width - 120, 0, 120, Screen.height));')
 			self.csharp_variablesdisplay.append('GUILayout.Label("Variables:");')
@@ -42,7 +50,15 @@ class State:
 
 	def ParseOnEnableCode(self):
 		if 'onenablecode' in self.config:
-			self.csharp_onenablecode.extend(self.config['onenablecode'])
+			for i, elem in enumerate(self.config['onenablecode']):
+				indent = ('' if i == 0 or not elem else '\t\t')
+				self.csharp_onenablecode.append(indent + elem + '\n')
+
+	def ParseExtraFunctions(self):
+		if 'extrafunctions' in self.config:
+			for i, elem in enumerate(self.config['extrafunctions']):
+				indent = ('' if i == 0 or not elem else '\t')
+				self.csharp_extrafunctions.append(indent + elem + '\n')
 
 	def ParseCallbacks(self, callbacks):
 		for callback in callbacks:
@@ -77,7 +93,7 @@ class State:
 			if 'customcode' in self.config['callbacks'][callback.name]:
 				callbackfunction += '\n'
 				for line in self.config['callbacks'][callback.name]['customcode']:
-					callbackfunction += '\t\t' + line + '\n'
+					callbackfunction += ('\t\t' if line else '') + line + '\n'
 
 		callbackfunction += '\t}'
 
@@ -109,7 +125,9 @@ class State:
 			print("[WARNING] The number of functions in the config does not match the number of non private functions in the interface. Interface: {0}, Config: {1}".format(len(interface.functions) - numPrivateFunctions, len(self.config['functions'])))
 
 	def ParseFunctionCSharp(self, func, funcconfig):
-		label = funcconfig.get('label', False)
+		if funcconfig.get('skip', False):
+			self.csharp_functions.append("//{0}.{1}() // {2}\n".format(self.interfacename, func.name, funcconfig['skip']))
+			return
 
 		args = ''
 		guiargs = ''
@@ -120,6 +138,10 @@ class State:
 			printargs += '" + '
 			printargs += ' + ", " + '.join([('"\\"' + x.strip('"') + '\\""' if x.startswith('"') else x) for x in funcconfig['args']])
 			printargs += ' + "'
+
+		prebutton = ''
+		if 'prebutton' in funcconfig:
+			prebutton = '\n\t\t'.join(funcconfig['prebutton']) + '\n\t\t'
 
 		precall = ''
 		if 'precall' in funcconfig:
@@ -138,8 +160,11 @@ class State:
 
 		override = ''
 		if 'override' in funcconfig:
-			for elem in funcconfig['override']:
-				override = '\n\t\t'.join(funcconfig['override'])
+			#override = '\n\t\t'.join(funcconfig['override'])
+			for i, elem in enumerate(funcconfig['override']):
+				indent = ('' if i == 0 or not elem else '\t\t')
+				override += indent + elem + '\n'
+
 
 		printadditional = '"'
 		if func.returntype != 'void':
@@ -156,25 +181,27 @@ class State:
 		function = ''
 		if override:
 			function += override
-		elif label:
-			if precall or postcall:
+		elif funcconfig.get('label', False):
+			if prebutton or precall or postcall:
 				function += '{\n'
+				function += prebutton
 				function += precall
 				function += '\t\t\t{1}{0}.{2}({3});\n'.format(self.interfacename, ret, func.name, args)
 				function += postcall
 				function += '\t\t\tGUILayout.Label("{0}({1}){2});\n'.format(func.name, guiargs, printadditional)
 				function += postprint
-				function += '\t\t}'
+				function += '\t\t}\n'
 			else:
-				function += 'GUILayout.Label("{1}({2}) : " + {0}.{1}({2}));'.format(self.interfacename, func.name, guiargs)
+				function += 'GUILayout.Label("{1}({2}) : " + {0}.{1}({2}));\n'.format(self.interfacename, func.name, guiargs)
 		else:
+			function += prebutton
 			function += 'if (GUILayout.Button("{0}({1})")) {{\n'.format(func.name, guiargs)
 			function += precall
 			function += '\t\t\t{1}{0}.{2}({3});\n'.format(self.interfacename, ret, func.name, args)
 			function += postcall
 			function += '\t\t\tprint("{0}.{1}({2}){3});\n'.format(self.interfacename, func.name, printargs, printadditional)
 			function += postprint
-			function += '\t\t}'
+			function += '\t\t}\n'
 		self.csharp_functions.append(function)
 
 def OutputCSharpFile(outputDir, state):
@@ -198,7 +225,11 @@ def OutputCSharpFile(outputDir, state):
 
 	template = ReplaceTemplate(template, '[[INTERFACENAME]]', state.interfacename)
 
-	template = ReplaceTemplate(template, '[[ONENABLECODE]]', '\n\t\t'.join(state.csharp_onenablecode) + '\n')
+	template = ReplaceTemplate(template, '[[ONENABLECODE]]', ''.join(state.csharp_onenablecode))
+
+	template = ReplaceTemplate(template, '[[EXTRAFUNCTIONS]]', ''.join(state.csharp_extrafunctions))
+
+	template = ReplaceTemplate(template, '[[CONSTANTS]]', '\n\t'.join(state.csharp_constants) + '\n')
 
 	template = ReplaceTemplate(template, '[[VARIABLES]]', '\n\t'.join(state.csharp_variables) + '\n')
 	template = ReplaceTemplate(template, '[[VARIABLESDISPLAY]]', '\n\t\t'.join(state.csharp_variablesdisplay) + '\n')
@@ -210,16 +241,13 @@ def OutputCSharpFile(outputDir, state):
 	template = ReplaceTemplate(template, '[[CALLRESULTDECL]]', '\n\t'.join(state.csharp_callresultdecl) + '\n')
 	template = ReplaceTemplate(template, '[[CALLRESULTCREATION]]', '\n\t\t'.join(state.csharp_callresultcreation))
 
-	template = ReplaceTemplate(template, '[[FUNCTIONS]]', '\n\n\t\t'.join(state.csharp_functions))
+	template = ReplaceTemplate(template, '[[FUNCTIONS]]', '\n\t\t'.join(state.csharp_functions))
 
 	with open(outputDir + state.interfacename + 'Test.cs', 'w') as out:
 		out.write(template)
 
 def main(parser, configDir, outputDir):
 	for f in parser.files:
-		if f.name not in ['isteamapplist.h', 'isteamapps.h', 'isteamclient.h', 'isteamscreenshots.h', 'isteamuser.h', 'isteamutils.h', 'isteamvideo.h']:
-			continue
-
 		print("[INFO] Opening: {}".format(f.name))
 
 		state = State()
@@ -227,14 +255,19 @@ def main(parser, configDir, outputDir):
 		for interface in f.interfaces:
 			print("[INFO] Parsing Interface: {}".format(interface.name))
 			state.interfacename = interface.name[1:]
-			state.LoadConfig(configDir)
+			if not state.LoadConfig(configDir):
+				print("[WARNING] Interface config does not exist: {}.json".format(state.interfacename))
+				state.interfacename = None
+				continue
+			state.ParseConstants()
 			state.ParseVariables()
 			state.ParseOnEnableCode()
+			state.ParseExtraFunctions()
 			state.ParseFunctions(interface)
 
-		state.ParseCallbacks(f.callbacks)
+			state.ParseCallbacks(f.callbacks)
 
-		if f.interfaces:
+		if state.interfacename:
 			OutputCSharpFile(outputDir, state)
 
 if __name__ == '__main__':

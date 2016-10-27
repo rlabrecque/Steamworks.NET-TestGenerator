@@ -1,0 +1,401 @@
+{
+    "constants":
+    [
+        ["int", "WidthOffset", "400"],
+        ["int", "HeightOffset", "100"]
+    ],
+
+    "variables":
+    [
+        ["bool", "m_Init"],
+        ["HHTMLBrowser", "m_HHTMLBrowser"],
+        ["string", "m_URL"],
+        ["Texture2D", "m_Texture"],
+        ["uint", "m_Width"],
+        ["uint", "m_Height"],
+        ["bool", "m_CanGoBack"],
+        ["bool", "m_CanGoForward"],
+        ["Rect", "m_Rect"],
+        ["Vector2", "m_LastMousePos"],
+        ["uint", "m_VerticalScrollMax"],
+        ["uint", "m_VeritcalScrollCurrent"],
+        ["uint", "m_HorizontalScrollMax"],
+        ["uint", "m_HorizontalScrollCurrent"],
+        ["bool", "m_SetKeyFocus"],
+        ["string", "m_Find"],
+        ["bool", "m_CurrentlyInFind"],
+        ["float", "m_ScaleFactor"]
+    ],
+
+    "onenablecode": [
+        "m_HHTMLBrowser = HHTMLBrowser.Invalid;",
+        "m_URL = \"http://steamworks.github.io\";",
+        "m_Texture = null;",
+        "m_Find = \"Steamworks\"",
+        "m_CurrentlyInFind = false;",
+        "m_ScaleFactor = 0f;",
+        "",
+        "m_Init = SteamHTMLSurface.Init();",
+        "print(\"SteamHTMLSurface.Init() : \" + m_Init);"
+    ],
+
+    "extrafunctions": [
+        "public void OnDisable() {",
+        "\tRemoveBrowser();",
+        "\tSteamHTMLSurface.Shutdown();",
+        "}",
+        "",
+        "void RemoveBrowser() {",
+        "\tif (m_HHTMLBrowser != HHTMLBrowser.Invalid) {",
+        "\t\tprint(\"SteamHTMLSurface.RemoveBrowser(\" + m_HHTMLBrowser + \")\");",
+        "\t\tSteamHTMLSurface.RemoveBrowser(m_HHTMLBrowser);",
+        "\t\tm_HHTMLBrowser = HHTMLBrowser.Invalid;",
+        "\t}",
+        "\tm_Texture = null;",
+        "}"
+    ],
+
+    "functions": [
+        {
+            "name": "Init",
+            "override": [
+                "if (m_Texture) {",
+                "\tGUI.DrawTexture(m_Rect, m_Texture);",
+                "}",
+                "",
+                "if (!m_Init) {",
+                "\tGUILayout.Label(\"SteamHTMLSurface.Init() returned false\");",
+                "\treturn;",
+                "}",
+                "",
+                "//SteamHTMLSurface.Init() // N/A - Called in OnEnable"
+            ]
+        },
+        {
+            "name": "Shutdown",
+            "skip": "N/A - Called in OnDisable"
+        },
+        {
+            "name": "CreateBrowser",
+            "precall": ["RemoveBrowser(); // Remove an old browser if it exists."],
+            "args": ["\"SpaceWars Test\"", "null"],
+            "postcall": ["m_HTML_BrowserReadyResult.Set(ret);"]
+        },
+        {
+            "name": "RemoveBrowser",
+            "customcode": ["RemoveBrowser();"]
+        },
+        {
+            "name": "LoadURL",
+            "prebutton": ["m_URL = GUILayout.TextField(m_URL);"],
+            "args": ["m_HHTMLBrowser", "m_URL", "null"]
+        },
+        {
+            "name": "SetSize",
+            "precall": [
+                "m_Width = (uint)Screen.width - WidthOffset;",
+                "m_Height = (uint)Screen.height - HeightOffset;",
+                "m_Rect = new Rect(WidthOffset, m_Height + HeightOffset, m_Width, -m_Height); // This flips the viewport since Unity renders textures upside down.",
+                "m_Texture = null;"
+            ],
+            "args": ["m_HHTMLBrowser", "m_Width", "m_Height"]
+        },
+        {
+            "name": "StopLoad",
+            "args": ["m_HHTMLBrowser"]
+        },
+        {
+            "name": "Reload",
+            "args": ["m_HHTMLBrowser"]
+        },
+        {
+            "name": "GoBack",
+            "prebutton": ["GUI.enabled = m_CanGoBack;"],
+            "args": ["m_HHTMLBrowser"]
+        },
+        {
+            "name": "GoForward",
+            "prebutton": ["GUI.enabled = m_CanGoForward;"],
+            "args": ["m_HHTMLBrowser"]
+        },
+        {
+            "name": "AddHeader",
+            "prebutton": ["GUI.enabled = true;"],
+            "args": ["m_HHTMLBrowser", "\"From\"", "\"test@test.com\""]
+        },
+        {
+            "name": "ExecuteJavascript",
+            "args": ["m_HHTMLBrowser", "\"window.alert('Test');\""]
+        },
+        {
+            "name": "MouseUp",
+            "skip": "All interaction calls are dealt with at the end of OnGUI"
+        },
+        {
+            "name": "MouseDown",
+            "skip": "All interaction calls are dealt with at the end of OnGUI"
+        },
+        {
+            "name": "MouseDoubleClick",
+            "skip": "All interaction calls are dealt with at the end of OnGUI"
+        },
+        {
+            "name": "MouseMove",
+            "skip": "All interaction calls are dealt with at the end of OnGUI"
+        },
+        {
+            "name": "MouseWheel",
+            "skip": "All interaction calls are dealt with at the end of OnGUI"
+        },
+        {
+            "name": "KeyDown",
+            "skip": "All interaction calls are dealt with at the end of OnGUI"
+        },
+        {
+            "name": "KeyUp",
+            "skip": "All interaction calls are dealt with at the end of OnGUI"
+        },
+        {
+            "name": "KeyChar",
+            "skip": "All interaction calls are dealt with at the end of OnGUI"
+        },
+        {
+            "name": "SetHorizontalScroll",
+            "skip": "All interaction calls are dealt with at the end of OnGUI"
+        },
+        {
+            "name": "SetVerticalScroll",
+            "skip": "All interaction calls are dealt with at the end of OnGUI"
+        },
+        {
+            "name": "SetKeyFocus",
+            "args": ["m_HHTMLBrowser", "!m_SetKeyFocus"]
+        },
+        {
+            "name": "ViewSource",
+            "args": ["m_HHTMLBrowser"]
+        },
+        {
+            "name": "CopyToClipboard",
+            "args": ["m_HHTMLBrowser"]
+        },
+        {
+            "name": "PasteFromClipboard",
+            "args": ["m_HHTMLBrowser"]
+        },
+        {
+            "name": "Find",
+            "prebutton": ["m_Find = GUILayout.TextField(m_Find);"],
+            "args": ["m_HHTMLBrowser", "m_Find", "m_CurrentlyInFind", "bReverse: false"],
+            "postcode": ["m_CurrentlyInFind = true;"]
+        },
+        {
+            "name": "StopFind",
+            "args": ["m_HHTMLBrowser"]
+        },
+        {
+            "name": "GetLinkAtPosition",
+            "args": ["m_HHTMLBrowser", "500 - WidthOffset", "120 - HeightOffset"]
+        },
+        {
+            "name": "SetCookie",
+            "precall": ["// Use with http://html-kit.com/tools/cookietester/"],
+            "args": ["\"html-kit.com\"", "\"testcookiekey\"", "\"testcookievalue\""]
+        },
+        {
+            "name": "SetPageScaleFactor",
+            "args": ["m_HHTMLBrowser", "m_ScaleFactor", "0", "0"]
+        },
+        {
+            "name": "SetBackgroundMode",
+            "args": ["m_HHTMLBrowser", "Random.Range(0, 2) != 0"]
+        },
+        {
+            "name": "AllowStartRequest",
+            "skip": ["N/A - You MUST call this in response to a HTML_StartRequest_t callback"]
+        },
+        {
+            "name": "JSDialogResponse",
+            "skip": [" N/A - You MUST call this in response to a HTML_JSAlert_t or HTML_JSConfirm_t callback"]
+        },
+        {
+            "name": "FileLoadDialogResponse",
+            "override": [
+                "//SteamHTMLSurface.FileLoadDialogResponse() // N/A - You MUST call this in response to a HTML_FileOpenDialog_t callback",
+                "",
+                "if (m_HHTMLBrowser == HHTMLBrowser.Invalid) {",
+                "\treturn;",
+                "}",
+                "",
+                "// We set the moust position before checking for mouse presses just incase the mouse moved in the same OnGUI frame as a mouse press.",
+                "Event e = Event.current;",
+                "if (e.mousePosition != m_LastMousePos) {",
+                "\tif ((e.mousePosition.x >= WidthOffset && e.mousePosition.x <= m_Width + WidthOffset) && (e.mousePosition.y >= HeightOffset && e.mousePosition.y <= m_Height + HeightOffset)) {",
+                "\t\tm_LastMousePos = e.mousePosition;",
+                "\t\tSteamHTMLSurface.MouseMove(m_HHTMLBrowser, (int)(e.mousePosition.x - WidthOffset), (int)(e.mousePosition.y - HeightOffset));",
+                "\t}",
+                "}",
+                "",
+                "//virtual void MouseDoubleClick( HHTMLBrowser unBrowserHandle, EHTMLMouseButton eMouseButton ) = 0; //TODO",
+                "switch(e.type) {",
+                "\tcase EventType.MouseDown:",
+                "\t\tSteamHTMLSurface.MouseDown(m_HHTMLBrowser, (EHTMLMouseButton)e.button);",
+                "\t\tbreak;",
+                "\tcase EventType.MouseUp:",
+                "\t\tSteamHTMLSurface.MouseUp(m_HHTMLBrowser, (EHTMLMouseButton)e.button);",
+                "\t\tbreak;",
+                "\tcase EventType.ScrollWheel:",
+                "\t\tSteamHTMLSurface.MouseWheel(m_HHTMLBrowser, (int)(-e.delta.y * 100));",
+                "\t\tbreak;",
+                "\tcase EventType.KeyDown:",
+                "\t\t//print(\"KeyDown: \" + e.keyCode + \" - \" + (int)e.character + \" - \" + e.character);",
+                "\t\tEHTMLKeyModifiers modifiers = EHTMLKeyModifiers.k_eHTMLKeyModifier_None;",
+                "\t\tif (e.alt)",
+                "\t\t\tmodifiers = modifiers | EHTMLKeyModifiers.k_eHTMLKeyModifier_AltDown;",
+                "\t\tif (e.shift)",
+                "\t\t\tmodifiers = modifiers | EHTMLKeyModifiers.k_eHTMLKeyModifier_ShiftDown;",
+                "\t\tif (e.control)",
+                "\t\t\tmodifiers = modifiers | EHTMLKeyModifiers.k_eHTMLKeyModifier_CtrlDown;",
+                "",
+                "\t\tif (e.keyCode != KeyCode.None)",
+                "\t\t\tSteamHTMLSurface.KeyDown(m_HHTMLBrowser, (uint)e.keyCode, modifiers);",
+                "\t\tif (e.character != 0)",
+                "\t\t\tSteamHTMLSurface.KeyChar(m_HHTMLBrowser, (uint)e.character, modifiers);",
+                "",
+                "\t\tif (e.keyCode == KeyCode.DownArrow) {",
+                "\t\t\tm_VeritcalScrollCurrent = System.Math.Min(m_VeritcalScrollCurrent + 100, m_VerticalScrollMax);",
+                "\t\t\tSteamHTMLSurface.SetVerticalScroll(m_HHTMLBrowser, m_VeritcalScrollCurrent);",
+                "\t\t}",
+                "\t\telse if (e.keyCode == KeyCode.UpArrow) {",
+                "\t\t\tif (m_VeritcalScrollCurrent - 100 > m_VeritcalScrollCurrent) // Underflow",
+                "\t\t\t\tm_VeritcalScrollCurrent = 0;",
+                "\t\t\telse",
+                "\t\t\t\tm_VeritcalScrollCurrent -= 100;",
+                "\t\t\tSteamHTMLSurface.SetVerticalScroll(m_HHTMLBrowser, m_VeritcalScrollCurrent);",
+                "\t\t}",
+                "\t\telse if (e.keyCode == KeyCode.RightArrow) {",
+                "\t\t\tm_HorizontalScrollCurrent = System.Math.Min(m_HorizontalScrollCurrent + 100, m_HorizontalScrollMax);",
+                "\t\t\tSteamHTMLSurface.SetHorizontalScroll(m_HHTMLBrowser, m_HorizontalScrollCurrent);",
+                "\t\t}",
+                "\t\telse if (e.keyCode == KeyCode.LeftArrow) {",
+                "\t\t\tif (m_HorizontalScrollCurrent - 100 > m_HorizontalScrollCurrent) // Underflow",
+                "\t\t\t\tm_HorizontalScrollCurrent = 0;",
+                "\t\t\telse",
+                "\t\t\t\tm_HorizontalScrollCurrent -= 100;",
+                "\t\t\tSteamHTMLSurface.SetHorizontalScroll(m_HHTMLBrowser, m_HorizontalScrollCurrent);",
+                "\t\t}",
+                "\t\tbreak;",
+                "\tcase EventType.KeyUp:",
+                "\t\t//print(\"KeyUp: \" + e.keyCode + \" - \" + (int)e.character + \" - \" + e.character);",
+                "\t\tmodifiers = EHTMLKeyModifiers.k_eHTMLKeyModifier_None;",
+                "\t\tif (e.alt)",
+                "\t\t\tmodifiers = modifiers | EHTMLKeyModifiers.k_eHTMLKeyModifier_AltDown;",
+                "\t\tif (e.shift)",
+                "\t\t\tmodifiers = modifiers | EHTMLKeyModifiers.k_eHTMLKeyModifier_ShiftDown;",
+                "\t\tif (e.control)",
+                "\t\t\tmodifiers = modifiers | EHTMLKeyModifiers.k_eHTMLKeyModifier_CtrlDown;",
+                "",
+                "\t\tif (e.keyCode != KeyCode.None)",
+                "\t\t\tSteamHTMLSurface.KeyUp(m_HHTMLBrowser, (uint)e.keyCode, modifiers);",
+                "\t\tbreak;",
+                "}"
+            ]
+        }
+
+    ],
+
+    "callresults":
+    [
+        "HTML_BrowserReady_t"
+    ],
+
+    "callbacks":
+    {
+        "HTML_BrowserReady_t":
+        {
+            "customcode":
+            [
+                "m_HHTMLBrowser = pCallback.unBrowserHandle;"
+            ]
+        },
+        "HTML_NeedsPaint_t":
+        {
+            "customcode":
+            [
+                "if (m_Texture == null) {",
+                "\tm_Texture = new Texture2D((int)pCallback.unWide, (int)pCallback.unTall, TextureFormat.BGRA32, false, true);",
+                "}",
+                "",
+                "int dataSize = (int)(pCallback.unWide * pCallback.unTall * 4);",
+                "byte[] bytes = new byte[dataSize];",
+                "System.Runtime.InteropServices.Marshal.Copy(pCallback.pBGRA, bytes, 0, dataSize);",
+                "",
+                "m_Texture.LoadRawTextureData(bytes);",
+                "m_Texture.Apply();"
+            ]
+        },
+        "HTML_StartRequest_t":
+        {
+            "customcode":
+            [
+                "SteamHTMLSurface.AllowStartRequest(pCallback.unBrowserHandle, true);",
+                "print(\"SteamHTMLSurface.AllowStartRequest(pCallback.unBrowserHandle, true)\");"
+            ]
+        },
+        "HTML_CloseBrowser_t":
+        {
+            "customcode":
+            [
+                "m_HHTMLBrowser = HHTMLBrowser.Invalid;"
+            ]
+        },
+        "HTML_CanGoBackAndForward_t":
+        {
+            "customcode":
+            [
+                "m_CanGoBack = pCallback.bCanGoBack;",
+                "m_CanGoForward = pCallback.bCanGoForward;"
+            ]
+        },
+        "HTML_HorizontalScroll_t":
+        {
+            "customcode":
+            [
+                "m_HorizontalScrollMax = pCallback.unScrollMax;",
+                "m_HorizontalScrollCurrent = pCallback.unScrollCurrent;"
+            ]
+        },
+        "HTML_VerticalScroll_t":
+        {
+            "customcode":
+            [
+                "m_VerticalScrollMax = pCallback.unScrollMax;",
+                "m_VeritcalScrollCurrent = pCallback.unScrollCurrent;"
+            ]
+        },
+        "HTML_JSAlert_t":
+        {
+            "customcode":
+            [
+                "SteamHTMLSurface.JSDialogResponse(pCallback.unBrowserHandle, true);",
+                "print(\"SteamHTMLSurface.JSDialogResponse(pCallback.unBrowserHandle, true)\");"
+            ]
+        },
+        "HTML_JSConfirm_t":
+        {
+            "customcode":
+            [
+                "SteamHTMLSurface.JSDialogResponse(pCallback.unBrowserHandle, true);",
+                "print(\"SteamHTMLSurface.JSDialogResponse(pCallback.unBrowserHandle, true)\");"
+            ]
+        },
+        "HTML_FileOpenDialog_t":
+        {
+            "customcode":
+            [
+                "// TODO: Valve has no example usage of this.",
+                "SteamHTMLSurface.FileLoadDialogResponse(pCallback.unBrowserHandle, System.IntPtr.Zero);"
+            ]
+        }
+    }
+}

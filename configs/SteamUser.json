@@ -179,7 +179,7 @@
         {
             "name": "RequestStoreAuthURL",
             "args": ["\"https://steampowered.com\""],
-            "postcall": ["OnStoreAuthURLResponseCallResult.Set(handle);"]
+            "postcall": ["OnStoreAuthURLResponseCallResult.Set(ret);"]
         },
         {
             "name": "BIsPhoneVerified",
@@ -187,6 +187,14 @@
         },
         {
             "name": "BIsTwoFactorEnabled",
+            "label": true
+        },
+        {
+            "name": "BIsPhoneIdentifying",
+            "label": true
+        },
+        {
+            "name": "BIsPhoneRequiringVerification",
             "label": true
         }
     ],
