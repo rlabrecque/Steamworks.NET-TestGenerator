@@ -1,0 +1,244 @@
+{
+    "variables":
+    [
+        ["SteamInventoryResult_t", "m_SteamInventoryResult"],
+        ["SteamItemDetails_t[]", "m_SteamItemDetails"],
+        ["SteamItemDef_t[]", "m_SteamItemDef"],
+        ["byte[]", "m_SerializedBuffer"]
+    ],
+
+    "onenablecode":
+    [
+        "m_SteamInventoryResult = SteamInventoryResult_t.Invalid;",
+        "m_SteamItemDetails = null;",
+        "m_SteamItemDef = null;",
+        "m_SerializedBuffer = null;"
+    ],
+
+    "extrafunctions":
+    [
+        "public void OnDisable() {",
+        "\tDestroyResult();",
+        "}",
+        "",
+        "void DestroyResult() {",
+        "\tif (m_SteamInventoryResult != SteamInventoryResult_t.Invalid) {",
+        "\t\tSteamInventory.DestroyResult(m_SteamInventoryResult);",
+        "\t\tprint(\"SteamInventory.DestroyResult(\" + m_SteamInventoryResult + \")\");",
+        "\t\tm_SteamInventoryResult = SteamInventoryResult_t.Invalid;",
+        "\t}",
+        "}",
+        "",
+        "// These are hardcoded in the game and match the item definition IDs which were uploaded to Steam.",
+        "public static class ESpaceWarItemDefIDs {",
+        "\tpublic static readonly SteamItemDef_t k_SpaceWarItem_TimedDropList = (SteamItemDef_t)10;",
+        "\tpublic static readonly SteamItemDef_t k_SpaceWarItem_ShipDecoration1 = (SteamItemDef_t)100;",
+        "\tpublic static readonly SteamItemDef_t k_SpaceWarItem_ShipDecoration2 = (SteamItemDef_t)101;",
+        "\tpublic static readonly SteamItemDef_t k_SpaceWarItem_ShipDecoration3 = (SteamItemDef_t)102;",
+        "\tpublic static readonly SteamItemDef_t k_SpaceWarItem_ShipDecoration4 = (SteamItemDef_t)103;",
+        "\tpublic static readonly SteamItemDef_t k_SpaceWarItem_ShipWeapon1 = (SteamItemDef_t)110;",
+        "\tpublic static readonly SteamItemDef_t k_SpaceWarItem_ShipWeapon2 = (SteamItemDef_t)111;",
+        "\tpublic static readonly SteamItemDef_t k_SpaceWarItem_ShipSpecial1 = (SteamItemDef_t)120;",
+        "\tpublic static readonly SteamItemDef_t k_SpaceWarItem_ShipSpecial2 = (SteamItemDef_t)121;",
+        "};"
+    ],
+
+    "functions":
+    [
+        {
+            "name": "GetResultStatus",
+            "label": true,
+            "args": ["m_SteamInventoryResult"]
+        },
+        {
+            "name": "GetResultItems",
+            "override":
+            [
+                "if (GUILayout.Button(\"GetResultItems(m_SteamInventoryResult, m_SteamItemDetails, ref OutItemsArraySize)\")) {",
+                "\tuint OutItemsArraySize = 0;",
+                "\tbool ret = SteamInventory.GetResultItems(m_SteamInventoryResult, null, ref OutItemsArraySize);",
+                "\tif (ret && OutItemsArraySize > 0) {",
+                "\t\tm_SteamItemDetails = new SteamItemDetails_t[OutItemsArraySize];",
+                "\t\tret = SteamInventory.GetResultItems(m_SteamInventoryResult, m_SteamItemDetails, ref OutItemsArraySize);",
+                "\t\tprint(\"SteamInventory.GetResultItems(\" + m_SteamInventoryResult + \", m_SteamItemDetails, out OutItemsArraySize) - \" + ret + \" -- \" + OutItemsArraySize);",
+                "",
+                "\t\tSystem.Text.StringBuilder test = new System.Text.StringBuilder();",
+                "\t\tfor (int i = 0; i < OutItemsArraySize; ++i) {",
+                "\t\t\ttest.AppendFormat(\"{0} - {1} - {2} - {3} - {4}\\n\", i, m_SteamItemDetails[i].m_itemId, m_SteamItemDetails[i].m_iDefinition, m_SteamItemDetails[i].m_unQuantity, m_SteamItemDetails[i].m_unFlags);",
+                "\t\t}",
+                "\t\tprint(test);",
+                "\t}",
+                "\telse {",
+                "\t\tprint(\"SteamInventory.GetResultItems(\" + m_SteamInventoryResult + \", null, out OutItemsArraySize) - \" + ret + \" -- \" + OutItemsArraySize);",
+                "\t}",
+                "}"
+            ]
+        },
+        {
+            "name": "GetResultTimestamp",
+            "args": ["m_SteamInventoryResult"]
+        },
+        {
+            "name": "CheckResultSteamID",
+            "args": ["m_SteamInventoryResult", "SteamUser.GetSteamID()"]
+        },
+        {
+            "name": "DestroyResult",
+            "override":
+            [
+                "if (GUILayout.Button(\"DestroyResult(m_SteamInventoryResult)\")) {",
+                "\tDestroyResult();",
+                "}"
+            ]
+        },
+        {
+            "name": "GetAllItems",
+            "args": ["out m_SteamInventoryResult"]
+        },
+        {
+            "name": "GetItemsByID",
+            "precall": ["SteamItemInstanceID_t[] InstanceIDs = { (SteamItemInstanceID_t)0, (SteamItemInstanceID_t)1, };"],
+            "args": ["out m_SteamInventoryResult", "InstanceIDs", "(uint)InstanceIDs.Length"]
+        },
+        {
+            "name": "SerializeResult",
+            "override":
+            [
+                "if (GUILayout.Button(\"SerializeResult(m_SteamInventoryResult, m_SerializedBuffer, out OutBufferSize)\")) {",
+                "\tuint OutBufferSize;",
+                "\tbool ret = SteamInventory.SerializeResult(m_SteamInventoryResult, null, out OutBufferSize);",
+                "\tif(ret) {",
+                "\t\tm_SerializedBuffer = new byte[OutBufferSize];",
+                "\t\tret = SteamInventory.SerializeResult(m_SteamInventoryResult, m_SerializedBuffer, out OutBufferSize);",
+                "\t\tprint(\"SteamInventory.SerializeResult(m_SteamInventoryResult, m_SerializedBuffer, out OutBufferSize) - \" + ret + \" -- \" + OutBufferSize + \" -- \" + System.Text.Encoding.UTF8.GetString(m_SerializedBuffer, 0, m_SerializedBuffer.Length));",
+                "\t}",
+                "\telse {",
+                "\t\tprint(\"SteamInventory.SerializeResult(m_SteamInventoryResult, null, out OutBufferSize) - \" + ret + \" -- \" + OutBufferSize);",
+                "\t}",
+                "}"
+            ]
+        },
+        {
+            "name": "DeserializeResult",
+            "args": ["out m_SteamInventoryResult", "m_SerializedBuffer", "(uint)m_SerializedBuffer.Length"]
+        },
+        {
+            "name": "GenerateItems",
+            "precall": ["SteamItemDef_t[] ArrayItemDefs = { ESpaceWarItemDefIDs.k_SpaceWarItem_ShipDecoration1, ESpaceWarItemDefIDs.k_SpaceWarItem_ShipDecoration2 };"],
+            "args": ["out m_SteamInventoryResult", "ArrayItemDefs", "null", "(uint)ArrayItemDefs.Length"]
+        },
+        {
+            "name": "GrantPromoItems",
+            "args": ["out m_SteamInventoryResult"]
+        },
+        {
+            "name": "AddPromoItem",
+            "args": ["out m_SteamInventoryResult", "ESpaceWarItemDefIDs.k_SpaceWarItem_ShipWeapon1"]
+        },
+        {
+            "name": "AddPromoItems",
+            "precall": ["SteamItemDef_t[] ArrayItemDefs = { ESpaceWarItemDefIDs.k_SpaceWarItem_ShipWeapon1, ESpaceWarItemDefIDs.k_SpaceWarItem_ShipWeapon2 };"],
+            "args": ["out m_SteamInventoryResult", "ArrayItemDefs", "(uint)ArrayItemDefs.Length"]
+        },
+        {
+            "name": "ConsumeItem",
+            "override":
+            [
+                "if (GUILayout.Button(\"ConsumeItem(out m_SteamInventoryResult, m_SteamItemDetails[0].m_itemId, 1)\")) {",
+                "\tif (m_SteamItemDetails != null) {",
+                "\t\tbool ret = SteamInventory.ConsumeItem(out m_SteamInventoryResult, m_SteamItemDetails[0].m_itemId, 1);",
+                "\t\tprint(\"SteamInventory.ConsumeItem(out m_SteamInventoryResult, \" + m_SteamItemDetails[0].m_itemId + \", 1) - \" + ret + \" -- \" + m_SteamInventoryResult);",
+                "\t}",
+                "}"
+            ]
+        },
+        {
+            "name": "ExchangeItems",
+            "override":
+            [
+                "if (GUILayout.Button(\"ExchangeItems(TODO)\")) {",
+                "\tif (m_SteamItemDetails != null) {",
+                "\t\tbool ret = SteamInventory.ExchangeItems(out m_SteamInventoryResult, null, null, 0, null, null, 0); // TODO",
+                "\t\tprint(\"SteamInventory.ExchangeItems(TODO) - \" + ret + \" -- \" + m_SteamInventoryResult);",
+                "\t}",
+                "}"
+            ]
+        },
+        {
+            "name": "TransferItemQuantity",
+            "override":
+            [
+                "if (GUILayout.Button(\"TransferItemQuantity(out m_SteamInventoryResult, m_SteamItemDetails[0].m_itemId, 1, SteamItemInstanceID_t.Invalid)\")) {",
+                "\tif (m_SteamItemDetails != null) {",
+                "\t\tbool ret = SteamInventory.TransferItemQuantity(out m_SteamInventoryResult, m_SteamItemDetails[0].m_itemId, 1, SteamItemInstanceID_t.Invalid);",
+                "\t\tprint(\"SteamInventory.TransferItemQuantity(out m_SteamInventoryResult, \" + m_SteamItemDetails[0].m_itemId + \", 1, SteamItemInstanceID_t.Invalid) - \" + ret + \" -- \" + m_SteamInventoryResult);",
+                "\t}",
+                "}"
+            ]
+        },
+        {
+            "name": "SendItemDropHeartbeat"
+        },
+        {
+            "name": "TriggerItemDrop",
+            "args": ["out m_SteamInventoryResult", "ESpaceWarItemDefIDs.k_SpaceWarItem_TimedDropList"]
+        },
+        {
+            "name": "TradeItems",
+            "override":
+            [
+                "if (GUILayout.Button(\"TradeItems(TODO)\")) {",
+                "\tif (m_SteamItemDetails != null) {",
+                "\t\tbool ret = SteamInventory.TradeItems(out m_SteamInventoryResult, SteamUser.GetSteamID(), null, null, 0, null, null, 0); // TODO... Difficult",
+                "\t\tprint(\"SteamInventory.TradeItems(TODO) - \" + ret + \" -- \" + m_SteamInventoryResult);",
+                "\t}",
+                "}"
+            ]
+        },
+        {
+            "name": "LoadItemDefinitions"
+        },
+        {
+            "name": "GetItemDefinitionIDs",
+            "override":
+            [
+                "if (GUILayout.Button(\"GetItemDefinitionIDs(ItemDefIDs, ref length)\")) {",
+                "\tuint length;",
+                "\tbool ret = SteamInventory.GetItemDefinitionIDs(null, out length);",
+                "\tif (ret) {",
+                "\t\tm_SteamItemDef = new SteamItemDef_t[length];",
+                "\t\tret = SteamInventory.GetItemDefinitionIDs(m_SteamItemDef, out length);",
+                "\t\tprint(\"SteamInventory.GetItemDefinitionIDs(m_SteamItemDef, out length) - \" + ret + \" -- \" + length);",
+                "\t}",
+                "\telse {",
+                "\t\tprint(\"SteamInventory.GetItemDefinitionIDs(null, out length) - \" + ret + \" -- \" + length);",
+                "\t}",
+                "}"
+            ]
+        },
+        {
+            "name": "GetItemDefinitionProperty",
+            "precall": ["uint length = 2048;"],
+            "outargs": [["string", "ValueBuffer"]],
+            "args": ["ESpaceWarItemDefIDs.k_SpaceWarItem_ShipDecoration1", "null", "out ValueBuffer", "ref length"]
+        }
+    ],
+
+    "callbacks":
+    {
+        "SteamInventoryResultReady_t":
+        {
+            "customcode":
+            [
+                "m_SteamInventoryResult = pCallback.m_handle;"
+            ]
+        },
+        "SteamInventoryFullUpdate_t":
+        {
+            "customcode":
+            [
+                "m_SteamInventoryResult = pCallback.m_handle;"
+            ]
+        }
+    }
+}
