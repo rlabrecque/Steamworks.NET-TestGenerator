@@ -1,0 +1,195 @@
+{
+    "variables":
+    [
+        ["HTTPRequestHandle", "m_RequestHandle"],
+        ["ulong", "m_ContextValue"],
+        ["uint", "m_Offset"],
+        ["uint", "m_BufferSize"],
+        ["HTTPCookieContainerHandle", "m_CookieContainer"]
+    ],
+
+    "onenablecode":
+    [
+        "m_RequestHandle = HTTPRequestHandle.Invalid;",
+        "m_CookieContainer = HTTPCookieContainerHandle.Invalid;"
+    ],
+
+    "extrafunctions":
+    [
+        "public void OnDisable() {",
+        "\tReleaseCookieContainer();",
+        "}",
+        "",
+        "void ReleaseCookieContainer() {",
+        "\tif (m_CookieContainer != HTTPCookieContainerHandle.Invalid) {",
+        "\t\tprint(\"SteamHTTP.ReleaseCookieContainer(\" + m_CookieContainer + \") - \" + SteamHTTP.ReleaseCookieContainer(m_CookieContainer));",
+        "\t\tm_CookieContainer = HTTPCookieContainerHandle.Invalid;",
+        "\t}",
+        "}"
+    ],
+
+    "functions":
+    [
+        {
+            "name": "CreateHTTPRequest",
+            "args": ["EHTTPMethod.k_EHTTPMethodGET", "\"http://httpbin.org/get\""],
+            "postcall": ["m_RequestHandle = ret;"]
+        },
+        {
+            "name": "SetHTTPRequestContextValue",
+            "args": ["m_RequestHandle", "1"]
+        },
+        {
+            "name": "SetHTTPRequestNetworkActivityTimeout",
+            "args": ["m_RequestHandle", "30"]
+        },
+        {
+            "name": "SetHTTPRequestHeaderValue",
+            "args": ["m_RequestHandle", "\"From\"", "\"support@rileylabrecque.com\""]
+        },
+        {
+            "name": "SetHTTPRequestGetOrPostParameter",
+            "args": ["m_RequestHandle", "\"testing\"", "\"Steamworks.NET\""]
+        },
+        {
+            "name": "SendHTTPRequest",
+            "outargs": [["SteamAPICall_t", "handle"]],
+            "args": ["m_RequestHandle", "out handle"],
+            "postcall": ["OnHTTPRequestCompletedCallResult.Set(handle);"]
+        },
+        {
+            "name": "SendHTTPRequestAndStreamResponse",
+            "outargs": [["SteamAPICall_t", "handle"]],
+            "args": ["m_RequestHandle", "out handle"],
+            "postcall": ["OnHTTPRequestCompletedCallResult.Set(handle);"]
+        },
+        {
+            "name": "DeferHTTPRequest",
+            "args": ["m_RequestHandle"]
+        },
+        {
+            "name": "PrioritizeHTTPRequest",
+            "args": ["m_RequestHandle"]
+        },
+        {
+            "name": "GetHTTPResponseHeaderSize",
+            "outargs": [["uint", "ResponseHeaderSize"]],
+            "args": ["m_RequestHandle", "\"User-Agent\"", "out ResponseHeaderSize"]
+        },
+        {
+            "name": "GetHTTPResponseHeaderValue",
+            "precall":
+            [
+                "uint ResponseHeaderSize;",
+                "SteamHTTP.GetHTTPResponseHeaderSize(m_RequestHandle, \"User-Agent\", out ResponseHeaderSize);",
+                "",
+                "byte[] HeaderValueBuffer = new byte[ResponseHeaderSize];"
+            ],
+            "args": ["m_RequestHandle", "\"User-Agent\"", "HeaderValueBuffer", "ResponseHeaderSize"]
+        },
+        {
+            "name": "GetHTTPResponseBodySize",
+            "outargs": [["uint", "BodySize"]],
+            "args": ["m_RequestHandle", "out BodySize"]
+        },
+        {
+            "name": "GetHTTPResponseBodyData",
+            "precall":
+            [
+                "uint BodySize;",
+                "SteamHTTP.GetHTTPResponseHeaderSize(m_RequestHandle, out BodySize);",
+                "",
+                "byte[] HeaderValueBuffer = new byte[ResponseHeaderSize];"
+            ],
+            "args": ["m_RequestHandle", "BodyDataBuffer", "BodySize"]
+        },
+        {
+            "name": "GetHTTPStreamingResponseBodyData",
+            "precall": ["byte[] BodyDataBuffer = new byte[m_BufferSize];"],
+            "args": ["m_RequestHandle", "m_Offset", "BodyDataBuffer", "m_BufferSize"],
+            "postprint": ["print(\"BodyDataBuffer: \" + System.Text.Encoding.UTF8.GetString(BodyDataBuffer))"]
+        },
+        {
+            "name": "ReleaseHTTPRequest",
+            "args": ["m_RequestHandle"]
+        },
+        {
+            "name": "GetHTTPDownloadProgressPct",
+            "label": true,
+            "outargs": [["float", "PercentOut"]],
+            "args": ["m_RequestHandle", "out PercentOut"]
+        },
+        {
+            "name": "SetHTTPRequestRawPostBody",
+            "precall": [
+                "string Body = \"parameter=value&also=another\";",
+                "byte[] buffer = new byte[System.Text.Encoding.UTF8.GetByteCount(Body) + 1];",
+                "System.Text.Encoding.UTF8.GetBytes(Body, 0, Body.Length, buffer, 0);"
+            ],
+            "args": ["m_RequestHandle", "\"application/x-www-form-urlencoded\"", "buffer", "(uint)buffer.Length"]
+        },
+        {
+            "name": "CreateCookieContainer",
+            "args": ["true"],
+            "postcall": ["m_CookieContainer = ret;"]
+        },
+        {
+            "name": "ReleaseCookieContainer",
+            "override": [
+                "if (GUILayout.Button(\"ReleaseCookieContainer(m_CookieContainer)\")) {",
+                "\tReleaseCookieContainer();",
+                "}"
+            ]
+        },
+        {
+            "name": "SetCookie",
+            "args": ["m_CookieContainer", "\"http://httpbin.org\"", "\"http://httpbin.org/get\"", "\"TestCookie\""]
+        },
+        {
+            "name": "SetHTTPRequestCookieContainer",
+            "args": ["m_RequestHandle", "m_CookieContainer"]
+        },
+        {
+            "name": "SetHTTPRequestUserAgentInfo",
+            "args": ["m_RequestHandle", "\"TestUserAgentInfo\""]
+        },
+        {
+            "name": "SetHTTPRequestRequiresVerifiedCertificate",
+            "args": ["m_RequestHandle", "false"]
+        },
+        {
+            "name": "SetHTTPRequestAbsoluteTimeoutMS",
+            "args": ["m_RequestHandle", "20000"]
+        },
+        {
+            "name": "GetHTTPRequestWasTimedOut",
+            "label": true,
+            "outargs": [["bool", "WasTimedOut"]],
+            "args": ["m_RequestHandle", "out WasTimedOut"]
+        }
+    ],
+
+    "callresults":
+    [
+        "HTTPRequestCompleted_t"
+    ],
+
+    "callbacks":
+    {
+        "HTTPRequestCompleted_t":
+        {
+            "customcode":
+            [
+                "m_ContextValue = pCallback.m_ulContextValue;"
+            ]
+        },
+        "HTTPRequestDataReceived_t":
+        {
+            "customcode":
+            [
+                "m_Offset = pCallback.m_cOffset;",
+                "m_BufferSize = pCallback.m_cBytesReceived;"
+            ]
+        }
+    }
+}
