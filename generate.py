@@ -62,7 +62,10 @@ class State:
 
 	def ParseCallbacks(self, callbacks):
 		for callback in callbacks:
-			if 'callresults' in self.config and callback.name in self.config['callresults']:
+			if 'callbacks' in self.config and callback.name in self.config['callbacks'] and 'both' in self.config['callbacks'][callback.name]:
+				self.ParseCallbackCSharp(callback)
+				self.ParseCallResultCSharp(callback)
+			elif 'callresults' in self.config and callback.name in self.config['callresults']:
 				self.ParseCallResultCSharp(callback)
 			else:
 				self.ParseCallbackCSharp(callback)
@@ -160,7 +163,6 @@ class State:
 
 		override = ''
 		if 'override' in funcconfig:
-			#override = '\n\t\t'.join(funcconfig['override'])
 			for i, elem in enumerate(funcconfig['override']):
 				indent = ('' if i == 0 or not elem else '\t\t')
 				override += indent + elem + '\n'
@@ -182,9 +184,9 @@ class State:
 		if override:
 			function += override
 		elif funcconfig.get('label', False):
-			if prebutton or precall or postcall:
-				function += '{\n'
+			if precall or postcall:
 				function += prebutton
+				function += '{\n'
 				function += precall
 				function += '\t\t\t{1}{0}.{2}({3});\n'.format(self.interfacename, ret, func.name, args)
 				function += postcall
@@ -192,7 +194,8 @@ class State:
 				function += postprint
 				function += '\t\t}\n'
 			else:
-				function += 'GUILayout.Label("{1}({2}) : " + {0}.{1}({2}));\n'.format(self.interfacename, func.name, guiargs)
+				function += prebutton
+				function += 'GUILayout.Label("{1}({2}) : " + {0}.{1}({3}));\n'.format(self.interfacename, func.name, guiargs, args)
 		else:
 			function += prebutton
 			function += 'if (GUILayout.Button("{0}({1})")) {{\n'.format(func.name, guiargs)
