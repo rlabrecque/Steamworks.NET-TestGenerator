@@ -1,0 +1,346 @@
+{
+    "variables":
+    [
+        ["int", "m_NumGamesStat"],
+        ["float", "m_FeetTraveledStat"],
+        ["bool", "m_AchievedWinOneGame"],
+        ["SteamLeaderboard_t", "m_SteamLeaderboard"],
+        ["SteamLeaderboardEntries_t", "m_SteamLeaderboardEntries"],
+        ["Texture2D", "m_Icon"]
+    ],
+
+    "functions":
+    [
+        {
+            "name": "RequestCurrentStats"
+        },
+        {
+            "name": "GetStat",
+            "label": true,
+            "args": ["\"NumGames\"", "out m_NumGamesStat"]
+        },
+        {
+            "name": "GetStat",
+            "label": true,
+            "args": ["\"FeetTraveled\"", "out m_FeetTraveledStat"]
+        },
+        {
+            "name": "SetStat",
+            "args": ["\"NumGames\"", "m_NumGamesStat + 1"]
+        },
+        {
+            "name": "SetStat",
+            "args": ["\"FeetTraveled\"", "m_FeetTraveledStat + 1"]
+        },
+        {
+            "name": "UpdateAvgRateStat",
+            "args": ["\"AverageSpeed\"", "100", "60.0"]
+        },
+        {
+            "name": "GetAchievement",
+            "args": ["\"ACH_WIN_ONE_GAME\"", "out m_AchievedWinOneGame"]
+        },
+        {
+            "name": "SetAchievement",
+            "args": ["\"ACH_WIN_ONE_GAME\""]
+        },
+        {
+            "name": "ClearAchievement",
+            "args": ["\"ACH_WIN_ONE_GAME\""]
+        },
+        {
+            "name": "GetAchievementAndUnlockTime",
+            "args": ["\"ACH_WIN_ONE_GAME\""]
+        },
+        {
+            "name": "StoreStats"
+        },
+        {
+            "name": "GetAchievementIcon",
+            "args": ["\"ACH_WIN_ONE_GAME\""],
+            "postprint":
+            [
+                "if (ret != 0) {",
+                "\tuint Width = 0;",
+                "\tuint Height = 0;",
+                "\tbool ret = SteamUtils.GetImageSize(ret, out Width, out Height);",
+                "",
+                "\tif (ret && Width > 0 && Height > 0) {",
+                "\t\tbyte[] RGBA = new byte[Width * Height * 4];",
+                "\t\tret = SteamUtils.GetImageRGBA(ret, RGBA, RGBA.Length);",
+                "\t\tif (ret) {",
+                "\t\t\tm_Icon = new Texture2D((int)Width, (int)Height, TextureFormat.RGBA32, false, true);",
+                "\t\t\tm_Icon.LoadRawTextureData(RGBA);",
+                "\t\t\tm_Icon.Apply();",
+                "\t\t}",
+                "\t}",
+                "}"
+            ]
+        },
+        {
+            "name": "GetAchievementDisplayAttribute",
+            "label": true,
+            "args": ["\"ACH_WIN_ONE_GAME\"", "\"name\""]
+        },
+        {
+            "name": "IndicateAchievementProgress",
+            "args": ["\"ACH_WIN_100_GAMES\"", "10", "100"]
+        },
+        {
+            "name": "GetNumAchievements",
+            "label": true
+        },
+        {
+            "name": "GetAchievementName",
+            "label": true,
+            "args": ["0"]
+        },
+        {
+            "name": "RequestUserStats",
+            "args": ["new CSteamID(76561197991230424)"],
+            "postcall": ["UserStatsReceived.Set(ret);"]
+        },
+        {
+            "name": "GetUserStat",
+            "label": true,
+            "outargs": [["int", "Data"]],
+            "args": ["new CSteamID(76561197991230424)", "\"NumWins\"", "out Data"]
+        },
+        {
+            "name": "GetUserStat",
+            "label": true,
+            "outargs": [["float", "Data"]],
+            "args": ["new CSteamID(76561197991230424)", "\"MaxFeetTraveled\"", "out Data"]
+        },
+        {
+            "name": "GetUserAchievement",
+            "label": true,
+            "outargs": [["bool", "Achieved"]],
+            "args": ["new CSteamID(76561197991230424)", "\"ACH_TRAVEL_FAR_ACCUM\"", "out Achieved"]
+        },
+        {
+            "name": "GetUserAchievementAndUnlockTime",
+            "label": true,
+            "outargs": [["bool", "Achieved"], ["uint", "UnlockTime"]],
+            "args": ["new CSteamID(76561197991230424)", "\"ACH_WIN_ONE_GAME\"", "out Achieved", "out UnlockTime"]
+        },
+        {
+            "name": "ResetAllStats",
+            "args": ["true"]
+        },
+        {
+            "name": "FindOrCreateLeaderboard",
+            "args": ["\"Feet Traveled\"", "ELeaderbooardSortMethod.k_ELeaderboardSortMethodAscending", "ELeaderboardDisplayType.k_ELeaderboardDisplayTypeNumeric"],
+            "postcall": ["LeaderboardFindResult.Set(ret);"]
+        },
+        {
+            "name": "FindLeaderboard",
+            "args": ["\"Feet Traveled\""],
+            "postcall": ["LeaderboardFindResult.Set(ret);"]
+        },
+        {
+            "name": "GetLeaderboardName",
+            "override":
+            [
+                "// Spams SteamAPI Warnings that the SteamLeaderboard does not exist.",
+                "if (m_SteamLeaderboard != new SteamLeaderboard_t(0)) {",
+                "\tGUILayout.Label(\"GetLeaderboardName(m_SteamLeaderboard) : \" + SteamUserStats.GetLeaderboardName(m_SteamLeaderboard));"
+            ]
+        },
+        {
+            "name": "GetLeaderboardEntryCount",
+            "override": ["\tGUILayout.Label(\"GetLeaderboardEntryCount(m_SteamLeaderboard) : \" + SteamUserStats.GetLeaderboardEntryCount(m_SteamLeaderboard));"]
+        },
+        {
+            "name": "GetLeaderboardSortMethod",
+            "override": ["\tGUILayout.Label(\"GetLeaderboardSortMethod(m_SteamLeaderboard) : \" + SteamUserStats.GetLeaderboardSortMethod(m_SteamLeaderboard));"]
+        },
+        {
+            "name": "GetLeaderboardDisplayType",
+            "override": [
+                "\tGUILayout.Label(\"GetLeaderboardDisplayType(m_SteamLeaderboard) : \" + SteamUserStats.GetLeaderboardDisplayType(m_SteamLeaderboard));",
+                "}",
+                "else {",
+                "\tGUILayout.Label(\"GetLeaderboardName(m_SteamLeaderboard) : \");",
+                "\tGUILayout.Label(\"GetLeaderboardEntryCount(m_SteamLeaderboard) : \");",
+                "\tGUILayout.Label(\"GetLeaderboardSortMethod(m_SteamLeaderboard) : \");",
+                "\tGUILayout.Label(\"GetLeaderboardDisplayType(m_SteamLeaderboard) : \");",
+                "}"
+            ]
+        },
+        {
+            "name": "DownloadLeaderboardEntries",
+            "args": ["m_SteamLeaderboard", "ELeaderboardDataRequest.k_ELeaderboardDataRequestGlobal", "1", "5"],
+            "postcall": ["LeaderboardScoresDownloaded.Set(ret);"]
+        },
+        {
+            "name": "DownloadLeaderboardEntriesForUsers",
+            "precall": ["CSteamID[] Users = { SteamUser.GetSteamID() };"],
+            "args": ["m_SteamLeaderboard", "Users", "Users.Length"],
+            "postcall": ["LeaderboardScoresDownloaded.Set(ret);"]
+        },
+        {
+            "name": "GetDownloadedLeaderboardEntry",
+            "outargs": [["LeaderboardEntry_t", "LeaderboardEntry"]],
+            "args": ["m_SteamLeaderboardEntries", "0", "out LeaderboardEntry", "null", "0"]
+        },
+        {
+            "name": "UploadLeaderboardScore",
+            "args": ["m_SteamLeaderboard", "ELeaderboardUploadScoreMethod.k_ELeaderboardUploadScoreMethodForceUpdate", "(int)m_FeetTraveledStat", "null", "0"],
+            "postcall": ["LeaderboardScoreUploaded.Set(ret);"]
+        },
+        {
+            "name": "AttachLeaderboardUGC",
+            "args": ["m_SteamLeaderboard", "UGCHandle_t.Invalid"],
+            "postcall": ["LeaderboardUGCSet.Set(ret);"]
+        },
+        {
+            "name": "GetNumberOfCurrentPlayers",
+            "postcall": ["NumberOfCurrentPlayers.Set(ret);"]
+        },
+        {
+            "name": "RequestGlobalAchievementPercentages",
+            "postcall": ["GlobalAchievementPercentagesReady.Set(ret);"]
+        },
+        {
+            "name": "GetMostAchievedAchievementInfo",
+            "override":
+            [
+                "{",
+                "\tint Iterator;",
+                "",
+                "\t{",
+                "\t\tstring Name;",
+                "\t\tfloat Percent;",
+                "\t\tbool Achieved;",
+                "\t\tIterator = SteamUserStats.GetMostAchievedAchievementInfo(out Name, 120, out Percent, out Achieved);",
+                "\t\tif (Iterator != -1) {",
+                "\t\t\tGUILayout.Label(\"GetMostAchievedAchievementInfo(out Name, 120, out Percent, out Achieved) : \" + Iterator + \" -- \" + Name + \" -- \" + Percent + \" -- \" + Achieved);",
+                "\t\t}",
+                "\t\telse {",
+                "\t\t\tGUILayout.Label(\"GetMostAchievedAchievementInfo(out Name, 120, out Percent, out Achieved) : \" + Iterator);",
+                "\t\t}",
+                "\t}"
+            ]
+        },
+        {
+            "name": "GetNextMostAchievedAchievementInfo",
+            "override":
+            [
+                "\tif (Iterator != -1) {",
+                "\t\tstring Name;",
+                "\t\tfloat Percent;",
+                "\t\tbool Achieved;",
+                "\t\tIterator = SteamUserStats.GetNextMostAchievedAchievementInfo(Iterator, out Name, 120, out Percent, out Achieved);",
+                "\t\tGUILayout.Label(\"GetNextMostAchievedAchievementInfo(out Name, 120, out Percent, out Achieved) : \" + Iterator + \" -- \" + Name + \" -- \" + Percent + \" -- \" + Achieved);",
+                "\t}",
+                "}"
+            ]
+        },
+        {
+            "name": "GetAchievementAchievedPercent",
+            "label": true,
+            "outargs": [["float", "Percent"]],
+            "args": ["\"ACH_WIN_100_GAMES\"", "out Percent"]
+        },
+        {
+            "name": "RequestGlobalStats",
+            "args": ["3"],
+            "postcall": ["GlobalStatsReceived.Set(ret);"]
+        },
+        {
+            "name": "GetGlobalStat",
+            "label": true,
+            "prebutton":
+            [
+                "/* TODO - Spams SteamAPI warnings",
+                " * Does SpaceWar have a stat marked as \"aggregated\" to try out these functions?"
+            ],
+            "outargs": [["long", "Data"]],
+            "args": ["\"\"", "out Data"]
+        },
+        {
+            "name": "GetGlobalStat",
+            "label": true,
+            "outargs": [["double", "Data"]],
+            "args": ["\"\"", "out Data"]
+        },
+        {
+            "name": "GetGlobalStatHistory",
+            "override":
+            [
+                "{",
+                "\tlong[] Data = new long[1];",
+                "\tint ret = SteamUserStats.GetGlobalStatHistory(\"\", Data, (uint)Data.Length);",
+                "\tif (ret != 0) {",
+                "\t\tGUILayout.Label(\"GetGlobalStatHistory(\\\"\\\", Data, \" + (uint)Data.Length + \") : \" + ret + \" -- \" + Data[0]);",
+                "\t}",
+                "\telse {",
+                "\t\tGUILayout.Label(\"GetGlobalStatHistory(\\\"\\\", Data, \" + (uint)Data.Length + \") : \" + ret + \" -- \");",
+                "\t}",
+                "}"
+            ]
+        },
+        {
+            "name": "GetGlobalStatHistory",
+            "override":
+            [
+                "{",
+                "\tdouble[] Data = new double[1];",
+                "\tint ret = SteamUserStats.GetGlobalStatHistory(\"\", Data, (uint)Data.Length);",
+                "\tif (ret != 0) {",
+                "\t\tGUILayout.Label(\"GetGlobalStatHistory(\\\"\\\", Data, \" + (uint)Data.Length + \") : \" + ret + \" -- \" + Data[0]);",
+                "\t}",
+                "\telse {",
+                "\t\tGUILayout.Label(\"GetGlobalStatHistory(\\\"\\\", Data, \" + (uint)Data.Length + \") : \" + ret + \" -- \");",
+                "\t}",
+                "}"
+            ]
+        },
+        {
+            "name": "InstallPS3Trophies",
+            "skip": "N/A - _PS3"
+        },
+        {
+            "name": "GetTrophySpaceRequiredBeforeInstall",
+            "skip": "N/A - _PS3"
+        },
+        {
+            "name": "SetUserStatsData",
+            "skip": "N/A - _PS3"
+        },
+        {
+            "name": "GetUserStatsData",
+            "skip": "N/A - _PS3"
+        }
+    ],
+
+    "callresults":
+    [
+        "UserStatsReceived_t",
+        "LeaderboardFindResult_t",
+        "LeaderboardScoresDownloaded_t",
+        "LeaderboardScoreUploaded_t",
+        "LeaderboardUGCSet_t",
+        "NumberOfCurrentPlayers_t",
+        "GlobalAchievementPercentagesReady_t",
+        "GlobalStatsReceived_t"
+    ],
+
+    "callbacks":
+    {
+        "UserStatsReceived_t":
+        {
+            "both": true
+        },
+        "LeaderboardFindResult_t":
+        {
+            "customcode":
+            [
+                "if (pCallback.m_bLeaderboardFound != 0) {",
+                "\tm_SteamLeaderboard = pCallback.m_hSteamLeaderboard;",
+                "}"
+            ]
+        }
+    }
+}
