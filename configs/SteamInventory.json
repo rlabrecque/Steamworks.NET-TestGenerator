@@ -48,7 +48,8 @@
         {
             "name": "GetResultStatus",
             "label": true,
-            "args": ["m_SteamInventoryResult"]
+            "args": ["m_SteamInventoryResult"],
+            "prebutton": ["// INVENTORY ASYNC RESULT MANAGEMENT"]
         },
         {
             "name": "GetResultItems",
@@ -93,7 +94,8 @@
         },
         {
             "name": "GetAllItems",
-            "args": ["out m_SteamInventoryResult"]
+            "args": ["out m_SteamInventoryResult"],
+            "prebutton": ["// INVENTORY ASYNC QUERY"]
         },
         {
             "name": "GetItemsByID",
@@ -104,6 +106,7 @@
             "name": "SerializeResult",
             "override":
             [
+                "// RESULT SERIALIZATION AND AUTHENTICATION",
                 "if (GUILayout.Button(\"SerializeResult(m_SteamInventoryResult, m_SerializedBuffer, out OutBufferSize)\")) {",
                 "\tuint OutBufferSize;",
                 "\tbool ret = SteamInventory.SerializeResult(m_SteamInventoryResult, null, out OutBufferSize);",
@@ -125,7 +128,8 @@
         {
             "name": "GenerateItems",
             "precall": ["SteamItemDef_t[] ArrayItemDefs = { ESpaceWarItemDefIDs.k_SpaceWarItem_ShipDecoration1, ESpaceWarItemDefIDs.k_SpaceWarItem_ShipDecoration2 };"],
-            "args": ["out m_SteamInventoryResult", "ArrayItemDefs", "null", "(uint)ArrayItemDefs.Length"]
+            "args": ["out m_SteamInventoryResult", "ArrayItemDefs", "null", "(uint)ArrayItemDefs.Length"],
+            "prebutton": ["// INVENTORY ASYNC MODIFICATION"]
         },
         {
             "name": "GrantPromoItems",
@@ -177,7 +181,8 @@
             ]
         },
         {
-            "name": "SendItemDropHeartbeat"
+            "name": "SendItemDropHeartbeat",
+            "prebutton": ["// TIMED DROPS AND PLAYTIME CREDIT"]
         },
         {
             "name": "TriggerItemDrop",
@@ -187,6 +192,7 @@
             "name": "TradeItems",
             "override":
             [
+                "// IN-GAME TRADING",
                 "if (GUILayout.Button(\"TradeItems(TODO)\")) {",
                 "\tif (m_SteamItemDetails != null) {",
                 "\t\tbool ret = SteamInventory.TradeItems(out m_SteamInventoryResult, SteamUser.GetSteamID(), null, null, 0, null, null, 0); // TODO... Difficult",
@@ -196,7 +202,8 @@
             ]
         },
         {
-            "name": "LoadItemDefinitions"
+            "name": "LoadItemDefinitions",
+            "prebutton": ["// ITEM DEFINITIONS"]
         },
         {
             "name": "GetItemDefinitionIDs",
