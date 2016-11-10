@@ -169,11 +169,25 @@ class State:
 
 
 		printadditional = '"'
-		if func.returntype != 'void':
+		if func.returntype == 'void':
+			ret = ''
+		elif 'returnname' in funcconfig:
+			returnname = funcconfig['returnname']
+			ret = returnname + ' = '
+			printadditional = ' : " + ' + returnname
+		elif func.returntype == 'SteamAPICall_t':
+			ret = g_csharptypemap.get(func.returntype, func.returntype) + ' handle = '
+			printadditional = ' : " + handle'
+
+			for attrib in func.attributes:
+				if attrib.name == 'CALL_RESULT':
+					postcall += '\t\t\t' + 'On' + attrib.value[:-2] + 'CallResult.Set(handle);' + '\n'
+					break
+			else:
+				print('[WARNING] Function {} returns a SteamAPICall_t but does not have attrib CALL_RESULT!'.format(func.name))
+		else:
 			ret = g_csharptypemap.get(func.returntype, func.returntype) + ' ret = '
 			printadditional = ' : " + ret'
-		else:
-			ret = ''
 
 		if 'outargs' in funcconfig:
 			for elem in funcconfig['outargs']:
