@@ -1,0 +1,37 @@
+{
+	"functions":
+	[
+		{
+			"name": "BIsEnabled",
+			"label": true
+		},
+		{
+			"name": "BIsPlaying",
+			"label": true
+		},
+		{
+			"name": "GetPlaybackStatus",
+			"label": true
+		},
+		{
+			"name": "Play"
+		},
+		{
+			"name": "Pause"
+		},
+		{
+			"name": "PlayPrevious"
+		},
+		{
+			"name": "PlayNext"
+		},
+		{
+			"name": "SetVolume",
+			"args": ["1.0f"]
+		},
+		{
+			"name": "GetVolume",
+			"label": true
+		}
+	]
+}
