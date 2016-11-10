@@ -1,0 +1,133 @@
+{
+	"functions":
+	[
+		{
+			"name": "RegisterSteamMusicRemote",
+			"prebutton": ["// Service Definition"],
+			"args": ["\"Steamworks.NET Test Remote\""]
+		},
+		{
+			"name": "DeregisterSteamMusicRemote"
+		},
+		{
+			"name": "BIsCurrentMusicRemote",
+			"label": true
+		},
+		{
+			"name": "BActivationSuccess",
+			"label": true,
+			"args": ["true"]
+		},
+		{
+			"name": "SetDisplayName",
+			"args": ["\"Some Display Name\""]
+		},
+		{
+			"name": "SetPNGIcon_64x64",
+			"precall": ["// TODO"],
+			"args": ["null", "0"]
+		},
+		{
+			"name": "EnablePlayPrevious",
+			"prebutton": ["// Abilities for the user interface"],
+			"args": ["true"]
+		},
+		{
+			"name": "EnablePlayNext",
+			"args": ["true"]
+		},
+		{
+			"name": "EnableShuffled",
+			"args": ["true"]
+		},
+		{
+			"name": "EnableLooped",
+			"args": ["true"]
+		},
+		{
+			"name": "EnableQueue",
+			"args": ["true"]
+		},
+		{
+			"name": "EnablePlaylists",
+			"args": ["true"]
+		},
+		{
+			"name": "UpdatePlaybackStatus",
+			"prebutton": ["// Status"],
+			"args": ["AudioPlayback_Status.AudioPlayback_Paused"]
+		},
+		{
+			"name": "UpdateShuffled",
+			"args": ["true"]
+		},
+		{
+			"name": "UpdateLooped",
+			"args": ["true"]
+		},
+		{
+			"name": "UpdateVolume",
+			"args": ["0.5f"]
+		},
+		{
+			"name": "CurrentEntryWillChange",
+			"prebutton": ["// Current Entry"]
+		},
+		{
+			"name": "CurrentEntryIsAvailable",
+			"args": ["true"]
+		},
+		{
+			"name": "UpdateCurrentEntryText",
+			"args": ["\"Current Entry Text\""]
+		},
+		{
+			"name": "UpdateCurrentEntryElapsedSeconds",
+			"args": ["10"]
+		},
+		{
+			"name": "UpdateCurrentEntryCoverArt",
+			"precall": ["// TODO"],
+			"args": ["null, 0"]
+		},
+		{
+			"name": "CurrentEntryDidChange"
+		},
+		{
+			"name": "QueueWillChange",
+			"prebutton": ["// Queue"]
+		},
+		{
+			"name": "ResetQueueEntries"
+		},
+		{
+			"name": "SetQueueEntry",
+			"args": ["0", "0", "\"I don't know what I'm doing\""]
+		},
+		{
+			"name": "SetCurrentQueueEntry",
+			"args": ["0"]
+		},
+		{
+			"name": "QueueDidChange"
+		},
+		{
+			"name": "PlaylistWillChange",
+			"prebutton": ["// Playlist"]
+		},
+		{
+			"name": "ResetPlaylistEntries"
+		},
+		{
+			"name": "SetPlaylistEntry",
+			"args": ["0", "0", "\"I don't know what I'm doing\""]
+		},
+		{
+			"name": "SetCurrentPlaylistEntry",
+			"args": ["0"]
+		},
+		{
+			"name": "PlaylistDidChange"
+		}
+	]
+}
