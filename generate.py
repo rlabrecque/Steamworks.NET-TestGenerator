@@ -128,10 +128,6 @@ class State:
 			print("[WARNING] The number of functions in the config does not match the number of non private functions in the interface. Interface: {0}, Config: {1}".format(len(interface.functions) - numPrivateFunctions, len(self.config['functions'])))
 
 	def ParseFunctionCSharp(self, func, funcconfig):
-		if funcconfig.get('skip', False):
-			self.csharp_functions.append("//{0}.{1}() // {2}\n".format(self.interfacename, func.name, funcconfig['skip']))
-			return
-
 		args = ''
 		guiargs = ''
 		printargs = ''
@@ -167,6 +163,16 @@ class State:
 				indent = ('' if i == 0 or not elem else '\t\t')
 				override += indent + elem + '\n'
 
+
+		if funcconfig.get('skip', False):
+			function = ''
+			function += prebutton
+			function += precall
+			function += "//{0}.{1}() // {2}\n".format(self.interfacename, func.name, funcconfig['skip'])
+			function += postcall
+			function += postprint
+			self.csharp_functions.append(function)
+			return
 
 		printadditional = '"'
 		if func.returntype == 'void':
