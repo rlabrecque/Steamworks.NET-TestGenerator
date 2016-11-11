@@ -1,0 +1,181 @@
+{
+    "variables":
+    [
+        ["CSteamID", "m_RemoteSteamId"]
+    ],
+
+    "onenablecode":
+    [
+        "// You'd typically get this from a Lobby. Hardcoding it so that we don't need to integrate the whole lobby system with the networking.",
+        "m_RemoteSteamId = new CSteamID(0);"
+    ],
+
+    "extrafunctions":
+    [
+        "void OnDisable() {",
+        "\t// Just incase we have it open when we close/assemblies get reloaded.",
+        "\tif (!m_RemoteSteamId.IsValid()) {",
+        "\t\tSteamNetworking.CloseP2PSessionWithUser(m_RemoteSteamId);",
+        "\t}",
+        "}",
+        "",
+        "enum MsgType : uint {",
+        "\tPing,",
+        "\tAck,",
+        "}"
+    ],
+
+    "functions":
+    [
+        {
+            "name": "SendP2PPacket",
+            "prebutton":
+            [
+                "if (!m_RemoteSteamId.IsValid()) {",
+                "\tGUILayout.Label(\"Please fill m_RemoteSteamId with a valid 64bit SteamId to use SteamNetworkingTest.\");",
+                "\tGUILayout.Label(\"Alternatively it will be filled automatically when a session request is recieved.\");",
+                "\treturn;",
+                "}",
+                "",
+                "// Session-less connection functions"
+            ],
+            "precall":
+            [
+                "byte[] bytes = new byte[4];",
+                "using (System.IO.MemoryStream ms = new System.IO.MemoryStream(bytes))",
+                "using (System.IO.BinaryWriter b = new System.IO.BinaryWriter(ms)) {",
+                "\tb.Write((uint)MsgType.Ping);",
+                "}"
+            ],
+            "args": ["m_RemoteSteamId", "bytes", "(uint)bytes.Length", "EP2PSend.k_EP2PSendReliable"]
+        },
+        {
+            "name": "IsP2PPacketAvailable",
+            "override":
+            [
+                "{",
+                "\tuint MsgSize;",
+                "\tbool ret = SteamNetworking.IsP2PPacketAvailable(out MsgSize);",
+                "\tGUILayout.Label(\"IsP2PPacketAvailable(out MsgSize) : \" + ret + \" -- \" + MsgSize);"
+            ]
+        },
+        {
+            "name": "ReadP2PPacket",
+            "override":
+            [
+                "\tGUI.enabled = ret;",
+                "",
+                "\tif (GUILayout.Button(\"ReadP2PPacket(bytes, MsgSize, out newMsgSize, out SteamIdRemote)\")) {",
+                "\t\tbyte[] bytes = new byte[MsgSize];",
+                "\t\tuint newMsgSize;",
+                "\t\tCSteamID SteamIdRemote;",
+                "\t\tret = SteamNetworking.ReadP2PPacket(bytes, MsgSize, out newMsgSize, out SteamIdRemote);",
+                "",
+                "\t\tusing (System.IO.MemoryStream ms = new System.IO.MemoryStream(bytes))",
+                "\t\tusing (System.IO.BinaryReader b = new System.IO.BinaryReader(ms)) {",
+                "\t\t\tMsgType msgtype = (MsgType)b.ReadUInt32();",
+                "\t\t\t// switch statement here depending on the msgtype",
+                "\t\t\tprint(\"SteamNetworking.ReadP2PPacket(bytes, \" + MsgSize + \", out newMsgSize, out SteamIdRemote) - \" + ret + \" -- \" + newMsgSize + \" -- \" + SteamIdRemote + \" -- \" + msgtype);",
+                "\t\t}",
+                "",
+                "\t}",
+                "",
+                "\tGUI.enabled = true;",
+                "}"
+            ]
+        },
+        {
+            "name": "AcceptP2PSessionWithUser",
+            "skip": "Only called from within P2PSessionRequest Callback!"
+        },
+        {
+            "name": "CloseP2PSessionWithUser",
+            "args": ["m_RemoteSteamId"]
+        },
+        {
+            "name": "CloseP2PChannelWithUser",
+            "args": ["m_RemoteSteamId", "0"]
+        },
+        {
+            "name": "GetP2PSessionState",
+            "label": true,
+            "outargs": [["P2PSessionState_t", "ConnectionState"]],
+            "args": ["m_RemoteSteamId", "out ConnectionState"]
+        },
+        {
+            "name": "AllowP2PPacketRelay",
+            "args": ["true"]
+        },
+        {
+            "name": "CreateListenSocket",
+            "prebutton": ["// LISTEN / CONNECT style interface functions"],
+            "skip": "TODO"
+        },
+        {
+            "name": "CreateP2PConnectionSocket",
+            "skip": "TODO"
+        },
+        {
+            "name": "CreateConnectionSocket",
+            "skip": "TODO"
+        },
+        {
+            "name": "DestroySocket",
+            "skip": "TODO"
+        },
+        {
+            "name": "DestroyListenSocket",
+            "skip": "TODO"
+        },
+        {
+            "name": "SendDataOnSocket",
+            "skip": "TODO"
+        },
+        {
+            "name": "IsDataAvailableOnSocket",
+            "skip": "TODO"
+        },
+        {
+            "name": "RetrieveDataFromSocket",
+            "skip": "TODO"
+        },
+        {
+            "name": "IsDataAvailable",
+            "skip": "TODO"
+        },
+        {
+            "name": "RetrieveData",
+            "skip": "TODO"
+        },
+        {
+            "name": "GetSocketInfo",
+            "skip": "TODO"
+        },
+        {
+            "name": "GetListenSocketInfo",
+            "skip": "TODO"
+        },
+        {
+            "name": "GetSocketConnectionType",
+            "skip": "TODO"
+        },
+        {
+            "name": "GetMaxPacketSize",
+            "skip": "TODO"
+        }
+    ],
+
+    "callbacks":
+    {
+        "P2PSessionRequest_t":
+        {
+            "customcode":
+            [
+                "bool ret = SteamNetworking.AcceptP2PSessionWithUser(pCallback.m_steamIDRemote);",
+                "print(\"SteamNetworking.AcceptP2PSessionWithUser(\" + pCallback.m_steamIDRemote + \") - \" + ret);",
+                "",
+                "m_RemoteSteamId = pCallback.m_steamIDRemote;"
+            ]
+        }
+    }
+}
