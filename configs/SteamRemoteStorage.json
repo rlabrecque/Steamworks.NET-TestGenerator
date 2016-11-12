@@ -1,0 +1,451 @@
+{
+    "constants":
+    [
+        ["string", "MESSAGE_FILE_NAME", "\"message.dat\""]
+    ],
+
+    "variables":
+    [
+        ["string", "m_Message"],
+        ["int", "m_FileCount"],
+        ["int", "m_FileSize"],
+        ["int", "m_TotalBytes"],
+        ["int", "m_FileSizeInBytes"],
+        ["bool", "m_CloudEnabled"],
+        ["UGCFileWriteStreamHandle_t", "m_FileStream"],
+        ["UGCHandle_t", "m_UGCHandle"],
+        ["PublishedFileId_t", "m_PublishedFileId"],
+        ["PublishedFileUpdateHandle_t", "m_PublishedFileUpdateHandle"],
+        ["SteamAPICall_t", "m_FileReadAsyncHandle"]
+    ],
+
+    "functions":
+    [
+        {
+            "name": "FileWrite",
+            "override":
+            [
+                "if (GUILayout.Button(\"FileWrite(MESSAGE_FILE_NAME, Data, Data.Length)\")) {",
+                "\tif (System.Text.Encoding.UTF8.GetByteCount(m_Message) > m_TotalBytes) {",
+                "\t\tprint(\"Remote Storage: Quota Exceeded! - Bytes: \" + System.Text.Encoding.UTF8.GetByteCount(m_Message) + \" - Max: \" + m_TotalBytes);",
+                "\t}",
+                "\telse {",
+                "\t\tbyte[] Data = new byte[System.Text.Encoding.UTF8.GetByteCount(m_Message)];",
+                "\t\tSystem.Text.Encoding.UTF8.GetBytes(m_Message, 0, m_Message.Length, Data, 0);",
+                "",
+                "\t\tbool ret = SteamRemoteStorage.FileWrite(MESSAGE_FILE_NAME, Data, Data.Length);",
+                "\t\tprint(\"FileWrite(\" + MESSAGE_FILE_NAME + \", Data, \" + Data.Length + \") - \" + ret);",
+                "\t}",
+                "}"
+            ]
+        },
+        {
+            "name": "FileRead",
+            "override":
+            [
+                "if (GUILayout.Button(\"FileRead(MESSAGE_FILE_NAME, Data, Data.Length)\")) {",
+                "\tif (m_FileSize > 40) {",
+                "\t\tbyte[] c = { 0 };",
+                "\t\tDebug.Log(\"RemoteStorage: File was larger than expected. . .\");",
+                "\t\tSteamRemoteStorage.FileWrite(MESSAGE_FILE_NAME, c, 1);",
+                "\t}",
+                "\telse {",
+                "\t\tbyte[] Data = new byte[40];",
+                "\t\tint ret = SteamRemoteStorage.FileRead(MESSAGE_FILE_NAME, Data, Data.Length);",
+                "\t\tm_Message = System.Text.Encoding.UTF8.GetString(Data, 0, ret);",
+                "\t\tprint(\"FileRead(\" + MESSAGE_FILE_NAME + \", Data, \" + Data.Length + \") - \" + ret);",
+                "\t}",
+                "}"
+            ]
+
+        },
+        {
+            "name": "FileWriteAsync",
+            "precall":
+            [
+                "byte[] Data = new byte[System.Text.Encoding.UTF8.GetByteCount(m_Message)];",
+                "System.Text.Encoding.UTF8.GetBytes(m_Message, 0, m_Message.Length, Data, 0);"
+            ],
+            "args": ["MESSAGE_FILE_NAME", "Data", "(uint)Data.Length"]
+        },
+        {
+            "name": "FileReadAsync",
+            "override":
+            [
+                "if (GUILayout.Button(\"FileReadAsync(MESSAGE_FILE_NAME, Data, (uint)Data.Length)\")) {",
+                "\tif (m_FileSize > 40) {",
+                "\t\tDebug.Log(\"RemoteStorage: File was larger than expected. . .\");",
+                "\t}",
+                "\telse {",
+                "\t\tm_FileReadAsyncHandle = SteamRemoteStorage.FileReadAsync(MESSAGE_FILE_NAME, 0, (uint)m_FileSize);",
+                "\t\tRemoteStorageFileReadAsyncComplete.Set(m_FileReadAsyncHandle);",
+                "\t\tprint(\"FileReadAsync(\" + MESSAGE_FILE_NAME + \", 0, \" + (uint)m_FileSize + \") - \" + m_FileReadAsyncHandle);",
+                "\t}",
+                "}"
+            ]
+        },
+        {
+            "name": "FileReadAsyncComplete"
+        },
+        {
+            "name": "FileForget",
+            "args": ["MESSAGE_FILE_NAME"]
+        },
+        {
+            "name": "FileDelete",
+            "args": ["MESSAGE_FILE_NAME"]
+        },
+        {
+            "name": "FileShare",
+            "args": ["MESSAGE_FILE_NAME"]
+        },
+        {
+            "name": "SetSyncPlatforms",
+            "args": ["MESSAGE_FILE_NAME", "ERemoteStoragePlatform.k_ERemoteStoragePlatformAll"]
+        },
+        {
+            "name": "FileWriteStreamOpen",
+            "args": ["MESSAGE_FILE_NAME"],
+            "returnname": "m_FileStream"
+        },
+        {
+            "name": "FileWriteStreamWriteChunk",
+            "override":
+            [
+                "if (GUILayout.Button(\"FileWriteStreamWriteChunk(m_FileStream, Data, Data.Length)\")) {",
+                "\tif (System.Text.Encoding.UTF8.GetByteCount(m_Message) > m_TotalBytes) {",
+                "\t\tprint(\"Remote Storage: Quota Exceeded! - Bytes: \" + System.Text.Encoding.UTF8.GetByteCount(m_Message) + \" - Max: \" + m_TotalBytes);",
+                "\t}",
+                "\telse {",
+                "\t\tbyte[] Data = new byte[System.Text.Encoding.UTF8.GetByteCount(m_Message)];",
+                "\t\tSystem.Text.Encoding.UTF8.GetBytes(m_Message, 0, m_Message.Length, Data, 0);",
+                "",
+                "\t\tbool ret = SteamRemoteStorage.FileWriteStreamWriteChunk(m_FileStream, Data, Data.Length);",
+                "\t\tprint(\"FileWriteStreamWriteChunk(\" + m_FileStream + \", Data, \" + Data.Length + \") - \" + ret);",
+                "\t}",
+                "}"
+            ]
+        },
+        {
+            "name": "FileWriteStreamClose",
+            "args": ["m_FileStream"]
+        },
+        {
+            "name": "FileWriteStreamCancel",
+            "args": ["m_FileStream"]
+        },
+        {
+            "name": "FileExists",
+            "label": true,
+            "args": ["MESSAGE_FILE_NAME"]
+        },
+        {
+            "name": "FilePersisted",
+            "label": true,
+            "args": ["MESSAGE_FILE_NAME"]
+        },
+        {
+            "name": "GetFileSize",
+            "label": true,
+            "args": ["MESSAGE_FILE_NAME"]
+        },
+        {
+            "name": "GetFileTimestamp",
+            "label": true,
+            "args": ["MESSAGE_FILE_NAME"]
+        },
+        {
+            "name": "GetSyncPlatforms",
+            "label": true,
+            "args": ["MESSAGE_FILE_NAME"]
+        },
+        {
+            "name": "GetFileCount",
+            "label": true,
+            "returnname": "m_FileCount"
+        },
+        {
+            "name": "GetFileNameAndSize",
+            "override":
+            [
+                "for (int i = 0; i < m_FileCount; ++i) {",
+                "\tint FileSize = 0;",
+                "\tstring FileName = SteamRemoteStorage.GetFileNameAndSize(i, out FileSize);",
+                "\tGUILayout.Label(\"GetFileNameAndSize(i, out FileSize) : \" + FileName + \" -- \" + FileSize);",
+                "",
+                "\tif(FileName == MESSAGE_FILE_NAME) {",
+                "\t\tm_FileSize = FileSize;",
+                "\t}",
+                "}"
+            ]
+        },
+        {
+            "name": "GetQuota",
+            "label": true,
+            "outargs": [["int", "TotalBytes"], ["int", "AvailableBytes"]],
+            "args": ["out m_TotalBytes", "out AvailableBytes"],
+            "postcall": ["m_TotalBytes = TotalBytes;"]
+        },
+        {
+            "name": "IsCloudEnabledForAccount",
+            "label": true
+        },
+        {
+            "name": "IsCloudEnabledForApp",
+            "label": true,
+            "returnname": "m_CloudEnabled"
+        },
+        {
+            "name": "SetCloudEnabledForApp",
+            "args": ["!m_CloudEnabled"]
+        },
+        {
+            "name": "UGCDownload",
+            "args": ["m_UGCHandle", "0"]
+        },
+        {
+            "name": "GetUGCDownloadProgress",
+            "label": true,
+            "outargs": [["int", "BytesDownloaded"], ["int", "BytesExpected"]],
+            "args": ["m_UGCHandle", "out BytesDownloaded", "out BytesExpected"]
+        },
+        {
+            "name": "GetUGCDetails",
+            "override":
+            [
+                "// Spams warnings if called with an empty handle",
+                "if (m_UGCHandle != (UGCHandle_t)0) {",
+                "\tAppId_t AppID;",
+                "\tstring Name;",
+                "\tCSteamID SteamIDOwner;",
+                "\tbool ret = SteamRemoteStorage.GetUGCDetails(m_UGCHandle, out AppID, out Name, out m_FileSizeInBytes, out SteamIDOwner);",
+                "\tGUILayout.Label(\"GetUGCDetails(m_UGCHandle, out AppID, Name, out FileSizeInBytes, out SteamIDOwner) : \" + ret + \" -- \" + AppID + \" -- \" + Name + \" -- \" + m_FileSizeInBytes + \" -- \" + SteamIDOwner);",
+                "}",
+                "else {",
+                "\tGUILayout.Label(\"GetUGCDetails(m_UGCHandle, out AppID, Name, out FileSizeInBytes, out SteamIDOwner) : \");",
+                "}"
+            ]
+        },
+        {
+            "name": "UGCRead",
+            "precall": ["byte[] Data = new byte[m_FileSizeInBytes];"],
+            "args": ["m_UGCHandle", "Data", "m_FileSizeInBytes", "0", "EUGCReadAction.k_EUGCRead_Close"]
+        },
+        {
+            "name": "GetCachedUGCCount",
+            "label": true
+        },
+        {
+            "name": "GetCachedUGCHandle",
+            "label": true,
+            "args": ["0"]
+        },
+        {
+            "name": "GetFileListFromServer",
+            "skip": "Playstation Only"
+        },
+        {
+            "name": "FileFetch",
+            "skip": "Playstation Only"
+        },
+        {
+            "name": "FilePersist",
+            "skip": "Playstation Only"
+        },
+        {
+            "name": "SynchronizeToClient",
+            "skip": "Playstation Only"
+        },
+        {
+            "name": "SynchronizeToServer",
+            "skip": "Playstation Only"
+        },
+        {
+            "name": "ResetFileRequestState",
+            "skip": "Playstation Only"
+        },
+        {
+            "name": "PublishWorkshopFile",
+            "precall": ["string[] Tags = { \"Test1\", \"Test2\", \"Test3\" };"],
+            "args": ["MESSAGE_FILE_NAME", "null", "SteamUtils.GetAppID()", "\"Title!\"", "\"Description!\"", "ERemoteStoragePublishedFileVisibility.k_ERemoteStoragePublishedFileVisibilityPublic", "Tags", "EWorkshopFileType.k_EWorkshopFileTypeCommunity"]
+        },
+        {
+            "name": "CreatePublishedFileUpdateRequest",
+            "returnname": "m_PublishedFileUpdateHandle",
+            "args": ["m_PublishedFileId"]
+        },
+        {
+            "name": "UpdatePublishedFileFile",
+            "args": ["m_PublishedFileUpdateHandle", "MESSAGE_FILE_NAME"]
+        },
+        {
+            "name": "UpdatePublishedFilePreviewFile",
+            "args": ["m_PublishedFileUpdateHandle", "null"]
+        },
+        {
+            "name": "UpdatePublishedFileTitle",
+            "args": ["m_PublishedFileUpdateHandle", "\"New Title\""]
+        },
+        {
+            "name": "UpdatePublishedFileDescription",
+            "args": ["m_PublishedFileUpdateHandle", "\"New Description\""]
+        },
+        {
+            "name": "UpdatePublishedFileVisibility",
+            "args": ["m_PublishedFileUpdateHandle", "ERemoteStoragePublishedFileVisibility.k_ERemoteStoragePublishedFileVisibilityPublic"]
+        },
+        {
+            "name": "UpdatePublishedFileTags",
+            "args": ["m_PublishedFileUpdateHandle", "new string[] {\"First\", \"Second\", \"Third\"}"]
+        },
+        {
+            "name": "CommitPublishedFileUpdate",
+            "args": ["m_PublishedFileUpdateHandle"]
+        },
+        {
+            "name": "GetPublishedFileDetails",
+            "args": ["m_PublishedFileId", "0"]
+        },
+        {
+            "name": "DeletePublishedFile",
+            "args": ["m_PublishedFileId"]
+        },
+        {
+            "name": "EnumerateUserPublishedFiles",
+            "args": ["0"]
+        },
+        {
+            "name": "SubscribePublishedFile",
+            "args": ["m_PublishedFileId"]
+        },
+        {
+            "name": "EnumerateUserSubscribedFiles",
+            "args": ["0"]
+        },
+        {
+            "name": "UnsubscribePublishedFile",
+            "args": ["m_PublishedFileId"]
+        },
+        {
+            "name": "UpdatePublishedFileSetChangeDescription",
+            "args": ["m_PublishedFileUpdateHandle", "\"Changelog!\""]
+        },
+        {
+            "name": "GetPublishedItemVoteDetails",
+            "args": ["m_PublishedFileId"]
+        },
+        {
+            "name": "UpdateUserPublishedItemVote",
+            "args": ["m_PublishedFileId", "true"]
+        },
+        {
+            "name": "GetUserPublishedItemVoteDetails",
+            "args": ["m_PublishedFileId"]
+        },
+        {
+            "name": "EnumerateUserSharedWorkshopFiles",
+            "args": ["SteamUser.GetSteamID()", "0", "null", "null"]
+        },
+        {
+            "name": "PublishVideo",
+            "args": ["EWorkshopVideoProvider.k_EWorkshopVideoProviderYoutube", "\"William Hunter\"", "\"Rmvb4Hktv7U\"", "null", "SteamUtils.GetAppID()", "\"Test Video\"", "\"Desc\"", "ERemoteStoragePublishedFileVisibility.k_ERemoteStoragePublishedFileVisibilityPublic", "null"]
+        },
+        {
+            "name": "SetUserPublishedFileAction",
+            "args": ["m_PublishedFileId", "EWorkshopFileAction.k_EWorkshopFileActionPlayed"]
+        },
+        {
+            "name": "EnumeratePublishedFilesByUserAction",
+            "args": ["EWorkshopFileAction.k_EWorkshopFileActionPlayed", "0"]
+        },
+        {
+            "name": "EnumeratePublishedWorkshopFiles",
+            "args": ["EWorkshopEnumerationType.k_EWorkshopEnumerationTypeRankedByVote", "0", "3", "0", "null", "null"]
+        },
+        {
+            "name": "UGCDownloadToLocation",
+            "skip": "There is absolutely no documentation on how to use this function"
+        }
+    ],
+
+    "callresults":
+    [
+        "RemoteStorageFileShareResult_t",
+        "RemoteStoragePublishFileResult_t",
+        "RemoteStorageDeletePublishedFileResult_t",
+        "RemoteStorageEnumerateUserPublishedFilesResult_t",
+        "RemoteStorageSubscribePublishedFileResult_t",
+        "RemoteStorageEnumerateUserSubscribedFilesResult_t",
+        "RemoteStorageUnsubscribePublishedFileResult_t",
+        "RemoteStorageUpdatePublishedFileResult_t",
+        "RemoteStorageDownloadUGCResult_t",
+        "RemoteStorageGetPublishedFileDetailsResult_t",
+        "RemoteStorageEnumerateWorkshopFilesResult_t",
+        "RemoteStorageGetPublishedItemVoteDetailsResult_t",
+        "RemoteStorageUpdateUserPublishedItemVoteResult_t",
+        "RemoteStorageUserVoteDetails_t",
+        "RemoteStorageEnumerateUserSharedWorkshopFilesResult_t",
+        "RemoteStorageSetUserPublishedFileActionResult_t",
+        "RemoteStorageEnumeratePublishedFilesByUserActionResult_t",
+        "RemoteStorageFileWriteAsyncComplete_t",
+        "RemoteStorageFileReadAsyncComplete_t"
+    ],
+
+    "callbacks":
+    {
+        "RemoteStorageFileShareResult_t":
+        {
+            "customcode":
+            [
+                "if (pCallback.m_eResult == EResult.k_EResultOK) {",
+                "\tm_UGCHandle = pCallback.m_hFile;",
+                "}"
+            ]
+        },
+        "RemoteStoragePublishFileResult_t":
+        {
+            "customcode":
+            [
+                "if (pCallback.m_eResult == EResult.k_EResultOK) {",
+                "\tm_PublishedFileId = pCallback.m_nPublishedFileId;",
+                "}"
+            ]
+        },
+        "RemoteStorageGetPublishedFileDetailsResult_t":
+        {
+            "customcode":
+            [
+                "if (pCallback.m_eResult == EResult.k_EResultOK) {",
+                "\tm_UGCHandle = pCallback.m_hFile;",
+                "}"
+            ]
+        },
+        "RemoteStorageEnumerateWorkshopFilesResult_t":
+        {
+            "customcode":
+            [
+                "for (int i = 0; i < pCallback.m_nResultsReturned; ++i) {",
+                "\tprint(i + \": \" + pCallback.m_rgPublishedFileId[i]);",
+                "}",
+                "",
+                "if(pCallback.m_nResultsReturned >= 1) {",
+                "\tm_PublishedFileId = pCallback.m_rgPublishedFileId[0];",
+                "}"
+            ]
+        },
+        "RemoteStorageFileReadAsyncComplete_t":
+        {
+            "customcode":
+            [
+                "if (pCallback.m_eResult == EResult.k_EResultOK) {",
+                "\tbyte[] Data = new byte[40];",
+                "\tbool ret = SteamRemoteStorage.FileReadAsyncComplete(pCallback.m_hFileReadAsync, Data, pCallback.m_cubRead);",
+                "\tprint(\"FileReadAsyncComplete(m_FileReadAsyncHandle, Data, pCallback.m_cubRead) : \" + ret);",
+                "\tif (ret) {",
+                "\t\tm_Message = System.Text.Encoding.UTF8.GetString(Data, (int)pCallback.m_nOffset, (int)pCallback.m_cubRead);",
+                "\t}",
+                "}"
+            ]
+        }
+    }
+}

@@ -7,6 +7,7 @@ from SteamworksParser import steamworksparser
 
 g_csharptypemap = {
 	'uint32': 'uint',
+	'int32': 'int',
 	'const char *': 'string'
 }
 
@@ -204,7 +205,7 @@ class State:
 		if override:
 			function += override
 		elif funcconfig.get('label', False):
-			if precall or postcall:
+			if precall or postcall or 'returnname' in funcconfig:
 				function += prebutton
 				function += '{\n'
 				function += precall
