@@ -63,10 +63,15 @@ class State:
 
 	def ParseCallbacks(self, callbacks):
 		for callback in callbacks:
-			if 'callbacks' in self.config and callback.name in self.config['callbacks'] and 'both' in self.config['callbacks'][callback.name]:
-				self.ParseCallbackCSharp(callback)
-				self.ParseCallResultCSharp(callback)
-			elif 'callresults' in self.config and callback.name in self.config['callresults']:
+			if 'callbacks' in self.config and callback.name in self.config['callbacks']:
+				if 'both' in self.config['callbacks'][callback.name]:
+					self.ParseCallbackCSharp(callback)
+					self.ParseCallResultCSharp(callback)
+					continue
+				elif 'skip' in self.config['callbacks'][callback.name]:
+					continue
+
+			if 'callresults' in self.config and callback.name in self.config['callresults']:
 				self.ParseCallResultCSharp(callback)
 			else:
 				self.ParseCallbackCSharp(callback)
@@ -291,7 +296,6 @@ def main(parser, configDir, outputDir):
 
 			state.ParseCallbacks(f.callbacks)
 
-		if state.interfacename:
 			OutputCSharpFile(outputDir, state)
 
 if __name__ == '__main__':

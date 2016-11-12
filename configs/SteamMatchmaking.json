@@ -1,0 +1,221 @@
+{
+    "variables":
+    [
+        ["CSteamID", "m_Lobby"]
+    ],
+
+    "functions":
+    [
+        {
+            "name": "GetFavoriteGameCount",
+            "label": true
+        },
+        {
+            "name": "GetFavoriteGame",
+            "label": true,
+            "outargs": [["AppId_t", "AppID"], ["uint", "IP"], ["ushort", "ConnPort"], ["ushort", "QueryPort"], ["uint", "Flags"], ["uint", "LastPlayedOnServer"]],
+            "args": ["0", "out AppID", "out IP", "out ConnPort", "out QueryPort", "out Flags", "out LastPlayedOnServer"]
+        },
+        {
+            "name": "AddFavoriteGame",
+            "prebutton": ["// 3494815209 = 208.78.165.233 = Valve Payload Server (Virginia srcds150 #1)"],
+            "precall": ["uint CurrentUnixTime = (uint)(System.DateTime.UtcNow.Subtract(new System.DateTime(1970, 1, 1))).TotalSeconds;"],
+            "args": ["(AppId_t)480", "3494815209", "27015", "27015", "Constants.k_unFavoriteFlagFavorite", "CurrentUnixTime"]
+        },
+        {
+            "name": "RemoveFavoriteGame",
+            "args": ["(AppId_t)480", "3494815209", "27015", "27015", "Constants.k_unFavoriteFlagFavorite"]
+        },
+        {
+            "name": "RequestLobbyList"
+        },
+        {
+            "name": "AddRequestLobbyListStringFilter",
+            "args": ["\"SomeStringKey\"", "\"SomeValue\"", "ELobbyComparison.k_ELobbyComparisonNotEqual"]
+        },
+        {
+            "name": "AddRequestLobbyListNumericalFilter",
+            "args": ["\"SomeIntKey\"", "0", "ELobbyComparison.k_ELobbyComparisonNotEqual"]
+        },
+        {
+            "name": "AddRequestLobbyListNearValueFilter",
+            "args": ["\"SomeIntKey\"", "0"]
+        },
+        {
+            "name": "AddRequestLobbyListFilterSlotsAvailable",
+            "args": ["3"]
+        },
+        {
+            "name": "AddRequestLobbyListDistanceFilter",
+            "args": ["ELobbyDistanceFilter.k_ELobbyDistanceFilterWorldwide"]
+        },
+        {
+            "name": "AddRequestLobbyListResultCountFilter",
+            "args": ["1"]
+        },
+        {
+            "name": "AddRequestLobbyListCompatibleMembersFilter",
+            "args": ["(CSteamID)0"]
+        },
+        {
+            "name": "GetLobbyByIndex",
+            "args": ["0"]
+        },
+        {
+            "name": "CreateLobby",
+            "args": ["ELobbyType.k_ELobbyTypePublic", "1"]
+        },
+        {
+            "name": "JoinLobby",
+            "args": ["m_Lobby"]
+        },
+        {
+            "name": "LeaveLobby",
+            "args": ["m_Lobby"],
+            "postcall": ["m_Lobby = CSteamID.Nil;"]
+        },
+        {
+            "name": "InviteUserToLobby",
+            "args": ["m_Lobby", "SteamUser.GetSteamID()"]
+        },
+        {
+            "name": "GetNumLobbyMembers",
+            "label": true,
+            "args": ["m_Lobby"]
+        },
+        {
+            "name": "GetLobbyMemberByIndex",
+            "label": true,
+            "args": ["m_Lobby", "0"]
+        },
+        {
+            "name": "GetLobbyData",
+            "label": true,
+            "args": ["m_Lobby", "\"name\""]
+        },
+        {
+            "name": "SetLobbyData",
+            "args": ["m_Lobby", "\"name\"", "\"Test Lobby!\""]
+        },
+        {
+            "name": "GetLobbyDataCount",
+            "label": true,
+            "args": ["m_Lobby"]
+        },
+        {
+            "name": "GetLobbyDataByIndex",
+            "label": true,
+            "outargs": [["string", "Key"], ["string", "Value"]],
+            "args": ["m_Lobby", "0", "out Key", "255", "out Value", "255"]
+        },
+        {
+            "name": "DeleteLobbyData",
+            "args": ["m_Lobby", "\"name\""]
+        },
+        {
+            "name": "GetLobbyMemberData",
+            "label": true,
+            "args": ["m_Lobby", "SteamUser.GetSteamID()", "\"test\""]
+        },
+        {
+            "name": "SetLobbyMemberData",
+            "args": ["m_Lobby", "\"test\"", "\"This is a test Key!\""]
+        },
+        {
+            "name": "SendLobbyChatMsg",
+            "precall": ["byte[] MsgBody = System.Text.Encoding.UTF8.GetBytes(\"Test Message!\");"],
+            "args": ["m_Lobby", "MsgBody", "MsgBody.Length"]
+        },
+        {
+            "name": "GetLobbyChatEntry",
+            "skip": "Only called from within OnLobbyChatMsg!"
+        },
+        {
+            "name": "RequestLobbyData",
+            "args": ["m_Lobby"]
+        },
+        {
+            "name": "SetLobbyGameServer",
+            "args": ["m_Lobby", "2130706433", "1337", "CSteamID.NonSteamGS"]
+        },
+        {
+            "name": "GetLobbyGameServer",
+            "label": true,
+            "outargs": [["uint", "GameServerIP"], ["ushort", "GameServerPort"], ["CSteamID", "SteamIDGameServer"]],
+            "args": ["m_Lobby", "out GameServerIP", "out GameServerPort", "out SteamIDGameServer"]
+        },
+        {
+            "name": "SetLobbyMemberLimit",
+            "args": ["m_Lobby", "6"]
+        },
+        {
+            "name": "GetLobbyMemberLimit",
+            "label": true,
+            "args": ["m_Lobby"]
+        },
+        {
+            "name": "SetLobbyType",
+            "args": ["m_Lobby", "ELobbyType.k_ELobbyTypePublic"]
+        },
+        {
+            "name": "SetLobbyJoinable",
+            "args": ["m_Lobby", "true"]
+        },
+        {
+            "name": "GetLobbyOwner",
+            "args": ["m_Lobby"]
+        },
+        {
+            "name": "SetLobbyOwner",
+            "args": ["m_Lobby", "SteamUser.GetSteamID()"]
+        },
+        {
+            "name": "SetLinkedLobby",
+            "args": ["m_Lobby", "m_Lobby"]
+        },
+        {
+            "name": "CheckForPSNGameBootInvite",
+            "skip": "Playstation only"
+        }
+    ],
+
+    "callresults":
+    [
+        "LobbyMatchList_t",
+        "LobbyCreated_t"
+    ],
+
+    "callbacks":
+    {
+        "LobbyEnter_t":
+        {
+            "both": true,
+            "customcode":
+            [
+                "m_Lobby = (CSteamID)pCallback.m_ulSteamIDLobby;"
+            ]
+        },
+        "LobbyChatMsg_t":
+        {
+            "customcode":
+            [
+                "CSteamID SteamIDUser;",
+                "byte[] Data = new byte[4096];",
+                "EChatEntryType ChatEntryType;",
+                "int ret = SteamMatchmaking.GetLobbyChatEntry((CSteamID)pCallback.m_ulSteamIDLobby, (int)pCallback.m_iChatID, out SteamIDUser, Data, Data.Length, out ChatEntryType);",
+                "Debug.Log(\"GetLobbyChatEntry(\" + (CSteamID)pCallback.m_ulSteamIDLobby + \", \" + (int)pCallback.m_iChatID + \", out SteamIDUser, Data, Data.Length, out ChatEntryType) : \" + ret + \" -- \" + SteamIDUser + \" -- \" + System.Text.Encoding.UTF8.GetString(Data) + \" -- \" + ChatEntryType);"
+            ]
+        },
+        "LobbyCreated_t":
+        {
+            "customcode":
+            [
+                "m_Lobby = (CSteamID)pCallback.m_ulSteamIDLobby;"
+            ]
+        },
+        "PSNGameBootInviteResult_t":
+        {
+            "skip": true
+        }
+    }
+}
