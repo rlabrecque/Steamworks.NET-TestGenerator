@@ -1,0 +1,338 @@
+{
+    "variables":
+    [
+        ["HServerListRequest", "m_ServerListRequest"],
+        ["HServerQuery", "m_ServerQuery"]
+    ],
+
+    "onenablecode":
+    [
+        "m_ServerListRequest = HServerListRequest.Invalid;",
+        "m_ServerQuery = HServerQuery.Invalid;",
+        "",
+        "m_ServerListResponse = new ISteamMatchmakingServerListResponse(OnServerResponded, OnServerFailedToRespond, OnRefreshComplete);",
+        "m_PingResponse = new ISteamMatchmakingPingResponse(OnServerResponded, OnServerFailedToRespond);",
+        "m_PlayersResponse = new ISteamMatchmakingPlayersResponse(OnAddPlayerToList, OnPlayersFailedToRespond, OnPlayersRefreshComplete);",
+        "m_RulesResponse = new ISteamMatchmakingRulesResponse(OnRulesResponded, OnRulesFailedToRespond, OnRulesRefreshComplete);"
+    ],
+
+    "extrafunctions":
+    [
+        "private void OnDisable() {",
+        "\tReleaseRequest();",
+        "\tCancelServerQuery();",
+        "}",
+        "",
+        "private void ReleaseRequest() {",
+        "\tif (m_ServerListRequest != HServerListRequest.Invalid) {",
+        "\t\tSteamMatchmakingServers.ReleaseRequest(m_ServerListRequest);",
+        "\t\tm_ServerListRequest = HServerListRequest.Invalid;",
+        "\t\tprint(\"SteamMatchmakingServers.ReleaseRequest(m_ServerListRequest)\");",
+        "\t}",
+        "}",
+        "",
+        "private void CancelServerQuery() {",
+        "\tif (m_ServerQuery != HServerQuery.Invalid) {",
+        "\t\tSteamMatchmakingServers.CancelServerQuery(m_ServerQuery);",
+        "\t\tm_ServerQuery = HServerQuery.Invalid;",
+        "\t\tprint(\"SteamMatchmakingServers.CancelServerQuery(m_ServerQuery)\");",
+        "\t}",
+        "}",
+        "",
+        "private string GameServerItemFormattedString(gameserveritem_t gsi) {",
+        "\treturn\t\"m_NetAdr: \" + gsi.m_NetAdr.GetConnectionAddressString() + \"\\n\" +",
+        "\t\t\t\"m_nPing: \" + gsi.m_nPing + \"\\n\" +",
+        "\t\t\t\"m_bHadSuccessfulResponse: \" + gsi.m_bHadSuccessfulResponse + \"\\n\" +",
+        "\t\t\t\"m_bDoNotRefresh: \" + gsi.m_bDoNotRefresh + \"\\n\" +",
+        "\t\t\t\"m_szGameDir: \" + gsi.GetGameDir() + \"\\n\" +",
+        "\t\t\t\"m_szMap: \" + gsi.GetMap() + \"\\n\" +",
+        "\t\t\t\"m_szGameDescription: \" + gsi.GetGameDescription() + \"\\n\" +",
+        "\t\t\t\"m_nAppID: \" + gsi.m_nAppID + \"\\n\" +",
+        "\t\t\t\"m_nPlayers: \" + gsi.m_nPlayers + \"\\n\" +",
+        "\t\t\t\"m_nMaxPlayers: \" + gsi.m_nMaxPlayers + \"\\n\" +",
+        "\t\t\t\"m_nBotPlayers: \" + gsi.m_nBotPlayers + \"\\n\" +",
+        "\t\t\t\"m_bPassword: \" + gsi.m_bPassword + \"\\n\" +",
+        "\t\t\t\"m_bSecure: \" + gsi.m_bSecure + \"\\n\" +",
+        "\t\t\t\"m_ulTimeLastPlayed: \" + gsi.m_ulTimeLastPlayed + \"\\n\" +",
+        "\t\t\t\"m_nServerVersion: \" + gsi.m_nServerVersion + \"\\n\" +",
+        "\t\t\t\"m_szServerName: \" + gsi.GetServerName() + \"\\n\" +",
+        "\t\t\t\"m_szGameTags: \" + gsi.GetGameTags() + \"\\n\" +",
+        "\t\t\t\"m_steamID: \" + gsi.m_steamID + \"\\n\";",
+        "}",
+        "",
+        "// ISteamMatchmakingServerListResponse",
+        "private void OnServerResponded(HServerListRequest hRequest, int iServer) {",
+        "\tDebug.Log(\"OnServerResponded: \" + hRequest + \" - \" + iServer);",
+        "}",
+        "",
+        "private void OnServerFailedToRespond(HServerListRequest hRequest, int iServer) {",
+        "\tDebug.Log(\"OnServerFailedToRespond: \" + hRequest + \" - \" + iServer);",
+        "}",
+        "",
+        "private void OnRefreshComplete(HServerListRequest hRequest, EMatchMakingServerResponse response) {",
+        "\tDebug.Log(\"OnRefreshComplete: \" + hRequest + \" - \" + response);",
+        "}",
+        "",
+        "// ISteamMatchmakingPingResponse",
+        "private void OnServerResponded(gameserveritem_t gsi) {",
+        "\tDebug.Log(\"OnServerResponded: \" + gsi + \"\\n\" + GameServerItemFormattedString(gsi));",
+        "}",
+        "",
+        "private void OnServerFailedToRespond() {",
+        "\tDebug.Log(\"OnServerFailedToRespond\");",
+        "}",
+        "",
+        "// ISteamMatchmakingPlayersResponse",
+        "private void OnAddPlayerToList(string pchName, int nScore, float flTimePlayed) {",
+        "\tDebug.Log(\"OnAddPlayerToList: \" + pchName + \" - \" + nScore + \" - \" + flTimePlayed);",
+        "}",
+        "",
+        "private void OnPlayersFailedToRespond() {",
+        "\tDebug.Log(\"OnPlayersFailedToRespond\");",
+        "}",
+        "",
+        "private void OnPlayersRefreshComplete() {",
+        "\tDebug.Log(\"OnPlayersRefreshComplete\");",
+        "}",
+        "",
+        "// ISteamMatchmakingRulesResponse",
+        "private void OnRulesResponded(string pchRule, string pchValue) {",
+        "\tDebug.Log(\"OnRulesResponded: \" + pchRule + \" - \" + pchValue);",
+        "}",
+        "",
+        "private void OnRulesFailedToRespond() {",
+        "\tDebug.Log(\"OnRulesFailedToRespond\");",
+        "}",
+        "",
+        "private void OnRulesRefreshComplete() {",
+        "\tDebug.Log(\"OnRulesRefreshComplete\");",
+        "}"
+    ],
+
+    "functions":
+    [
+        {
+            "name": "RequestInternetServerList",
+            "returnname": "m_ServerListRequest",
+            "precall":
+            [
+                "ReleaseRequest();",
+                "",
+                "MatchMakingKeyValuePair_t[] filters = {",
+                "\tnew MatchMakingKeyValuePair_t { m_szKey = \"appid\", m_szValue = \"440\" },",
+                "\tnew MatchMakingKeyValuePair_t { m_szKey = \"gamedir\", m_szValue = \"tf\" },",
+                "\tnew MatchMakingKeyValuePair_t { m_szKey = \"gametagsand\", m_szValue = \"beta\" },",
+                "};"
+            ],
+            "args": ["new AppId_t(440)", "filters", "(uint)filters.Length", "m_ServerListResponse"]
+        },
+        {
+            "name": "RequestLANServerList",
+            "returnname": "m_ServerListRequest",
+            "precall":
+            [
+                "ReleaseRequest();"
+            ],
+            "args": ["new AppId_t(440)", "m_ServerListResponse"]
+        },
+        {
+            "name": "RequestFriendsServerList",
+            "returnname": "m_ServerListRequest",
+            "precall":
+            [
+                "ReleaseRequest();"
+            ],
+            "args": ["new AppId_t(440)", "null", "0", "m_ServerListResponse"]
+        },
+        {
+            "name": "RequestFavoritesServerList",
+            "returnname": "m_ServerListRequest",
+            "precall":
+            [
+                "ReleaseRequest();"
+            ],
+            "args": ["new AppId_t(440)", "null", "0", "m_ServerListResponse"]
+        },
+        {
+            "name": "RequestHistoryServerList",
+            "returnname": "m_ServerListRequest",
+            "precall":
+            [
+                "ReleaseRequest();"
+            ],
+            "args": ["new AppId_t(440)", "null", "0", "m_ServerListResponse"]
+        },
+        {
+            "name": "RequestSpectatorServerList",
+            "returnname": "m_ServerListRequest",
+            "precall":
+            [
+                "ReleaseRequest();"
+            ],
+            "args": ["new AppId_t(440)", "null", "0", "m_ServerListResponse"]
+        },
+        {
+            "name": "ReleaseRequest",
+            "override":
+            [
+                "if (GUILayout.Button(\"ReleaseRequest(m_ServerListRequest)\")) {",
+                "\tReleaseRequest(); // We do this instead, because we want to make sure that m_ServerListRequested gets set to Invalid after releasing.",
+                "}"
+            ]
+        },
+        {
+            "name": "GetServerDetails",
+            "args": ["m_ServerListRequest", "0"],
+            "postprint": ["print(GameServerItemFormattedString(ret));"]
+        },
+        {
+            "name": "CancelQuery",
+            "args": ["m_ServerListRequest"]
+        },
+        {
+            "name": "RefreshQuery",
+            "args": ["m_ServerListRequest"]
+        },
+        {
+            "name": "IsRefreshing",
+            "label": true,
+            "args": ["m_ServerListRequest"]
+        },
+        {
+            "name": "GetServerCount",
+            "label": true,
+            "args": ["m_ServerListRequest"]
+        },
+        {
+            "name": "RefreshServer",
+            "args": ["m_ServerListRequest", "0"]
+        },
+        {
+            "name": "PingServer",
+            "returnname": "m_ServerQuery",
+            "precall": ["CancelServerQuery();"],
+            "args": ["3494815209", "27015", "m_PingResponse"]
+        },
+        {
+            "name": "PlayerDetails",
+            "returnname": "m_ServerQuery",
+            "precall": ["CancelServerQuery();"],
+            "args": ["3494815209", "27015", "m_PlayersResponse"]
+        },
+        {
+            "name": "ServerRules",
+            "returnname": "m_ServerQuery",
+            "precall": ["CancelServerQuery();"],
+            "args": ["3494815209", "27015", "m_RulesResponse"]
+        },
+        {
+            "name": "CancelServerQuery",
+            "override":
+            [
+                "if (GUILayout.Button(\"CancelServerQuery(m_ServerQuery)\")) {",
+                "\tCancelServerQuery(); // We do this instead, because we want to make sure that m_ServerListRequested gets set to Invalid after releasing, and we call it from a number of places.",
+                "}"
+            ]
+        }
+    ],
+
+    "callbacks":
+    {
+        "FavoritesListChanged_t":
+        {
+            "skip": true
+        },
+        "LobbyInvite_t":
+        {
+            "skip": true
+        },
+        "LobbyEnter_t":
+        {
+            "skip": true
+        },
+        "LobbyDataUpdate_t":
+        {
+            "skip": true
+        },
+        "LobbyChatUpdate_t":
+        {
+            "skip": true
+        },
+        "LobbyChatMsg_t":
+        {
+            "skip": true
+        },
+        "LobbyGameCreated_t":
+        {
+            "skip": true
+        },
+        "LobbyKicked_t":
+        {
+            "skip": true
+        },
+        "FavoritesListAccountsUpdated_t":
+        {
+            "skip": true
+        },
+        "FavoritesListChanged_t":
+        {
+            "skip": true
+        },
+        "LobbyInvite_t":
+        {
+            "skip": true
+        },
+        "LobbyEnter_t":
+        {
+            "skip": true
+        },
+        "LobbyDataUpdate_t":
+        {
+            "skip": true
+        },
+        "LobbyChatUpdate_t":
+        {
+            "skip": true
+        },
+        "LobbyChatMsg_t":
+        {
+            "skip": true
+        },
+        "LobbyGameCreated_t":
+        {
+            "skip": true
+        },
+        "LobbyMatchList_t":
+        {
+            "skip": true
+        },
+        "LobbyKicked_t":
+        {
+            "skip": true
+        },
+        "LobbyCreated_t":
+        {
+            "skip": true
+        },
+        "PSNGameBootInviteResult_t":
+        {
+            "skip": true
+        },
+        "FavoritesListAccountsUpdated_t":
+        {
+            "skip": true
+        },
+        "LobbyEnter_t":
+        {
+            "skip": true
+        },
+        "LobbyMatchList_t":
+        {
+            "skip": true
+        },
+        "LobbyCreated_t":
+        {
+            "skip": true
+        }
+    }
+}
