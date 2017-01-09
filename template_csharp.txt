@@ -16,7 +16,7 @@ public class [[INTERFACENAME]]Test : MonoBehaviour {
 	[[EXTRAFUNCTIONS]]
 	public void RenderOnGUI() {
 		[[VARIABLESDISPLAY]]
-		[[FUNCTIONS]]
+[[FUNCTIONS]]
 	}
 
 	[[CALLBACKS]]

@@ -2,13 +2,18 @@
 import os
 import sys
 import json
-import re
 from SteamworksParser import steamworksparser
+
+g_skippedfiles = (
+	"isteamappticket.h",
+	"isteamgamecoordinator.h"
+)
 
 g_csharptypemap = {
 	'uint32': 'uint',
 	'int32': 'int',
-	'const char *': 'string'
+	'const char *': 'string',
+	'gameserveritem_t *': 'gameserveritem_t'
 }
 
 class State:
@@ -64,11 +69,12 @@ class State:
 	def ParseCallbacks(self, callbacks):
 		for callback in callbacks:
 			if 'callbacks' in self.config and callback.name in self.config['callbacks']:
+				if 'skip' in self.config['callbacks'][callback.name]:
+					continue
+
 				if 'both' in self.config['callbacks'][callback.name]:
 					self.ParseCallbackCSharp(callback)
 					self.ParseCallResultCSharp(callback)
-					continue
-				elif 'skip' in self.config['callbacks'][callback.name]:
 					continue
 
 			if 'callresults' in self.config and callback.name in self.config['callresults']:
@@ -114,26 +120,33 @@ class State:
 			return
 
 		numPrivateFunctions = 0
+		indentLevel = 2
 		for i, func in enumerate(interface.functions):
 			if func.private:
 				numPrivateFunctions += 1
 				continue
 
-			if i - numPrivateFunctions >= len(self.config['functions']):
+			curFunctionIndex = i - numPrivateFunctions
+
+			if curFunctionIndex >= len(self.config['functions']):
 				print("[ERROR] Function missing from the config: {0}".format(func.name))
 				return
 
-			funcconfig = self.config['functions'][i - numPrivateFunctions]
+			funcconfig = self.config['functions'][curFunctionIndex]
 			if func.name != funcconfig['name']:
 				print("[ERROR] Function missmatch, expected: {0} but got {1} instead!".format(func.name, funcconfig['name']))
 				return
 
-			self.ParseFunctionCSharp(func, funcconfig)
+			if 'indent' in funcconfig:
+				indentLevel += funcconfig['indent']
+
+			function = self.ParseFunctionCSharp(func, funcconfig, indentLevel)
+			self.csharp_functions.append(function)
 
 		if len(self.config['functions']) != len(interface.functions) - numPrivateFunctions:
 			print("[WARNING] The number of functions in the config does not match the number of non private functions in the interface. Interface: {0}, Config: {1}".format(len(interface.functions) - numPrivateFunctions, len(self.config['functions'])))
 
-	def ParseFunctionCSharp(self, func, funcconfig):
+	def ParseFunctionCSharp(self, func, funcconfig, indentLevel):
 		args = ''
 		guiargs = ''
 		printargs = ''
@@ -144,41 +157,89 @@ class State:
 			printargs += ' + ", " + '.join([('"\\"' + x.strip('"') + '\\""' if x.startswith('"') else x) for x in funcconfig['args']])
 			printargs += ' + "'
 
+		indent = '\t' * indentLevel
+
+		preindent = ''
+		if 'preindent' in funcconfig:
+			oldIndentLevel = indentLevel
+			if 'indent' in funcconfig:
+				oldIndentLevel = indentLevel - funcconfig['indent']
+
+			oldIndentStr = '\t' * oldIndentLevel
+
+			for elem in funcconfig['preindent']:
+				preindent += oldIndentStr + elem + '\n'
+
+		postindent = ''
+		if 'postindent' in funcconfig:
+			oldIndentLevel = indentLevel
+			if 'indent' in funcconfig:
+				oldIndentLevel = indentLevel - funcconfig['indent']
+
+			oldIndentStr = '\t' * oldIndentLevel
+
+			for elem in funcconfig['postindent']:
+				postindent += oldIndentStr + elem + '\n'
+
 		prebutton = ''
 		if 'prebutton' in funcconfig:
-			prebutton = '\n\t\t'.join(funcconfig['prebutton']) + '\n\t\t'
+			for elem in funcconfig['prebutton']:
+				if elem:
+					prebutton += indent + elem + '\n'
+				else:
+					prebutton += '\n'
+
+		postbutton = ''
+		if 'postbutton' in funcconfig:
+			for elem in funcconfig['postbutton']:
+				if elem:
+					postbutton += indent + elem + '\n'
+				else:
+					postbutton += '\n'
 
 		precall = ''
 		if 'precall' in funcconfig:
 			for elem in funcconfig['precall']:
-				precall += '\t\t\t' + elem + '\n'
+				if elem:
+					precall += indent + '\t' + elem + '\n'
+				else:
+					precall += '\n'
 
 		postcall = ''
 		if 'postcall' in funcconfig:
 			for elem in funcconfig['postcall']:
-				postcall += '\t\t\t' + elem + '\n'
+				if elem:
+					postcall += indent + '\t' + elem + '\n'
+				else:
+					postcall += '\n'
 
 		postprint = ''
 		if 'postprint' in funcconfig:
 			for elem in funcconfig['postprint']:
-				postprint += '\t\t\t' + elem + '\n'
+				if elem:
+					postprint += indent + '\t' + elem + '\n'
+				else:
+					postprint += '\n'
 
-		override = ''
 		if 'override' in funcconfig:
-			for i, elem in enumerate(funcconfig['override']):
-				indent = ('' if i == 0 or not elem else '\t\t')
-				override += indent + elem + '\n'
+			function = ''
+			for elem in funcconfig['override']:
+				if elem:
+					function += indent + elem + '\n'
+				else:
+					function += '\n'
 
+			return function
 
 		if funcconfig.get('skip', False):
 			function = ''
 			function += prebutton
 			function += precall
-			function += "//{0}.{1}() // {2}\n".format(self.interfacename, func.name, funcconfig['skip'])
+			function += indent + "//{0}.{1}() // {2}\n".format(self.interfacename, func.name, funcconfig['skip'])
 			function += postcall
 			function += postprint
-			self.csharp_functions.append(function)
-			return
+			function += postbutton
+			return function
 
 		printadditional = '"'
 		if func.returntype == 'void':
@@ -193,7 +254,7 @@ class State:
 
 			for attrib in func.attributes:
 				if attrib.name == 'CALL_RESULT':
-					postcall += '\t\t\t' + 'On' + attrib.value[:-2] + 'CallResult.Set(handle);' + '\n'
+					postcall += indent + '\t' + 'On' + attrib.value[:-2] + 'CallResult.Set(handle);' + '\n'
 					break
 			else:
 				print('[WARNING] Function {} returns a SteamAPICall_t but does not have attrib CALL_RESULT!'.format(func.name))
@@ -203,90 +264,103 @@ class State:
 
 		if 'outargs' in funcconfig:
 			for elem in funcconfig['outargs']:
-				precall += '\t\t\t' + elem[0] + ' ' + elem[1] + ';\n'
+				precall += indent + '\t' + elem[0] + ' ' + elem[1] + ';\n'
 				printadditional += ' + " -- " + ' + elem[1]
 
 		function = ''
-		if override:
-			function += override
-		elif funcconfig.get('label', False):
+		if funcconfig.get('label', False):
 			if precall or postcall or 'returnname' in funcconfig:
+				function += preindent
 				function += prebutton
-				function += '{\n'
+				function += indent + '{\n'
 				function += precall
-				function += '\t\t\t{1}{0}.{2}({3});\n'.format(self.interfacename, ret, func.name, args)
+				function += indent + '\t{1}{0}.{2}({3});\n'.format(self.interfacename, ret, func.name, args)
 				function += postcall
-				function += '\t\t\tGUILayout.Label("{0}({1}){2});\n'.format(func.name, guiargs, printadditional)
+				function += indent + '\tGUILayout.Label("{0}({1}){2});\n'.format(func.name, guiargs, printadditional)
 				function += postprint
-				function += '\t\t}\n'
+				function += indent + '}\n'
+				function += postbutton
+				function += postindent
 			else:
+				function += preindent
 				function += prebutton
-				function += 'GUILayout.Label("{1}({2}) : " + {0}.{1}({3}));\n'.format(self.interfacename, func.name, guiargs, args)
+				function += precall
+				function += indent + 'GUILayout.Label("{1}({2}) : " + {0}.{1}({3}));\n'.format(self.interfacename, func.name, guiargs, args)
+				function += postcall
+				function += postprint
+				function += postbutton
+				function += postindent
 		else:
+			function += preindent
 			function += prebutton
-			function += 'if (GUILayout.Button("{0}({1})")) {{\n'.format(func.name, guiargs)
+			function += indent + 'if (GUILayout.Button("{0}({1})")) {{\n'.format(func.name, guiargs)
 			function += precall
-			function += '\t\t\t{1}{0}.{2}({3});\n'.format(self.interfacename, ret, func.name, args)
+			function += indent + '\t{1}{0}.{2}({3});\n'.format(self.interfacename, ret, func.name, args)
 			function += postcall
-			function += '\t\t\tprint("{0}.{1}({2}){3});\n'.format(self.interfacename, func.name, printargs, printadditional)
+			function += indent + '\tprint("{0}.{1}({2}){3});\n'.format(self.interfacename, func.name, printargs, printadditional)
 			function += postprint
-			function += '\t\t}\n'
-		self.csharp_functions.append(function)
+			function += indent + '}\n'
+			function += postbutton
+			function += postindent
 
-def OutputCSharpFile(outputDir, state):
-	def ReplaceTemplate(template, placeholderString, newString):
-		if len(newString.strip()) == 0:
-			splitlines = template.splitlines()
-			for i, line in enumerate(splitlines):
-				if placeholderString in line:
-					splitlines.remove(line)
-			return '\n'.join(splitlines)
+		return function
 
-		return template.replace(placeholderString, newString)
+	def OutputCSharpFile(self, outputDir):
+		def ReplaceTemplate(template, placeholderString, newString):
+			if len(newString.strip()) == 0:
+				splitlines = template.splitlines()
+				for i, line in enumerate(splitlines):
+					if placeholderString in line:
+						splitlines.remove(line)
+				return '\n'.join(splitlines)
 
-	try:
-		os.mkdir(outputDir)
-	except:
-		pass
+			return template.replace(placeholderString, newString)
 
-	with open('template_csharp.txt', 'r') as stream:
-		template = stream.read()
+		try:
+			os.mkdir(outputDir)
+		except:
+			pass
 
-	template = ReplaceTemplate(template, '[[INTERFACENAME]]', state.interfacename)
+		with open('template_csharp.txt', 'r') as stream:
+			template = stream.read()
 
-	template = ReplaceTemplate(template, '[[ONENABLECODE]]', ''.join(state.csharp_onenablecode))
+		template = ReplaceTemplate(template, '[[INTERFACENAME]]', self.interfacename)
 
-	template = ReplaceTemplate(template, '[[EXTRAFUNCTIONS]]', ''.join(state.csharp_extrafunctions))
+		template = ReplaceTemplate(template, '[[ONENABLECODE]]', ''.join(self.csharp_onenablecode))
 
-	template = ReplaceTemplate(template, '[[CONSTANTS]]', '\n\t'.join(state.csharp_constants) + '\n')
+		template = ReplaceTemplate(template, '[[EXTRAFUNCTIONS]]', ''.join(self.csharp_extrafunctions))
 
-	template = ReplaceTemplate(template, '[[VARIABLES]]', '\n\t'.join(state.csharp_variables) + '\n')
-	template = ReplaceTemplate(template, '[[VARIABLESDISPLAY]]', '\n\t\t'.join(state.csharp_variablesdisplay) + '\n')
+		template = ReplaceTemplate(template, '[[CONSTANTS]]', '\n\t'.join(self.csharp_constants) + '\n')
 
-	template = ReplaceTemplate(template, '[[CALLBACKDECL]]', '\n\t'.join(state.csharp_callbackdecl) + '\n')
-	template = ReplaceTemplate(template, '[[CALLBACKCREATION]]', '\n\t\t'.join(state.csharp_callbackcreation) + ('\n' if state.csharp_callresultcreation else ''))
-	template = ReplaceTemplate(template, '[[CALLBACKS]]', '\n\n\t'.join(state.csharp_callbacks))
+		template = ReplaceTemplate(template, '[[VARIABLES]]', '\n\t'.join(self.csharp_variables) + '\n')
+		template = ReplaceTemplate(template, '[[VARIABLESDISPLAY]]', '\n\t\t'.join(self.csharp_variablesdisplay) + '\n')
 
-	template = ReplaceTemplate(template, '[[CALLRESULTDECL]]', '\n\t'.join(state.csharp_callresultdecl) + '\n')
-	template = ReplaceTemplate(template, '[[CALLRESULTCREATION]]', '\n\t\t'.join(state.csharp_callresultcreation))
+		template = ReplaceTemplate(template, '[[CALLBACKDECL]]', '\n\t'.join(self.csharp_callbackdecl) + '\n')
+		template = ReplaceTemplate(template, '[[CALLBACKCREATION]]', '\n\t\t'.join(self.csharp_callbackcreation) + ('\n' if self.csharp_callresultcreation else ''))
+		template = ReplaceTemplate(template, '[[CALLBACKS]]', '\n\n\t'.join(self.csharp_callbacks))
 
-	template = ReplaceTemplate(template, '[[FUNCTIONS]]', '\n\t\t'.join(state.csharp_functions))
+		template = ReplaceTemplate(template, '[[CALLRESULTDECL]]', '\n\t'.join(self.csharp_callresultdecl) + '\n')
+		template = ReplaceTemplate(template, '[[CALLRESULTCREATION]]', '\n\t\t'.join(self.csharp_callresultcreation))
 
-	with open(outputDir + state.interfacename + 'Test.cs', 'w') as out:
-		out.write(template)
+		template = ReplaceTemplate(template, '[[FUNCTIONS]]', '\n'.join(self.csharp_functions).rstrip('\n'))
+
+		with open(outputDir + self.interfacename + 'Test.cs', 'w') as out:
+			out.write(template)
 
 def main(parser, configDir, outputDir):
 	for f in parser.files:
+		if f.name in g_skippedfiles:
+			print("[INFO] Skipping: {}".format(f.name))
+			continue
+
 		print("[INFO] Opening: {}".format(f.name))
 
-		state = State()
-
 		for interface in f.interfaces:
+			state = State()
 			print("[INFO] Parsing Interface: {}".format(interface.name))
 			state.interfacename = interface.name[1:]
 			if not state.LoadConfig(configDir):
 				print("[WARNING] Interface config does not exist: {}.json".format(state.interfacename))
-				state.interfacename = None
 				continue
 			state.ParseConstants()
 			state.ParseVariables()
@@ -296,7 +370,7 @@ def main(parser, configDir, outputDir):
 
 			state.ParseCallbacks(f.callbacks)
 
-			OutputCSharpFile(outputDir, state)
+			state.OutputCSharpFile(outputDir)
 
 if __name__ == '__main__':
 	if len(sys.argv) != 4:
