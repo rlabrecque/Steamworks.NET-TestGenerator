@@ -1,0 +1,299 @@
+{
+	"variables":
+    [
+        [
+        	"bool", "m_ControllerInitialized",
+        	"int", "m_nControllers"
+        ]
+    ],
+
+	"onenablecode": [
+		"m_ControllerInitialized = SteamController.Init();",
+		"print(\"SteamController.Init() - \" + m_ControllerInitialized);",
+		"m_ControllerHandles = new ControllerHandle_t[Constants.STEAM_CONTROLLER_MAX_COUNT];",
+		"",
+		"if (m_ControllerInitialized) {",
+		"\tPrecache();",
+		"}",
+		"",
+		"// TODO: Activate some default ActionSet?"
+	],
+
+	"extrafunctions": [
+		"void OnDisable() {",
+		"\tm_ControllerInitialized = false;",
+		"\tprint(\"SteamController.Shutdown() - \" + SteamController.Shutdown());",
+		"}",
+		"",
+		"enum EActionSets {",
+		"\tInGameControls,",
+		"\tMenuControls,",
+		"}",
+		"",
+		"enum EAnalogActions_InGameControls {",
+		"\tMove,",
+		"\tCamera,",
+		"\tThrottle,",
+		"}",
+		"",
+		"enum EDigitalActions_InGameControls {",
+		"\tfire,",
+		"\tJump,",
+		"\tpause_menu,",
+		"}",
+		"",
+		"enum EDigitalActions_MenuControls {",
+		"\tmenu_up,",
+		"\tmenu_down,",
+		"\tmenu_left,",
+		"\tmenu_right,",
+		"\tmenu_select,",
+		"\tmenu_cancel,",
+		"\tpause_menu,",
+		"}",
+		"",
+		"int m_nActionSets;",
+		"int m_nInGameControlsAnalogActions;",
+		"int m_nInGameControlsDigitalActions;",
+		"int m_nMenuControlsDigitalActions;",
+		"",
+		"string[] m_ActionSetNames;",
+		"string[] m_InGameControlsAnalogActionNames;",
+		"string[] m_InGameControlsDigitalActionNames;",
+		"string[] m_MenuControlsDigitalActionNames;",
+		"",
+		"ControllerActionSetHandle_t[] m_ActionSets;",
+		"ControllerAnalogActionHandle_t[] m_InGameControlsAnalogActions;",
+		"ControllerDigitalActionHandle_t[] m_InGameControlsDigitalActions;",
+		"ControllerDigitalActionHandle_t[] m_MenuControlsDigitalActions;",
+		"",
+		"ControllerHandle_t[] m_ControllerHandles;",
+		"",
+		"void Precache() {",
+		"\t// ActionSets",
+		"\tm_ActionSetNames = System.Enum.GetNames(typeof(EActionSets));",
+		"\tm_nActionSets = m_ActionSetNames.Length;",
+		"\tm_ActionSets = new ControllerActionSetHandle_t[m_nActionSets];",
+		"",
+		"\tfor(int i = 0; i < m_nActionSets; ++i) {",
+		"\t\tm_ActionSets[i] = SteamController.GetActionSetHandle(m_ActionSetNames[i]);",
+		"\t\tprint(\"SteamController.GetActionSetHandle(\" + m_ActionSetNames[i] + \") - \" + m_ActionSets[i]);",
+		"\t}",
+		"",
+		"\t// Actions",
+		"",
+		"\t// InGameControls Analog Actions",
+		"\tm_InGameControlsAnalogActionNames = System.Enum.GetNames(typeof(EAnalogActions_InGameControls));",
+		"\tm_nInGameControlsAnalogActions = m_InGameControlsAnalogActionNames.Length;",
+		"\tm_InGameControlsAnalogActions = new ControllerAnalogActionHandle_t[m_nInGameControlsAnalogActions];",
+		"",
+		"\tfor (int i = 0; i < m_nInGameControlsAnalogActions; ++i) {",
+		"\t\tm_InGameControlsAnalogActions[i] = SteamController.GetAnalogActionHandle(m_InGameControlsAnalogActionNames[i]);",
+		"\t\tprint(\"SteamController.GetAnalogActionHandle(\" + m_InGameControlsAnalogActionNames[i] + \") - \" + m_InGameControlsAnalogActions[i]);",
+		"\t}",
+		"",
+		"\t// InGameControls Digital Actions",
+		"\tm_InGameControlsDigitalActionNames = System.Enum.GetNames(typeof(EDigitalActions_InGameControls));",
+		"\tm_nInGameControlsDigitalActions = m_InGameControlsDigitalActionNames.Length;",
+		"\tm_InGameControlsDigitalActions = new ControllerDigitalActionHandle_t[m_nInGameControlsDigitalActions];",
+		"",
+		"\tfor (int i = 0; i < m_nInGameControlsDigitalActions; ++i) {",
+		"\t\tm_InGameControlsDigitalActions[i] = SteamController.GetDigitalActionHandle(m_InGameControlsDigitalActionNames[i]);",
+		"\t\tprint(\"SteamController.GetDigitalActionHandle(\" + m_InGameControlsDigitalActionNames[i] + \") - \" + m_InGameControlsDigitalActions[i]);",
+		"\t}",
+		"",
+		"\t// MenuControls Digital Actions",
+		"\tm_MenuControlsDigitalActionNames = System.Enum.GetNames(typeof(EDigitalActions_MenuControls));",
+		"\tm_nMenuControlsDigitalActions = m_MenuControlsDigitalActionNames.Length;",
+		"\tm_MenuControlsDigitalActions = new ControllerDigitalActionHandle_t[m_nMenuControlsDigitalActions];",
+		"",
+		"\tfor (int i = 0; i < m_nMenuControlsDigitalActions; ++i) {",
+		"\t\tm_MenuControlsDigitalActions[i] = SteamController.GetDigitalActionHandle(m_MenuControlsDigitalActionNames[i]);",
+		"\t\tprint(\"SteamController.GetDigitalActionHandle(\" + m_MenuControlsDigitalActionNames[i] + \") - \" + m_MenuControlsDigitalActions[i]);",
+		"\t}",
+		"}"
+	],
+
+	"functions":
+	[
+		{
+			"name": "Init",
+			"override": [
+				"if (!m_ControllerInitialized) {",
+				"\treturn;",
+				"}"
+			]
+		},
+		{
+			"name": "Shutdown",
+			"skip": "Called in OnDisable()"
+		},
+		{
+			"name": "RunFrame",
+			"skip": "N/A - This is called automatically by SteamAPI.RunCallbacks()"
+		},
+		{
+			"name": "GetConnectedControllers",
+			"label": true,
+			"returnname": "m_nControllers",
+			"args": ["m_ControllerHandles"]
+		},
+		{
+			"name": "ShowBindingPanel",
+			"args": ["m_ControllerHandles[i]"],
+			"preindent": [
+				"for (int i = 0; i < m_nControllers; ++i) {"
+			],
+			"prebutton": [
+				"GUILayout.Label(\"Controller \" + i + \" - \" + m_ControllerHandles[i]);",
+				""
+			],
+			"indent": 1
+		},
+		{
+			"name": "GetActionSetHandle",
+			"skip": "Called in Precache()"
+		},
+		{
+			"name": "ActivateActionSet",
+			"args": ["m_ControllerHandles[i]", "m_ActionSets[j]"],
+			"preindent": [
+				"for (int j = 0; j < m_nActionSets; ++j) {"
+			],
+			"postindent": [
+				"}"
+			],
+			"indent": 1
+		},
+		{
+			"name": "GetCurrentActionSet",
+			"args": ["m_ControllerHandles[i]"],
+			"label": true,
+			"indent": -1
+		},
+		{
+			"name": "GetDigitalActionHandle",
+			"skip": "Called in Precache()"
+		},
+		{
+			"name": "GetDigitalActionData",
+			"override": [
+				"GUILayout.Label(\"InGameControls Digital Actions:\");",
+				"for (int j = 0; j < m_nInGameControlsDigitalActions; ++j) {",
+				"\tControllerDigitalActionData_t ret = SteamController.GetDigitalActionData(m_ControllerHandles[i], m_InGameControlsDigitalActions[j]);",
+				"\tGUILayout.Label(\"GetDigitalActionData(\" + m_ControllerHandles[i] + \", \" + m_InGameControlsDigitalActions[j] + \") - \" + ret.bState + \" -- \" + ret.bActive + \" -- \" + m_InGameControlsDigitalActionNames[j]);",
+				"}",
+				"",
+				"GUILayout.Label(\"MenuControls Digital Actions:\");",
+				"for (int j = 0; j < m_nMenuControlsDigitalActions; ++j) {",
+				"\tControllerDigitalActionData_t ret = SteamController.GetDigitalActionData(m_ControllerHandles[i], m_MenuControlsDigitalActions[j]);",
+				"\tGUILayout.Label(\"GetDigitalActionData(\" + m_ControllerHandles[i] + \", \" + m_MenuControlsDigitalActions[j] + \") - \" + ret.bState + \" -- \" + ret.bActive + \" -- \" + m_MenuControlsDigitalActionNames[j]);",
+				"}"
+			]
+		},
+		{
+			"name": "GetDigitalActionOrigins",
+			"args": ["m_ControllerHandles[i]", "m_ActionSets[(int)EActionSets.InGameControls]", "m_InGameControlsDigitalActions[(int)EDigitalActions_InGameControls.fire]", "origins"],
+			"precall": ["EControllerActionOrigin[] origins = new EControllerActionOrigin[Constants.STEAM_CONTROLLER_MAX_ORIGINS];"],
+			"postprint": [
+				"print(ret + \" origins for: \" + m_ActionSetNames[(int)EActionSets.InGameControls] + \"::\" + m_InGameControlsDigitalActionNames[(int)EDigitalActions_InGameControls.fire]);",
+				"for (int j = 0; j < ret; ++j) {",
+				"\tprint(j + \": \" + origins[j]);",
+				"}"
+			]
+		},
+		{
+			"name": "GetAnalogActionHandle",
+			"skip": "Called in Precache()"
+		},
+		{
+			"name": "GetAnalogActionData",
+			"preindent": [
+				"GUILayout.Label(\"InGameControls Analog Actions:\");",
+				"for (int j = 0; j < m_nInGameControlsAnalogActions; ++j) {"
+			],
+			"args": ["m_ControllerHandles[i]", "m_InGameControlsAnalogActions[j]"],
+			"postindent": ["}"],
+			"label": true,
+			"indent": 1
+		},
+		{
+			"name": "GetAnalogActionOrigins",
+			"args": ["m_ControllerHandles[i]", "m_ActionSets[(int)EActionSets.InGameControls]", "m_InGameControlsAnalogActions[(int)EAnalogActions_InGameControls.Throttle]", "origins"],
+			"precall": [
+				"EControllerActionOrigin[] origins = new EControllerActionOrigin[Constants.STEAM_CONTROLLER_MAX_ORIGINS];"
+			],
+			"postprint": [
+				"print(ret + \" origins for: \" + m_ActionSetNames[(int)EActionSets.InGameControls] + \"::\" + m_InGameControlsAnalogActionNames[(int)EAnalogActions_InGameControls.Throttle]);",
+				"for (int j = 0; j < ret; ++j) {",
+				"\tprint(j + \": \" + origins[j]);",
+				"}"
+			],
+			"indent": -1
+		},
+		{
+			"name": "StopAnalogActionMomentum",
+			"preindent": [
+				"GUILayout.Label(\"InGameControls Analog Actions:\");",
+				"for (int j = 0; j < m_nInGameControlsAnalogActions; ++j) {"
+			],
+			"args": ["m_ControllerHandles[i]", "m_InGameControlsAnalogActions[j]"],
+			"postindent": [
+				"}"
+			],
+			"indent": 1
+		},
+		{
+			"name": "TriggerHapticPulse",
+			"args": ["m_ControllerHandles[i]", "ESteamControllerPad.k_ESteamControllerPad_Right", "5000"],
+			"indent": -1
+		},
+		{
+			"name": "TriggerRepeatedHapticPulse",
+			"args": ["m_ControllerHandles[i]", "ESteamControllerPad.k_ESteamControllerPad_Right", "5000", "0", "0", "0"]
+		},
+		{
+			"name": "TriggerVibration",
+			"args": ["m_ControllerHandles[i]", "short.MaxValue", "short.MaxValue"]
+		},
+		{
+			"name": "SetLEDColor",
+			"args": ["m_ControllerHandles[i]", "0", "0", "255", "ESteamControllerLEDFlag.k_ESteamControllerLEDFlag_SetColor"]
+		},
+		{
+			"name": "GetGamepadIndexForController",
+			"label": true,
+			"args": ["m_ControllerHandles[i]"]
+		},
+		{
+			"name": "GetControllerForGamepadIndex",
+			"label": true,
+			"args": ["0"]
+		},
+		{
+			"name": "GetMotionData",
+			"label": true,
+			"args": ["m_ControllerHandles[i]"]
+		},
+		{
+			"name": "ShowDigitalActionOrigins",
+			"args": ["m_ControllerHandles[i]", "m_InGameControlsDigitalActions[0]", "1", "0", "0"]
+		},
+		{
+			"name": "ShowAnalogActionOrigins",
+			"args": ["m_ControllerHandles[i]", "m_InGameControlsAnalogActions[0]", "1", "0", "0"]
+		},
+		{
+			"name": "GetStringForActionOrigin",
+			"label": true,
+			"args": ["EControllerActionOrigin.k_EControllerActionOrigin_XBoxOne_A"],
+			"prebutton": ["}", ""],
+			"indent": -1
+		},
+		{
+			"name": "GetGlyphForActionOrigin",
+			"label": true,
+			"args": ["EControllerActionOrigin.k_EControllerActionOrigin_XBoxOne_A"]
+		}
+	]
+}
