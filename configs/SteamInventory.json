@@ -228,6 +228,14 @@
             "precall": ["uint length = 2048;"],
             "outargs": [["string", "ValueBuffer"]],
             "args": ["ESpaceWarItemDefIDs.k_SpaceWarItem_ShipDecoration1", "null", "out ValueBuffer", "ref length"]
+        },
+        {
+            "name": "RequestEligiblePromoItemDefinitionsIDs",
+            "args": ["SteamUser.GetSteamID()"]
+        },
+        {
+            "name": "GetEligiblePromoItemDefinitionIDs",
+            "skip": "Should be handled within the SteamInventoryEligiblePromoItemDefIDs_t CallResult!"
         }
     ],
 
@@ -245,6 +253,16 @@
             "customcode":
             [
                 "m_SteamInventoryResult = pCallback.m_handle;"
+            ]
+        },
+        "SteamInventoryEligiblePromoItemDefIDs_t":
+        {
+            "customcode":
+            [
+                "int ItemDefIDsArraySize = m_numEligiblePromoItemDefs;",
+                "SteamItemDef_t ItemDefIDs = new SteamItemDef_t[ItemDefIDsArraySize];",
+                "bool ret = SteamInventory.GetEligiblePromoItemDefinitionIDs(m_steamID, ItemDefIDs, ref ItemDefIDsArraySize);",
+                "print(\"SteamInventory.GetEligiblePromoItemDefinitionIDs(m_steamID, ItemDefIDs, ref ItemDefIDsArraySize) - \" + ret + \" -- \" + ItemDefIDsArraySize);"
             ]
         }
     }
