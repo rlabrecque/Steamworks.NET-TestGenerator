@@ -24,16 +24,18 @@
         ["bool", "m_SetKeyFocus"],
         ["string", "m_Find"],
         ["bool", "m_CurrentlyInFind"],
-        ["float", "m_ScaleFactor"]
+        ["float", "m_ScaleFactor"],
+        ["bool", "m_BackgroundMode"]
     ],
 
     "onenablecode": [
         "m_HHTMLBrowser = HHTMLBrowser.Invalid;",
         "m_URL = \"http://steamworks.github.io\";",
         "m_Texture = null;",
-        "m_Find = \"Steamworks\"",
+        "m_Find = \"Steamworks\";",
         "m_CurrentlyInFind = false;",
         "m_ScaleFactor = 0f;",
+        "m_BackgroundMode = false;",
         "",
         "m_Init = SteamHTMLSurface.Init();",
         "print(\"SteamHTMLSurface.Init() : \" + m_Init);"
@@ -78,12 +80,15 @@
         {
             "name": "CreateBrowser",
             "precall": ["RemoveBrowser(); // Remove an old browser if it exists."],
-            "args": ["\"SpaceWars Test\"", "null"],
-            "postcall": ["m_HTML_BrowserReadyResult.Set(ret);"]
+            "args": ["\"SpaceWars Test\"", "null"]
         },
         {
             "name": "RemoveBrowser",
-            "customcode": ["RemoveBrowser();"]
+            "override": [
+                "if (GUILayout.Button(\"RemoveBrowser(m_HHTMLBrowser)\")) {",
+                "\tRemoveBrowser();",
+                "}"
+            ]
         },
         {
             "name": "LoadURL",
@@ -169,7 +174,8 @@
         },
         {
             "name": "SetKeyFocus",
-            "args": ["m_HHTMLBrowser", "!m_SetKeyFocus"]
+            "args": ["m_HHTMLBrowser", "!m_SetKeyFocus"],
+            "postprint": ["m_SetKeyFocus = !m_SetKeyFocus;"]
         },
         {
             "name": "ViewSource",
@@ -186,29 +192,32 @@
         {
             "name": "Find",
             "prebutton": ["m_Find = GUILayout.TextField(m_Find);"],
-            "args": ["m_HHTMLBrowser", "m_Find", "m_CurrentlyInFind", "bReverse: false"],
-            "postcode": ["m_CurrentlyInFind = true;"]
+            "args": ["m_HHTMLBrowser", "m_Find", "m_CurrentlyInFind", "false"],
+            "postprint": ["m_CurrentlyInFind = true;"]
         },
         {
             "name": "StopFind",
-            "args": ["m_HHTMLBrowser"]
+            "args": ["m_HHTMLBrowser"],
+            "postprint": ["m_CurrentlyInFind = false;"]
         },
         {
             "name": "GetLinkAtPosition",
-            "args": ["m_HHTMLBrowser", "500 - WidthOffset", "120 - HeightOffset"]
+            "args": ["m_HHTMLBrowser", "(500 - WidthOffset)", "(120 - HeightOffset)"]
         },
         {
             "name": "SetCookie",
-            "precall": ["// Use with http://html-kit.com/tools/cookietester/"],
-            "args": ["\"html-kit.com\"", "\"testcookiekey\"", "\"testcookievalue\""]
+            "precall": ["// Use with http://httpbin.org/cookies"],
+            "args": ["m_URL", "\"testcookiekey\"", "\"testcookievalue\""]
         },
         {
             "name": "SetPageScaleFactor",
-            "args": ["m_HHTMLBrowser", "m_ScaleFactor", "0", "0"]
+            "args": ["m_HHTMLBrowser", "m_ScaleFactor", "0", "0"],
+            "prebutton": ["m_ScaleFactor = GUILayout.HorizontalScrollbar(m_ScaleFactor, 0.25f, 0f, 2f);"]
         },
         {
             "name": "SetBackgroundMode",
-            "args": ["m_HHTMLBrowser", "Random.Range(0, 2) != 0"]
+            "args": ["m_HHTMLBrowser", "m_BackgroundMode"],
+            "postprint": ["m_BackgroundMode = !m_BackgroundMode;"]
         },
         {
             "name": "AllowStartRequest",
@@ -301,7 +310,6 @@
                 "}"
             ]
         }
-
     ],
 
     "callresults":

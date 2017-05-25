@@ -18,13 +18,12 @@
         },
         {
             "name": "AddFavoriteGame",
-            "prebutton": ["// 3494815209 = 208.78.165.233 = Valve Payload Server (Virginia srcds150 #1)"],
             "precall": ["uint CurrentUnixTime = (uint)(System.DateTime.UtcNow.Subtract(new System.DateTime(1970, 1, 1))).TotalSeconds;"],
-            "args": ["(AppId_t)480", "3494815209", "27015", "27015", "Constants.k_unFavoriteFlagFavorite", "CurrentUnixTime"]
+            "args": ["TestConstants.Instance.k_AppId_TeamFortress2", "TestConstants.k_IpAddress208_78_165_233", "TestConstants.k_Port27015", "TestConstants.k_Port27015", "Constants.k_unFavoriteFlagFavorite", "CurrentUnixTime"]
         },
         {
             "name": "RemoveFavoriteGame",
-            "args": ["(AppId_t)480", "3494815209", "27015", "27015", "Constants.k_unFavoriteFlagFavorite"]
+            "args": ["TestConstants.Instance.k_AppId_TeamFortress2", "TestConstants.k_IpAddress208_78_165_233", "TestConstants.k_Port27015", "TestConstants.k_Port27015", "Constants.k_unFavoriteFlagFavorite"]
         },
         {
             "name": "RequestLobbyList"
@@ -59,7 +58,8 @@
         },
         {
             "name": "GetLobbyByIndex",
-            "args": ["0"]
+            "args": ["0"],
+            "returnname": "m_Lobby"
         },
         {
             "name": "CreateLobby",
@@ -136,7 +136,7 @@
         },
         {
             "name": "SetLobbyGameServer",
-            "args": ["m_Lobby", "2130706433", "1337", "CSteamID.NonSteamGS"]
+            "args": ["m_Lobby", "TestConstants.k_IpAdress127_0_0_1", "TestConstants.k_Port27015", "CSteamID.NonSteamGS"]
         },
         {
             "name": "GetLobbyGameServer",
@@ -175,7 +175,7 @@
         },
         {
             "name": "CheckForPSNGameBootInvite",
-            "skip": "Playstation only"
+            "skip": "PS3 Only."
         }
     ],
 
@@ -215,7 +215,7 @@
         },
         "PSNGameBootInviteResult_t":
         {
-            "skip": true
+            "skip": "PS3 Only."
         }
     }
 }

@@ -13,8 +13,11 @@ g_csharptypemap = {
 	'uint32': 'uint',
 	'int32': 'int',
 	'const char *': 'string',
-	'gameserveritem_t *': 'gameserveritem_t'
+	'gameserveritem_t *': 'gameserveritem_t',
+	'void *': 'System.IntPtr'
 }
+
+g_skipScroll = ( 'SteamHTMLSurface' )
 
 class State:
 	def __init__(self):
@@ -41,17 +44,27 @@ class State:
 			return False
 
 	def ParseConstants(self):
-		if "constants" in self.config:
-			for var in self.config["constants"]:
+		if 'constants' in self.config:
+			for var in self.config['constants']:
 				self.csharp_constants.append('const {0} {1} = {2};'.format(var[0], var[1], var[2]))
 
 	def ParseVariables(self):
-		if "variables" in self.config:
-			self.csharp_variablesdisplay.append('GUILayout.BeginArea(new Rect(Screen.width - 120, 0, 120, Screen.height));')
+		if self.interfacename not in g_skipScroll:
+			self.csharp_variables.append('private Vector2 m_ScrollPos;')
+
+		if 'variables' in self.config:
+			self.csharp_variablesdisplay.append('GUILayout.BeginArea(new Rect(Screen.width - 200, 0, 200, Screen.height));')
 			self.csharp_variablesdisplay.append('GUILayout.Label("Variables:");')
-			for var in self.config["variables"]:
+			for var in self.config['variables']:
 				self.csharp_variables.append('private {0} {1};'.format(var[0], var[1]))
-				self.csharp_variablesdisplay.append('GUILayout.Label("{0}: " + {0});'.format(var[1]))
+
+				# Does this variable need to have it's variable drawn on a seperate line from the name?
+				if len(var) == 3:
+					self.csharp_variablesdisplay.append('GUILayout.Label("{0}:");'.format(var[1]))
+					self.csharp_variablesdisplay.append('{0}'.format(var[2]))
+				else:
+					self.csharp_variablesdisplay.append('GUILayout.Label("{0}: " + {0});'.format(var[1]))
+
 			self.csharp_variablesdisplay.append('GUILayout.EndArea();')
 
 	def ParseOnEnableCode(self):
@@ -68,49 +81,54 @@ class State:
 
 	def ParseCallbacks(self, callbacks):
 		for callback in callbacks:
+			skipMessage = ''
+
 			if 'callbacks' in self.config and callback.name in self.config['callbacks']:
 				if 'skip' in self.config['callbacks'][callback.name]:
-					continue
+					if self.config['callbacks'][callback.name]['skip'] == True:
+						return
+
+					skipMessage = ' // ' + self.config['callbacks'][callback.name]['skip']
 
 				if 'both' in self.config['callbacks'][callback.name]:
-					self.ParseCallbackCSharp(callback)
-					self.ParseCallResultCSharp(callback)
+					self.ParseCallbackCSharp(callback, skipMessage)
+					self.ParseCallResultCSharp(callback, skipMessage)
 					continue
 
 			if 'callresults' in self.config and callback.name in self.config['callresults']:
-				self.ParseCallResultCSharp(callback)
+				self.ParseCallResultCSharp(callback, skipMessage)
 			else:
-				self.ParseCallbackCSharp(callback)
+				self.ParseCallbackCSharp(callback, skipMessage)
 
-	def ParseCallResultCSharp(self, callresult):
-		self.csharp_callresultdecl.append('private CallResult<{0}> On{1}CallResult;'.format(callresult.name, callresult.name[:-2]))
-		self.csharp_callresultcreation.append('On{1}CallResult = CallResult<{0}>.Create(On{1});'.format(callresult.name, callresult.name[:-2]))
+	def ParseCallResultCSharp(self, callresult, skipMessage):
+		self.csharp_callresultdecl.append('{2}private CallResult<{0}> On{1}CallResult;'.format(callresult.name, callresult.name[:-2], '//' if skipMessage else ''))
+		self.csharp_callresultcreation.append('{2}On{1}CallResult = CallResult<{0}>.Create(On{1});{3}'.format(callresult.name, callresult.name[:-2], '//' if skipMessage else '', skipMessage))
 
-		self.ParseCallbackCallResultFields(callresult, True)
+		self.ParseCallbackCallResultFields(callresult, True, '//' if skipMessage else '')
 
-	def ParseCallbackCSharp(self, callback):
-		self.csharp_callbackdecl.append('protected Callback<{0}> m_{1};'.format(callback.name, callback.name[:-2]))
-		self.csharp_callbackcreation.append('m_{1} = Callback<{0}>.Create(On{1});'.format(callback.name, callback.name[:-2]))
+	def ParseCallbackCSharp(self, callback, skipMessage):
+		self.csharp_callbackdecl.append('{2}protected Callback<{0}> m_{1};'.format(callback.name, callback.name[:-2], '//' if skipMessage else ''))
+		self.csharp_callbackcreation.append('{2}m_{1} = Callback<{0}>.Create(On{1});{3}'.format(callback.name, callback.name[:-2], '//' if skipMessage else '', skipMessage))
 
-		self.ParseCallbackCallResultFields(callback, False)
+		self.ParseCallbackCallResultFields(callback, False, '//' if skipMessage else '')
 
-	def ParseCallbackCallResultFields(self, callback, bCallResult):
+	def ParseCallbackCallResultFields(self, callback, bCallResult, skip):
 		if callback.fields:
 			fields = ' - " + pCallback.'
 			fields += ' + " -- " + pCallback.'.join([x.name for x in callback.fields])
 		else:
 			fields = '"'
 
-		callbackfunction = 'void On{1}({0} pCallback{2}) {{\n'.format(callback.name, callback.name[:-2], (', bool bIOFailure' if bCallResult else ''))
-		callbackfunction += '\t\tDebug.Log("[" + {0}.k_iCallback + " - {1}]{2});\n'.format(callback.name, callback.name[:-2], fields)
+		callbackfunction = '{3}void On{1}({0} pCallback{2}) {{\n'.format(callback.name, callback.name[:-2], (', bool bIOFailure' if bCallResult else ''), skip)
+		callbackfunction += '\t{3}\tDebug.Log("[" + {0}.k_iCallback + " - {1}]{2});\n'.format(callback.name, callback.name[:-2], fields, skip)
 
 		if 'callbacks' in self.config and callback.name in self.config['callbacks']:
 			if 'customcode' in self.config['callbacks'][callback.name]:
-				callbackfunction += '\n'
+				callbackfunction += '{0}\n'.format(skip)
 				for line in self.config['callbacks'][callback.name]['customcode']:
-					callbackfunction += ('\t\t' if line else '') + line + '\n'
+					callbackfunction += ('\t\t{0}'.format(skip) if line else '{0}'.format(skip)) + line + '\n'
 
-		callbackfunction += '\t}'
+		callbackfunction += '\t{0}}}'.format(skip)
 
 		self.csharp_callbacks.append(callbackfunction)
 
@@ -118,6 +136,10 @@ class State:
 		if 'functions' not in self.config:
 			print("[ERROR] {0} has no 'functions' block in the config!".format(self.interfacename))
 			return
+
+		if self.interfacename not in g_skipScroll:
+			self.csharp_functions.append('\t\tGUILayout.BeginVertical("box");')
+			self.csharp_functions.append('\t\tm_ScrollPos = GUILayout.BeginScrollView(m_ScrollPos, GUILayout.Width(Screen.width - 215), GUILayout.Height(Screen.height - 33));\n')
 
 		numPrivateFunctions = 0
 		indentLevel = 2
@@ -143,6 +165,10 @@ class State:
 			function = self.ParseFunctionCSharp(func, funcconfig, indentLevel)
 			self.csharp_functions.append(function)
 
+		if self.interfacename not in g_skipScroll:
+			self.csharp_functions.append('\t\tGUILayout.EndScrollView();')
+			self.csharp_functions.append('\t\tGUILayout.EndVertical();')
+
 		if len(self.config['functions']) != len(interface.functions) - numPrivateFunctions:
 			print("[WARNING] The number of functions in the config does not match the number of non private functions in the interface. Interface: {0}, Config: {1}".format(len(interface.functions) - numPrivateFunctions, len(self.config['functions'])))
 
@@ -154,7 +180,7 @@ class State:
 			args += ', '.join(funcconfig['args'])
 			guiargs += ', '.join([x.replace('"', '\\"') for x in funcconfig['args']])
 			printargs += '" + '
-			printargs += ' + ", " + '.join([('"\\"' + x.strip('"') + '\\""' if x.startswith('"') else x) for x in funcconfig['args']])
+			printargs += ' + ", " + '.join([('"\\"' + x.strip('"') + '\\""' if x.startswith('"') else '"{}"'.format(x) if x.startswith('out') or x.startswith('ref') else x) for x in funcconfig['args']])
 			printargs += ' + "'
 
 		indent = '\t' * indentLevel
@@ -258,18 +284,27 @@ class State:
 					break
 			else:
 				print('[WARNING] Function {} returns a SteamAPICall_t but does not have attrib CALL_RESULT!'.format(func.name))
+		elif func.returntype.startswith("ISteam"):
+			ret = 'System.IntPtr ret = '
+			printadditional = ' : " + ret'
 		else:
 			ret = g_csharptypemap.get(func.returntype, func.returntype) + ' ret = '
 			printadditional = ' : " + ret'
 
+		bHasOutArgs = False
+		if 'args' in funcconfig:
+			for elem in funcconfig['args']:
+				if elem.startswith('out') or elem.startswith('ref'):
+					bHasOutArgs = True
+					printadditional += ' + " -- " + ' + elem.lstrip('out ').lstrip('ref ')
+
 		if 'outargs' in funcconfig:
 			for elem in funcconfig['outargs']:
 				precall += indent + '\t' + elem[0] + ' ' + elem[1] + ';\n'
-				printadditional += ' + " -- " + ' + elem[1]
 
 		function = ''
 		if funcconfig.get('label', False):
-			if precall or postcall or 'returnname' in funcconfig:
+			if precall or postcall or 'returnname' in funcconfig or bHasOutArgs:
 				function += preindent
 				function += prebutton
 				function += indent + '{\n'

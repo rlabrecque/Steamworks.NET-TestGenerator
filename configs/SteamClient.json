@@ -11,7 +11,8 @@
     [
         {
             "name": "CreateSteamPipe",
-            "postprint": ["m_Pipe = ret;"]
+            "returnname": "m_Pipe",
+            "prebutton": ["GUILayout.Label(\"DON'T TOUCH THESE IF YOU DO NOT KNOW WHAT THEY DO, YOU COULD CRASH YOUR STEAM CLIENT\");", ""]
         },
         {
             "name": "BReleaseSteamPipe",
@@ -20,12 +21,12 @@
         {
             "name": "ConnectToGlobalUser",
             "args": ["m_Pipe"],
-            "postprint": ["m_GlobalUser = ret;"]
+            "returnname": "m_GlobalUser"
         },
         {
             "name": "CreateLocalUser",
             "args": ["out m_LocalPipe", "EAccountType.k_EAccountTypeGameServer"],
-            "postprint": ["m_LocalUser = ret;"]
+            "returnname": "m_LocalUser"
         },
         {
             "name": "ReleaseUser",
@@ -41,7 +42,7 @@
         },
         {
             "name": "SetLocalIPBinding",
-            "args": ["2130706433", "27015"]
+            "args": ["TestConstants.k_IpAdress127_0_0_1", "TestConstants.k_Port27015"]
         },
         {
             "name": "GetISteamFriends",
@@ -49,7 +50,7 @@
         },
         {
             "name": "GetISteamUtils",
-            "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMUTILS_INTERFACE_VERSION"]
+            "args": ["SteamAPI.GetHSteamPipe()", "Constants.STEAMUTILS_INTERFACE_VERSION"]
         },
         {
             "name": "GetISteamMatchmaking",

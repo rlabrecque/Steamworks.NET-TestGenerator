@@ -6,6 +6,30 @@
         ["UGCUpdateHandle_t", "m_UGCUpdateHandle"]
     ],
 
+    "extrafunctions":
+    [
+        "// These come from ISteamRemoteStorage but they are used here as well...",
+        "private CallResult<RemoteStorageSubscribePublishedFileResult_t> OnRemoteStorageSubscribePublishedFileResultCallResult;",
+        "private CallResult<RemoteStorageUnsubscribePublishedFileResult_t> OnRemoteStorageUnsubscribePublishedFileResultCallResult;",
+        "",
+        "void OnRemoteStorageSubscribePublishedFileResult(RemoteStorageSubscribePublishedFileResult_t pCallback, bool bIOFailure) {",
+        "\tDebug.Log(\"[\" + RemoteStorageSubscribePublishedFileResult_t.k_iCallback + \" - RemoteStorageSubscribePublishedFileResult] - \" + pCallback.m_eResult + \" -- \" + pCallback.m_nPublishedFileId);",
+        "\tm_PublishedFileId = pCallback.m_nPublishedFileId;",
+        "}",
+        "",
+        "void OnRemoteStorageUnsubscribePublishedFileResult(RemoteStorageUnsubscribePublishedFileResult_t pCallback, bool bIOFailure) {",
+        "\tDebug.Log(\"[\" + RemoteStorageUnsubscribePublishedFileResult_t.k_iCallback + \" - RemoteStorageUnsubscribePublishedFileResult] - \" + pCallback.m_eResult + \" -- \" + pCallback.m_nPublishedFileId);",
+        "\tm_PublishedFileId = pCallback.m_nPublishedFileId;",
+        "}"
+    ],
+
+    "onenablecode":
+    [
+        "// These come from ISteamRemoteStorage but they are used here as well...",
+        "OnRemoteStorageSubscribePublishedFileResultCallResult = CallResult<RemoteStorageSubscribePublishedFileResult_t>.Create(OnRemoteStorageSubscribePublishedFileResult);",
+        "OnRemoteStorageUnsubscribePublishedFileResultCallResult = CallResult<RemoteStorageUnsubscribePublishedFileResult_t>.Create(OnRemoteStorageUnsubscribePublishedFileResult);"
+    ],
+
     "functions":
     [
         {
@@ -15,16 +39,13 @@
         },
         {
             "name": "CreateQueryAllUGCRequest",
-            "args": ["EUGCQuery.k_EUGCQuery_RankedByPublicationDate", "EUGCMatchingUGCType.k_EUGCMatchingUGCType_AllGuides", "AppId_t.Invalid", "SteamUtils.GetAppID()", "1"],
+            "args": ["EUGCQuery.k_EUGCQuery_RankedByPublicationDate", "EUGCMatchingUGCType.k_EUGCMatchingUGCType_Items", "AppId_t.Invalid", "SteamUtils.GetAppID()", "1"],
             "returnname": "m_UGCQueryHandle"
         },
         {
             "name": "CreateQueryUGCDetailsRequest",
             "precall": [
-                "PublishedFileId_t[] PublishedFileIDs = new PublishedFileId_t[] {",
-                "\t(PublishedFileId_t)280762427,",
-                "\t//(PublishedFileId_t)280664702,",
-                "};"
+                "PublishedFileId_t[] PublishedFileIDs = new PublishedFileId_t[] { TestConstants.Instance.k_PublishedFileId_Champions };"
             ],
             "args": ["PublishedFileIDs", "(uint)PublishedFileIDs.Length"],
             "returnname": "m_UGCQueryHandle"
@@ -56,7 +77,7 @@
         },
         {
             "name": "GetQueryUGCStatistic",
-            "outargs": [["uint", "StatValue"]],
+            "outargs": [["ulong", "StatValue"]],
             "args": ["m_UGCQueryHandle", "0", "EItemStatistic.k_EItemStatistic_NumSubscriptions", "out StatValue"]
         },
         {
@@ -119,6 +140,10 @@
             "args": ["m_UGCQueryHandle", "true"]
         },
         {
+            "name": "SetReturnPlaytimeStats",
+            "args": ["m_UGCQueryHandle", "7"]
+        },
+        {
             "name": "SetLanguage",
             "args": ["m_UGCQueryHandle", "\"english\""]
         },
@@ -136,7 +161,7 @@
         },
         {
             "name": "SetSearchText",
-            "args": ["m_UGCQueryHandle", "\"AciD\""]
+            "args": ["m_UGCQueryHandle", "\"Test\""]
         },
         {
             "name": "SetRankedByTrendDays",
@@ -153,11 +178,11 @@
         },
         {
             "name": "CreateItem",
-            "args": ["(AppId_t)480", "EWorkshopFileType.k_EWorkshopFileTypeWebGuide"]
+            "args": ["SteamUtils.GetAppID()", "EWorkshopFileType.k_EWorkshopFileTypeCommunity"]
         },
         {
             "name": "StartItemUpdate",
-            "args": ["(AppId_t)480", "m_PublishedFileId"],
+            "args": ["SteamUtils.GetAppID()", "m_PublishedFileId"],
             "returnname": "m_UGCUpdateHandle"
         },
         {
@@ -178,7 +203,7 @@
         },
         {
             "name": "SetItemVisibility",
-            "args": ["m_UGCUpdateHandle", "ERemoteStoragePublishedFileVisibility.k_ERemoteStoragePublishedFileVisibilityPrivate"]
+            "args": ["m_UGCUpdateHandle", "ERemoteStoragePublishedFileVisibility.k_ERemoteStoragePublishedFileVisibilityPublic"]
         },
         {
             "name": "SetItemTags",
@@ -190,7 +215,7 @@
         },
         {
             "name": "SetItemPreview",
-            "args": ["m_UGCUpdateHandle", "Application.dataPath + \"/controller.vdf\""]
+            "args": ["m_UGCUpdateHandle", "Application.dataPath + \"/PreviewImage.jpg\""]
         },
         {
             "name": "RemoveItemKeyValueTags",
@@ -201,19 +226,24 @@
             "args": ["m_UGCUpdateHandle", "\"TestKey\"", "\"TestValue\""]
         },
         {
-            "name": "AddItemPreviewFile"
+            "name": "AddItemPreviewFile",
+            "args": ["m_UGCUpdateHandle", "Application.dataPath + \"/PreviewImage.jpg\"", "EItemPreviewType.k_EItemPreviewType_Image"]
         },
         {
-            "name": "AddItemPreviewVideo"
+            "name": "AddItemPreviewVideo",
+            "args": ["m_UGCUpdateHandle", "\"jHgZh4GV9G0\""]
         },
         {
-            "name": "UpdateItemPreviewFile"
+            "name": "UpdateItemPreviewFile",
+            "args": ["m_UGCUpdateHandle", "0", "Application.dataPath + \"/PreviewImage.jpg\""]
         },
         {
-            "name": "UpdateItemPreviewVideo"
+            "name": "UpdateItemPreviewVideo",
+            "args": ["m_UGCUpdateHandle", "0", "\"jHgZh4GV9G0\""]
         },
         {
-            "name": "RemoveItemPreview"
+            "name": "RemoveItemPreview",
+            "args": ["m_UGCUpdateHandle", "0"]
         },
         {
             "name": "SubmitItemUpdate",
@@ -227,27 +257,27 @@
         },
         {
             "name": "SetUserItemVote",
-            "args": ["(PublishedFileId_t)280762427", "true"]
+            "args": ["TestConstants.Instance.k_PublishedFileId_Champions", "true"]
         },
         {
             "name": "GetUserItemVote",
-            "args": ["(PublishedFileId_t)280762427"]
+            "args": ["TestConstants.Instance.k_PublishedFileId_Champions"]
         },
         {
             "name": "AddItemToFavorites",
-            "args": ["SteamUtils.GetAppID()", "(PublishedFileId_t)280762427"]
+            "args": ["SteamUtils.GetAppID()", "TestConstants.Instance.k_PublishedFileId_Champions"]
         },
         {
             "name": "RemoveItemFromFavorites",
-            "args": ["SteamUtils.GetAppID()", "(PublishedFileId_t)280762427"]
+            "args": ["SteamUtils.GetAppID()", "TestConstants.Instance.k_PublishedFileId_Champions"]
         },
         {
             "name": "SubscribeItem",
-            "args": ["(PublishedFileId_t)280762427"]
+            "args": ["TestConstants.Instance.k_PublishedFileId_Champions"]
         },
         {
             "name": "UnsubscribeItem",
-            "args": ["(PublishedFileId_t)280762427"]
+            "args": ["TestConstants.Instance.k_PublishedFileId_Champions"]
         },
         {
             "name": "GetNumSubscribedItems",
@@ -288,13 +318,25 @@
             "args": ["true"]
         },
         {
-            "name": "StartPlaytimeTracking"
+            "name": "StartPlaytimeTracking",
+            "precall": ["PublishedFileId_t[] PublishedFileIds = new PublishedFileId_t[] { TestConstants.Instance.k_PublishedFileId_Champions };"],
+            "args": ["PublishedFileIds", "(uint)PublishedFileIds.Length"]
         },
         {
-            "name": "StopPlaytimeTracking"
+            "name": "StopPlaytimeTracking",
+            "precall": ["PublishedFileId_t[] PublishedFileIds = new PublishedFileId_t[] { TestConstants.Instance.k_PublishedFileId_Champions };"],
+            "args": ["PublishedFileIds", "(uint)PublishedFileIds.Length"]
         },
         {
             "name": "StopPlaytimeTrackingForAllItems"
+        },
+        {
+            "name": "AddDependency",
+            "args": ["m_PublishedFileId", "TestConstants.Instance.k_PublishedFileId_Champions"]
+        },
+        {
+            "name": "RemoveDependency",
+            "args": ["m_PublishedFileId", "TestConstants.Instance.k_PublishedFileId_Champions"]
         }
     ],
 
@@ -306,7 +348,11 @@
         "SubmitItemUpdateResult_t",
         "UserFavoriteItemsListChanged_t",
         "SetUserItemVoteResult_t",
-        "GetUserItemVoteResult_t"
+        "GetUserItemVoteResult_t",
+        "StartPlaytimeTrackingResult_t",
+        "StopPlaytimeTrackingResult_t",
+        "AddUGCDependencyResult_t",
+        "RemoveUGCDependencyResult_t"
     ],
 
     "callbacks":
@@ -322,8 +368,7 @@
         {
             "customcode":
             [
-                "m_PublishedFileId = pCallback.m_nPublishedFileId;",
-                "m_BufferSize = pCallback.m_cBytesReceived;"
+                "m_PublishedFileId = pCallback.m_nPublishedFileId;"
             ]
         }
     }

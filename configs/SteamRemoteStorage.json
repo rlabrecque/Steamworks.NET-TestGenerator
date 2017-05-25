@@ -6,10 +6,10 @@
 
     "variables":
     [
-        ["string", "m_Message"],
+        ["string", "m_Message", "m_Message = GUILayout.TextField(m_Message, 40);"],
         ["int", "m_FileCount"],
         ["int", "m_FileSize"],
-        ["int", "m_TotalBytes"],
+        ["ulong", "m_TotalBytes"],
         ["int", "m_FileSizeInBytes"],
         ["bool", "m_CloudEnabled"],
         ["UGCFileWriteStreamHandle_t", "m_FileStream"],
@@ -19,6 +19,11 @@
         ["SteamAPICall_t", "m_FileReadAsyncHandle"]
     ],
 
+    "onenablecode":
+    [
+        "m_Message = \"\";"
+    ],
+
     "functions":
     [
         {
@@ -26,7 +31,7 @@
             "override":
             [
                 "if (GUILayout.Button(\"FileWrite(MESSAGE_FILE_NAME, Data, Data.Length)\")) {",
-                "\tif (System.Text.Encoding.UTF8.GetByteCount(m_Message) > m_TotalBytes) {",
+                "\tif ((ulong)System.Text.Encoding.UTF8.GetByteCount(m_Message) > m_TotalBytes) {",
                 "\t\tprint(\"Remote Storage: Quota Exceeded! - Bytes: \" + System.Text.Encoding.UTF8.GetByteCount(m_Message) + \" - Max: \" + m_TotalBytes);",
                 "\t}",
                 "\telse {",
@@ -78,14 +83,15 @@
                 "\t}",
                 "\telse {",
                 "\t\tm_FileReadAsyncHandle = SteamRemoteStorage.FileReadAsync(MESSAGE_FILE_NAME, 0, (uint)m_FileSize);",
-                "\t\tRemoteStorageFileReadAsyncComplete.Set(m_FileReadAsyncHandle);",
+                "\t\tOnRemoteStorageFileReadAsyncCompleteCallResult.Set(m_FileReadAsyncHandle);",
                 "\t\tprint(\"FileReadAsync(\" + MESSAGE_FILE_NAME + \", 0, \" + (uint)m_FileSize + \") - \" + m_FileReadAsyncHandle);",
                 "\t}",
                 "}"
             ]
         },
         {
-            "name": "FileReadAsyncComplete"
+            "name": "FileReadAsyncComplete",
+            "skip": "Must be called from the RemoteStorageFileReadAsyncComplete_t CallResult."
         },
         {
             "name": "FileForget",
@@ -113,7 +119,7 @@
             "override":
             [
                 "if (GUILayout.Button(\"FileWriteStreamWriteChunk(m_FileStream, Data, Data.Length)\")) {",
-                "\tif (System.Text.Encoding.UTF8.GetByteCount(m_Message) > m_TotalBytes) {",
+                "\tif ((ulong)System.Text.Encoding.UTF8.GetByteCount(m_Message) > m_TotalBytes) {",
                 "\t\tprint(\"Remote Storage: Quota Exceeded! - Bytes: \" + System.Text.Encoding.UTF8.GetByteCount(m_Message) + \" - Max: \" + m_TotalBytes);",
                 "\t}",
                 "\telse {",
@@ -182,9 +188,8 @@
         {
             "name": "GetQuota",
             "label": true,
-            "outargs": [["int", "TotalBytes"], ["int", "AvailableBytes"]],
-            "args": ["out m_TotalBytes", "out AvailableBytes"],
-            "postcall": ["m_TotalBytes = TotalBytes;"]
+            "outargs": [["ulong", "AvailableBytes"]],
+            "args": ["out m_TotalBytes", "out AvailableBytes"]
         },
         {
             "name": "IsCloudEnabledForAccount",
@@ -242,27 +247,27 @@
         },
         {
             "name": "GetFileListFromServer",
-            "skip": "Playstation Only"
+            "skip": "PS3 Only."
         },
         {
             "name": "FileFetch",
-            "skip": "Playstation Only"
+            "skip": "PS3 Only."
         },
         {
             "name": "FilePersist",
-            "skip": "Playstation Only"
+            "skip": "PS3 Only."
         },
         {
             "name": "SynchronizeToClient",
-            "skip": "Playstation Only"
+            "skip": "PS3 Only."
         },
         {
             "name": "SynchronizeToServer",
-            "skip": "Playstation Only"
+            "skip": "PS3 Only."
         },
         {
             "name": "ResetFileRequestState",
-            "skip": "Playstation Only"
+            "skip": "PS3 Only."
         },
         {
             "name": "PublishWorkshopFile",
@@ -388,7 +393,8 @@
         "RemoteStorageSetUserPublishedFileActionResult_t",
         "RemoteStorageEnumeratePublishedFilesByUserActionResult_t",
         "RemoteStorageFileWriteAsyncComplete_t",
-        "RemoteStorageFileReadAsyncComplete_t"
+        "RemoteStorageFileReadAsyncComplete_t",
+        "RemoteStoragePublishFileProgress_t"
     ],
 
     "callbacks":

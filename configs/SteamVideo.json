@@ -3,13 +3,31 @@
     [
         {
             "name": "GetVideoURL",
-            "args": ["343450"]
+            "args": ["TestConstants.Instance.k_AppId_FreeToPlay"]
         },
         {
             "name": "IsBroadcasting",
             "label": true,
             "outargs": [["int", "NumViewers"]],
             "args": ["out NumViewers"]
+        },
+        {
+            "name": "GetOPFSettings",
+            "args": ["TestConstants.Instance.k_AppId_FreeToPlay"]
+        },
+        {
+            "name": "GetOPFStringForApp",
+            "precall": [
+                "string Buffer;",
+                "int ValueBufferSize = 0;",
+                "bool ret = SteamVideo.GetOPFStringForApp(TestConstants.Instance.k_AppId_FreeToPlay, out Buffer, ref ValueBufferSize);",
+                "if(ret) {"
+            ],
+            "returnname": "ret",
+            "args": ["TestConstants.Instance.k_AppId_FreeToPlay", "out Buffer", "ref ValueBufferSize"],
+            "postcall": [
+                "}"
+            ]
         }
     ]
 }

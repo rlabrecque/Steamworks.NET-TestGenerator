@@ -34,6 +34,8 @@
                 "if (!m_RemoteSteamId.IsValid()) {",
                 "\tGUILayout.Label(\"Please fill m_RemoteSteamId with a valid 64bit SteamId to use SteamNetworkingTest.\");",
                 "\tGUILayout.Label(\"Alternatively it will be filled automatically when a session request is recieved.\");",
+                "\tGUILayout.EndScrollView();",
+                "\tGUILayout.EndVertical();",
                 "\treturn;",
                 "}",
                 "",

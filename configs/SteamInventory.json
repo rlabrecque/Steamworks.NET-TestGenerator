@@ -49,7 +49,7 @@
             "name": "GetResultStatus",
             "label": true,
             "args": ["m_SteamInventoryResult"],
-            "prebutton": ["// INVENTORY ASYNC RESULT MANAGEMENT"]
+            "prebutton": ["// INVENTORY ASYNC RESULT MANAGEMENT", ""]
         },
         {
             "name": "GetResultItems",
@@ -76,6 +76,20 @@
             ]
         },
         {
+            "name": "GetResultItemProperty",
+            "precall": [
+                "string ValueBuffer;",
+                "uint ValueBufferSize = 0;",
+                "bool ret = SteamInventory.GetResultItemProperty(m_SteamInventoryResult, 0, null, out ValueBuffer, ref ValueBufferSize);",
+                "if(ret) {"
+            ],
+            "returnname": "ret",
+            "args": ["m_SteamInventoryResult", "0", "null", "out ValueBuffer", "ref ValueBufferSize"],
+            "postcall": [
+                "}"
+            ]
+        },
+        {
             "name": "GetResultTimestamp",
             "args": ["m_SteamInventoryResult"]
         },
@@ -95,7 +109,7 @@
         {
             "name": "GetAllItems",
             "args": ["out m_SteamInventoryResult"],
-            "prebutton": ["// INVENTORY ASYNC QUERY"]
+            "prebutton": ["// INVENTORY ASYNC QUERY", ""]
         },
         {
             "name": "GetItemsByID",
@@ -107,6 +121,7 @@
             "override":
             [
                 "// RESULT SERIALIZATION AND AUTHENTICATION",
+                "",
                 "if (GUILayout.Button(\"SerializeResult(m_SteamInventoryResult, m_SerializedBuffer, out OutBufferSize)\")) {",
                 "\tuint OutBufferSize;",
                 "\tbool ret = SteamInventory.SerializeResult(m_SteamInventoryResult, null, out OutBufferSize);",
@@ -129,7 +144,7 @@
             "name": "GenerateItems",
             "precall": ["SteamItemDef_t[] ArrayItemDefs = { ESpaceWarItemDefIDs.k_SpaceWarItem_ShipDecoration1, ESpaceWarItemDefIDs.k_SpaceWarItem_ShipDecoration2 };"],
             "args": ["out m_SteamInventoryResult", "ArrayItemDefs", "null", "(uint)ArrayItemDefs.Length"],
-            "prebutton": ["// INVENTORY ASYNC MODIFICATION"]
+            "prebutton": ["// INVENTORY ASYNC MODIFICATION", ""]
         },
         {
             "name": "GrantPromoItems",
@@ -182,7 +197,7 @@
         },
         {
             "name": "SendItemDropHeartbeat",
-            "prebutton": ["// TIMED DROPS AND PLAYTIME CREDIT"]
+            "prebutton": ["// TIMED DROPS AND PLAYTIME CREDIT", ""]
         },
         {
             "name": "TriggerItemDrop",
@@ -193,6 +208,7 @@
             "override":
             [
                 "// IN-GAME TRADING",
+                "",
                 "if (GUILayout.Button(\"TradeItems(TODO)\")) {",
                 "\tif (m_SteamItemDetails != null) {",
                 "\t\tbool ret = SteamInventory.TradeItems(out m_SteamInventoryResult, SteamUser.GetSteamID(), null, null, 0, null, null, 0); // TODO... Difficult",
@@ -203,7 +219,7 @@
         },
         {
             "name": "LoadItemDefinitions",
-            "prebutton": ["// ITEM DEFINITIONS"]
+            "prebutton": ["// ITEM DEFINITIONS", ""]
         },
         {
             "name": "GetItemDefinitionIDs",
@@ -239,6 +255,11 @@
         }
     ],
 
+    "callresults":
+    [
+        "SteamInventoryEligiblePromoItemDefIDs_t"
+    ],
+
     "callbacks":
     {
         "SteamInventoryResultReady_t":
@@ -259,10 +280,10 @@
         {
             "customcode":
             [
-                "int ItemDefIDsArraySize = m_numEligiblePromoItemDefs;",
-                "SteamItemDef_t ItemDefIDs = new SteamItemDef_t[ItemDefIDsArraySize];",
-                "bool ret = SteamInventory.GetEligiblePromoItemDefinitionIDs(m_steamID, ItemDefIDs, ref ItemDefIDsArraySize);",
-                "print(\"SteamInventory.GetEligiblePromoItemDefinitionIDs(m_steamID, ItemDefIDs, ref ItemDefIDsArraySize) - \" + ret + \" -- \" + ItemDefIDsArraySize);"
+                "uint ItemDefIDsArraySize = (uint)pCallback.m_numEligiblePromoItemDefs;",
+                "SteamItemDef_t[] ItemDefIDs = new SteamItemDef_t[ItemDefIDsArraySize];",
+                "bool ret = SteamInventory.GetEligiblePromoItemDefinitionIDs(pCallback.m_steamID, ItemDefIDs, ref ItemDefIDsArraySize);",
+                "print(\"SteamInventory.GetEligiblePromoItemDefinitionIDs(pCallback.m_steamID, ItemDefIDs, ref ItemDefIDsArraySize) - \" + ret + \" -- \" + ItemDefIDsArraySize);"
             ]
         }
     }

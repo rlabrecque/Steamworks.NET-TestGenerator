@@ -1,7 +1,30 @@
 {
     "variables":
     [
-        ["Texture2D", "m_Image"]
+        ["Texture2D", "m_Image", "GUILayout.Label(m_Image);"]
+    ],
+
+    "extrafunctions":
+    [
+        "public static Texture2D GetSteamImageAsTexture2D(int iImage) {",
+        "\tTexture2D ret = null;",
+        "\tuint ImageWidth;",
+        "\tuint ImageHeight;",
+        "\tbool bIsValid = SteamUtils.GetImageSize(iImage, out ImageWidth, out ImageHeight);",
+        "",
+        "\tif (bIsValid) {",
+        "\t\tbyte[] Image = new byte[ImageWidth * ImageHeight * 4];",
+        "",
+        "\t\tbIsValid = SteamUtils.GetImageRGBA(iImage, Image, (int)(ImageWidth * ImageHeight * 4));",
+        "\t\tif (bIsValid) {",
+        "\t\t\tret = new Texture2D((int)ImageWidth, (int)ImageHeight, TextureFormat.RGBA32, false, true);",
+        "\t\t\tret.LoadRawTextureData(Image);",
+        "\t\t\tret.Apply();",
+        "\t\t}",
+        "\t}",
+        "",
+        "\treturn ret;",
+        "}"
     ],
 
     "functions":
@@ -104,8 +127,7 @@
         },
         {
             "name": "CheckFileSignature",
-            "args":["\"FileNotFound.txt\""],
-            "postcall": ["OnCheckFileSignatureCallResult.Set(handle);"]
+            "args":["\"FileNotFound.txt\""]
         },
         {
             "name": "ShowGamepadTextInput",
@@ -148,6 +170,14 @@
         },
         {
             "name": "StartVRDashboard"
+        },
+        {
+            "name": "IsVRHeadsetStreamingEnabled",
+            "label": true
+        },
+        {
+            "name": "SetVRHeadsetStreamingEnabled",
+            "args": ["!SteamUtils.IsVRHeadsetStreamingEnabled()"]
         }
     ],
 
@@ -171,6 +201,10 @@
                 "\tDebug.Log(\"SteamUtils.GetEnteredGamepadTextInput(out Text, pCallback.m_unSubmittedText + 1) - \" + ret + \" -- \" + Text);",
                 "}"
             ]
+        },
+        "SteamAPICallCompleted_t":
+        {
+            "skip": "N/A - Far too spammy to test like this!"
         }
     }
 }

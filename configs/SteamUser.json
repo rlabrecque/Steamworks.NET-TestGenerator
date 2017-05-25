@@ -23,15 +23,15 @@
         },
         {
             "name": "InitiateGameConnection",
-            "override": ["//GUILayout.Label(\"InitiateGameConnection() : \" + SteamUser.InitiateGameConnection()); // N/A - Too Hard to test like this."]
+            "skip": "N/A - Too Hard to test like this."
         },
         {
             "name": "TerminateGameConnection",
-            "override": ["//GUILayout.Label(\"TerminateGameConnection() : \" + SteamUser.TerminateGameConnection()); // ^"]
+            "skip": "^"
         },
         {
             "name": "TrackAppUsageEvent",
-            "override": ["//GUILayout.Label(\"TrackAppUsageEvent() : \" + SteamUser.TrackAppUsageEvent()); // Legacy function with no documentation"]
+            "skip": "Legacy function with no documentation"
         },
         {
             "name": "GetUserDataFolder",
@@ -51,9 +51,8 @@
             [
                 "{",
                 "\tuint Compressed;",
-                "\tuint Uncompressed;",
-                "\tEVoiceResult ret = SteamUser.GetAvailableVoice(out Compressed, out Uncompressed, 11025);",
-                "\tGUILayout.Label(\"GetAvailableVoice(out Compressed, out Uncompressed, 11025) : \" + ret + \" -- \" + Compressed + \" -- \" + Uncompressed);"
+                "\tEVoiceResult ret = SteamUser.GetAvailableVoice(out Compressed);",
+                "\tGUILayout.Label(\"GetAvailableVoice(out Compressed) : \" + ret + \" -- \" + Compressed);"
             ]
         },
         {
@@ -63,11 +62,9 @@
 
                 "\tif (ret == EVoiceResult.k_EVoiceResultOK && Compressed > 0) {",
                 "\t\tbyte[] DestBuffer = new byte[1024];",
-                "\t\tbyte[] UncompressedDestBuffer = new byte[1024];",
                 "\t\tuint BytesWritten;",
-                "\t\tuint UncompressedBytesWritten;",
-                "\t\tret = SteamUser.GetVoice(true, DestBuffer, 1024, out BytesWritten, true, UncompressedDestBuffer, (uint)DestBuffer.Length, out UncompressedBytesWritten, 11025);",
-                "\t\t//print(\"SteamUser.GetVoice(true, DestBuffer, 1024, out BytesWritten, true, UncompressedDestBuffer, (uint)DestBuffer.Length, out UncompressedBytesWritten, 11025) : \" + ret + \" -- \" + BytesWritten + \" -- \" + UncompressedBytesWritten);"
+                "\t\tret = SteamUser.GetVoice(true, DestBuffer, 1024, out BytesWritten);",
+                "\t\t//print(\"SteamUser.GetVoice(true, DestBuffer, 1024, out BytesWritten) : \" + ret + \" -- \" + BytesWritten);"
             ]
         },
         {
@@ -85,7 +82,7 @@
                 "\t\t\t\tif (!m_VoiceLoopback) {",
                 "\t\t\t\t\tm_VoiceLoopback = new GameObject(\"Voice Loopback\");",
                 "\t\t\t\t\tsource = m_VoiceLoopback.AddComponent<AudioSource>();",
-                "\t\t\t\t\tsource.clip = AudioClip.Create(\"Testing!\", 11025, 1, 11025, false, false);",
+                "\t\t\t\t\tsource.clip = AudioClip.Create(\"Testing!\", 11025, 1, 11025, false);",
                 "\t\t\t\t}",
                 "\t\t\t\telse {",
                 "\t\t\t\t\tsource = m_VoiceLoopback.GetComponent<AudioSource>();",
@@ -154,13 +151,12 @@
         },
         {
             "name": "AdvertiseGame",
-            "args": ["CSteamID.NonSteamGS", "2130706433", "27015"]
+            "args": ["CSteamID.NonSteamGS", "TestConstants.k_IpAdress127_0_0_1", "TestConstants.k_Port27015"]
         },
         {
             "name": "RequestEncryptedAppTicket",
             "args": ["k_unSecretData", "sizeof(uint)"],
-            "precall": ["byte[] k_unSecretData = System.BitConverter.GetBytes(0x5444);"],
-            "postcall": ["OnEncryptedAppTicketResponseCallResult.Set(ret);"]
+            "precall": ["byte[] k_unSecretData = System.BitConverter.GetBytes(0x5444);"]
         },
         {
             "name": "GetEncryptedAppTicket",
@@ -170,7 +166,8 @@
         },
         {
             "name": "GetGameBadgeLevel",
-            "override": ["//GUILayout.Label(\"GetGameBadgeLevel(1, false) : \" + SteamUser.GetGameBadgeLevel(1, false)); // SpaceWar does not have trading cards, so this function will only ever return 0 and produce an annoying warning."]
+            "args": ["1", "false"],
+            "prebutton": ["// SpaceWar does not have trading cards, so this function will only ever return 0 and produce an annoying warning."]
         },
         {
             "name": "GetPlayerSteamLevel",
@@ -178,8 +175,7 @@
         },
         {
             "name": "RequestStoreAuthURL",
-            "args": ["\"https://steampowered.com\""],
-            "postcall": ["OnStoreAuthURLResponseCallResult.Set(ret);"]
+            "args": ["\"https://steampowered.com\""]
         },
         {
             "name": "BIsPhoneVerified",

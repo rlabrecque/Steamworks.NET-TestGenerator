@@ -6,7 +6,7 @@
         ["bool", "m_AchievedWinOneGame"],
         ["SteamLeaderboard_t", "m_SteamLeaderboard"],
         ["SteamLeaderboardEntries_t", "m_SteamLeaderboardEntries"],
-        ["Texture2D", "m_Icon"]
+        ["Texture2D", "m_Icon", "GUILayout.Label(m_Icon);"]
     ],
 
     "functions":
@@ -38,6 +38,7 @@
         },
         {
             "name": "GetAchievement",
+            "label": true,
             "args": ["\"ACH_WIN_ONE_GAME\"", "out m_AchievedWinOneGame"]
         },
         {
@@ -50,7 +51,9 @@
         },
         {
             "name": "GetAchievementAndUnlockTime",
-            "args": ["\"ACH_WIN_ONE_GAME\""]
+            "label": true,
+            "outargs": [["bool", "Achieved"], ["uint", "UnlockTime"]],
+            "args": ["\"ACH_WIN_ONE_GAME\"", "out Achieved", "out UnlockTime"]
         },
         {
             "name": "StoreStats"
@@ -61,19 +64,7 @@
             "postprint":
             [
                 "if (ret != 0) {",
-                "\tuint Width = 0;",
-                "\tuint Height = 0;",
-                "\tbool ret = SteamUtils.GetImageSize(ret, out Width, out Height);",
-                "",
-                "\tif (ret && Width > 0 && Height > 0) {",
-                "\t\tbyte[] RGBA = new byte[Width * Height * 4];",
-                "\t\tret = SteamUtils.GetImageRGBA(ret, RGBA, RGBA.Length);",
-                "\t\tif (ret) {",
-                "\t\t\tm_Icon = new Texture2D((int)Width, (int)Height, TextureFormat.RGBA32, false, true);",
-                "\t\t\tm_Icon.LoadRawTextureData(RGBA);",
-                "\t\t\tm_Icon.Apply();",
-                "\t\t}",
-                "\t}",
+                "\tm_Icon = SteamUtilsTest.GetSteamImageAsTexture2D(ret);",
                 "}"
             ]
         },
@@ -97,32 +88,31 @@
         },
         {
             "name": "RequestUserStats",
-            "args": ["new CSteamID(76561197991230424)"],
-            "postcall": ["UserStatsReceived.Set(ret);"]
+            "args": ["TestConstants.Instance.k_SteamId_rlabrecque"]
         },
         {
             "name": "GetUserStat",
             "label": true,
             "outargs": [["int", "Data"]],
-            "args": ["new CSteamID(76561197991230424)", "\"NumWins\"", "out Data"]
+            "args": ["TestConstants.Instance.k_SteamId_rlabrecque", "\"NumWins\"", "out Data"]
         },
         {
             "name": "GetUserStat",
             "label": true,
             "outargs": [["float", "Data"]],
-            "args": ["new CSteamID(76561197991230424)", "\"MaxFeetTraveled\"", "out Data"]
+            "args": ["TestConstants.Instance.k_SteamId_rlabrecque", "\"MaxFeetTraveled\"", "out Data"]
         },
         {
             "name": "GetUserAchievement",
             "label": true,
             "outargs": [["bool", "Achieved"]],
-            "args": ["new CSteamID(76561197991230424)", "\"ACH_TRAVEL_FAR_ACCUM\"", "out Achieved"]
+            "args": ["TestConstants.Instance.k_SteamId_rlabrecque", "\"ACH_TRAVEL_FAR_ACCUM\"", "out Achieved"]
         },
         {
             "name": "GetUserAchievementAndUnlockTime",
             "label": true,
             "outargs": [["bool", "Achieved"], ["uint", "UnlockTime"]],
-            "args": ["new CSteamID(76561197991230424)", "\"ACH_WIN_ONE_GAME\"", "out Achieved", "out UnlockTime"]
+            "args": ["TestConstants.Instance.k_SteamId_rlabrecque", "\"ACH_WIN_ONE_GAME\"", "out Achieved", "out UnlockTime"]
         },
         {
             "name": "ResetAllStats",
@@ -130,13 +120,11 @@
         },
         {
             "name": "FindOrCreateLeaderboard",
-            "args": ["\"Feet Traveled\"", "ELeaderbooardSortMethod.k_ELeaderboardSortMethodAscending", "ELeaderboardDisplayType.k_ELeaderboardDisplayTypeNumeric"],
-            "postcall": ["LeaderboardFindResult.Set(ret);"]
+            "args": ["\"Feet Traveled\"", "ELeaderboardSortMethod.k_ELeaderboardSortMethodAscending", "ELeaderboardDisplayType.k_ELeaderboardDisplayTypeNumeric"]
         },
         {
             "name": "FindLeaderboard",
-            "args": ["\"Feet Traveled\""],
-            "postcall": ["LeaderboardFindResult.Set(ret);"]
+            "args": ["\"Feet Traveled\""]
         },
         {
             "name": "GetLeaderboardName",
@@ -170,14 +158,12 @@
         },
         {
             "name": "DownloadLeaderboardEntries",
-            "args": ["m_SteamLeaderboard", "ELeaderboardDataRequest.k_ELeaderboardDataRequestGlobal", "1", "5"],
-            "postcall": ["LeaderboardScoresDownloaded.Set(ret);"]
+            "args": ["m_SteamLeaderboard", "ELeaderboardDataRequest.k_ELeaderboardDataRequestGlobal", "1", "5"]
         },
         {
             "name": "DownloadLeaderboardEntriesForUsers",
             "precall": ["CSteamID[] Users = { SteamUser.GetSteamID() };"],
-            "args": ["m_SteamLeaderboard", "Users", "Users.Length"],
-            "postcall": ["LeaderboardScoresDownloaded.Set(ret);"]
+            "args": ["m_SteamLeaderboard", "Users", "Users.Length"]
         },
         {
             "name": "GetDownloadedLeaderboardEntry",
@@ -186,21 +172,17 @@
         },
         {
             "name": "UploadLeaderboardScore",
-            "args": ["m_SteamLeaderboard", "ELeaderboardUploadScoreMethod.k_ELeaderboardUploadScoreMethodForceUpdate", "(int)m_FeetTraveledStat", "null", "0"],
-            "postcall": ["LeaderboardScoreUploaded.Set(ret);"]
+            "args": ["m_SteamLeaderboard", "ELeaderboardUploadScoreMethod.k_ELeaderboardUploadScoreMethodForceUpdate", "(int)m_FeetTraveledStat", "null", "0"]
         },
         {
             "name": "AttachLeaderboardUGC",
-            "args": ["m_SteamLeaderboard", "UGCHandle_t.Invalid"],
-            "postcall": ["LeaderboardUGCSet.Set(ret);"]
+            "args": ["m_SteamLeaderboard", "UGCHandle_t.Invalid"]
         },
         {
-            "name": "GetNumberOfCurrentPlayers",
-            "postcall": ["NumberOfCurrentPlayers.Set(ret);"]
+            "name": "GetNumberOfCurrentPlayers"
         },
         {
-            "name": "RequestGlobalAchievementPercentages",
-            "postcall": ["GlobalAchievementPercentagesReady.Set(ret);"]
+            "name": "RequestGlobalAchievementPercentages"
         },
         {
             "name": "GetMostAchievedAchievementInfo",
@@ -245,8 +227,7 @@
         },
         {
             "name": "RequestGlobalStats",
-            "args": ["3"],
-            "postcall": ["GlobalStatsReceived.Set(ret);"]
+            "args": ["3"]
         },
         {
             "name": "GetGlobalStat",
@@ -256,6 +237,7 @@
                 "/* TODO - Spams SteamAPI warnings",
                 " * Does SpaceWar have a stat marked as \"aggregated\" to try out these functions?"
             ],
+            "postbutton": ["*/"],
             "outargs": [["long", "Data"]],
             "args": ["\"\"", "out Data"]
         },
@@ -299,19 +281,19 @@
         },
         {
             "name": "InstallPS3Trophies",
-            "skip": "N/A - _PS3"
+            "skip": "PS3 Only."
         },
         {
             "name": "GetTrophySpaceRequiredBeforeInstall",
-            "skip": "N/A - _PS3"
+            "skip": "PS3 Only."
         },
         {
             "name": "SetUserStatsData",
-            "skip": "N/A - _PS3"
+            "skip": "PS3 Only."
         },
         {
             "name": "GetUserStatsData",
-            "skip": "N/A - _PS3"
+            "skip": "PS3 Only."
         }
     ],
 
@@ -331,7 +313,11 @@
     {
         "UserStatsReceived_t":
         {
-            "both": true
+            "both": true,
+            "customcode":
+            [
+                "// The Callback version is for the local player RequestCurrentStats(), and the CallResult version is for other players with RequestUserStats()"
+            ]
         },
         "LeaderboardFindResult_t":
         {
@@ -340,6 +326,24 @@
                 "if (pCallback.m_bLeaderboardFound != 0) {",
                 "\tm_SteamLeaderboard = pCallback.m_hSteamLeaderboard;",
                 "}"
+            ]
+        },
+        "PS3TrophiesInstalled_t":
+        {
+            "skip": "PS3 Only."
+        },
+        "LeaderboardScoresDownloaded_t":
+        {
+            "customcode":
+            [
+                "m_SteamLeaderboardEntries = pCallback.m_hSteamLeaderboardEntries;"
+            ]
+        },
+        "UserAchievementIconFetched_t":
+        {
+            "customcode":
+            [
+                "m_Icon = SteamUtilsTest.GetSteamImageAsTexture2D(pCallback.m_nIconHandle);"
             ]
         }
     }

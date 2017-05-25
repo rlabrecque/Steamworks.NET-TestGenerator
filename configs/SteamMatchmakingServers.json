@@ -2,7 +2,11 @@
     "variables":
     [
         ["HServerListRequest", "m_ServerListRequest"],
-        ["HServerQuery", "m_ServerQuery"]
+        ["HServerQuery", "m_ServerQuery"],
+        ["ISteamMatchmakingServerListResponse", "m_ServerListResponse"],
+        ["ISteamMatchmakingPingResponse", "m_PingResponse"],
+        ["ISteamMatchmakingPlayersResponse", "m_PlayersResponse"],
+        ["ISteamMatchmakingRulesResponse", "m_RulesResponse"]
     ],
 
     "onenablecode":
@@ -119,12 +123,12 @@
                 "ReleaseRequest();",
                 "",
                 "MatchMakingKeyValuePair_t[] filters = {",
-                "\tnew MatchMakingKeyValuePair_t { m_szKey = \"appid\", m_szValue = \"440\" },",
+                "\tnew MatchMakingKeyValuePair_t { m_szKey = \"appid\", m_szValue = TestConstants.Instance.k_AppId_TeamFortress2.ToString() },",
                 "\tnew MatchMakingKeyValuePair_t { m_szKey = \"gamedir\", m_szValue = \"tf\" },",
                 "\tnew MatchMakingKeyValuePair_t { m_szKey = \"gametagsand\", m_szValue = \"beta\" },",
                 "};"
             ],
-            "args": ["new AppId_t(440)", "filters", "(uint)filters.Length", "m_ServerListResponse"]
+            "args": ["TestConstants.Instance.k_AppId_TeamFortress2", "filters", "(uint)filters.Length", "m_ServerListResponse"]
         },
         {
             "name": "RequestLANServerList",
@@ -211,19 +215,19 @@
             "name": "PingServer",
             "returnname": "m_ServerQuery",
             "precall": ["CancelServerQuery();"],
-            "args": ["3494815209", "27015", "m_PingResponse"]
+            "args": ["TestConstants.k_IpAddress208_78_165_233", "TestConstants.k_Port27015", "m_PingResponse"]
         },
         {
             "name": "PlayerDetails",
             "returnname": "m_ServerQuery",
             "precall": ["CancelServerQuery();"],
-            "args": ["3494815209", "27015", "m_PlayersResponse"]
+            "args": ["TestConstants.k_IpAddress208_78_165_233", "TestConstants.k_Port27015", "m_PlayersResponse"]
         },
         {
             "name": "ServerRules",
             "returnname": "m_ServerQuery",
             "precall": ["CancelServerQuery();"],
-            "args": ["3494815209", "27015", "m_RulesResponse"]
+            "args": ["TestConstants.k_IpAddress208_78_165_233", "TestConstants.k_Port27015", "m_RulesResponse"]
         },
         {
             "name": "CancelServerQuery",

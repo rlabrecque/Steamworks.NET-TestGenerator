@@ -85,7 +85,8 @@
                 "",
                 "byte[] HeaderValueBuffer = new byte[ResponseHeaderSize];"
             ],
-            "args": ["m_RequestHandle", "\"User-Agent\"", "HeaderValueBuffer", "ResponseHeaderSize"]
+            "args": ["m_RequestHandle", "\"User-Agent\"", "HeaderValueBuffer", "ResponseHeaderSize"],
+            "postprint": ["print(\"HeaderValueBuffer:\\n\" + System.Text.Encoding.UTF8.GetString(HeaderValueBuffer));"]
         },
         {
             "name": "GetHTTPResponseBodySize",
@@ -97,17 +98,18 @@
             "precall":
             [
                 "uint BodySize;",
-                "SteamHTTP.GetHTTPResponseHeaderSize(m_RequestHandle, out BodySize);",
+                "SteamHTTP.GetHTTPResponseBodySize(m_RequestHandle, out BodySize);",
                 "",
-                "byte[] HeaderValueBuffer = new byte[ResponseHeaderSize];"
+                "byte[] BodyDataBuffer = new byte[BodySize];"
             ],
-            "args": ["m_RequestHandle", "BodyDataBuffer", "BodySize"]
+            "args": ["m_RequestHandle", "BodyDataBuffer", "BodySize"],
+            "postprint": ["print(\"BodyDataBuffer:\\n\" + System.Text.Encoding.UTF8.GetString(BodyDataBuffer));"]
         },
         {
             "name": "GetHTTPStreamingResponseBodyData",
             "precall": ["byte[] BodyDataBuffer = new byte[m_BufferSize];"],
             "args": ["m_RequestHandle", "m_Offset", "BodyDataBuffer", "m_BufferSize"],
-            "postprint": ["print(\"BodyDataBuffer: \" + System.Text.Encoding.UTF8.GetString(BodyDataBuffer))"]
+            "postprint": ["print(\"BodyDataBuffer:\\n\" + System.Text.Encoding.UTF8.GetString(BodyDataBuffer));"]
         },
         {
             "name": "ReleaseHTTPRequest",
@@ -131,7 +133,7 @@
         {
             "name": "CreateCookieContainer",
             "args": ["true"],
-            "postcall": ["m_CookieContainer = ret;"]
+            "returnname": "m_CookieContainer"
         },
         {
             "name": "ReleaseCookieContainer",
@@ -143,7 +145,7 @@
         },
         {
             "name": "SetCookie",
-            "args": ["m_CookieContainer", "\"http://httpbin.org\"", "\"http://httpbin.org/get\"", "\"TestCookie\""]
+            "args": ["m_CookieContainer", "\"http://httpbin.org\"", "\"http://httpbin.org/cookies\"", "\"TestCookie=Testing\""]
         },
         {
             "name": "SetHTTPRequestCookieContainer",

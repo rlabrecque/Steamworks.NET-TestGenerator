@@ -1,40 +1,40 @@
 {
     "extrafunctions":
     [
-"IEnumerator WriteScreenshot() {",
-"\tyield return new WaitForEndOfFrame();",
-"",
-"\tTexture2D texture = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, false);",
-"\ttexture.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0, false);",
-"\ttexture.Apply(false);",
-"",
-"\tColor[] color = texture.GetPixels();",
-"\tbyte[] RGB = new byte[color.Length * 3];",
-"",
-"\tfor(int i = 0, c = 0; i < RGB.Length; i += 3, ++c) {",
-"\t\tRGB[i] = (byte)(color[c].r * 255.0f);",
-"\t\tRGB[i + 1] = (byte)(color[c].g * 255.0f);",
-"\t\tRGB[i + 2] = (byte)(color[c].b * 255.0f);",
-"\t}",
-"",
-"\tDestroy(texture);",
-"",
-"\t// TODO: The image is upside down! \"@ares_p: in Unity all texture data starts from \"bottom\" (OpenGL convention)\"",
-"\tm_ScreenshotHandle = SteamScreenshots.WriteScreenshot(RGB, (uint)RGB.Length, Screen.width, Screen.height);",
-"\tprint(\"SteamScreenshots.WriteScreenshot(\" + RGB + \", \" + (uint)RGB.Length + \", \" + Screen.width + \", \" + Screen.height + \") : \" + m_ScreenshotHandle);",
-"}",
-"",
-"IEnumerator AddScreenshotToLibrary() {",
-"\twhile (true) {",
-"\t\tif (System.IO.File.Exists(Application.dataPath + \"/screenshot.png\")) {",
-"\t\t\tm_ScreenshotHandle = SteamScreenshots.AddScreenshotToLibrary(Application.dataPath + \"/screenshot.png\", \"\", Screen.width, Screen.height);",
-"\t\t\tprint(\"SteamScreenshots.AddScreenshotToLibrary(\\\"screenshot.png\\\", \\\"\\\", \" + Screen.width + \", \" + Screen.height + \") : \" + m_ScreenshotHandle);",
-"\t\t\tyield break;",
-"\t\t}",
-"",
-"\t\tyield return null;",
-"\t}",
-"}"
+        "IEnumerator WriteScreenshot() {",
+        "\tyield return new WaitForEndOfFrame();",
+        "",
+        "\tTexture2D texture = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, false);",
+        "\ttexture.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0, false);",
+        "\ttexture.Apply(false);",
+        "",
+        "\tColor[] color = texture.GetPixels();",
+        "\tbyte[] RGB = new byte[color.Length * 3];",
+        "",
+        "\tfor(int i = 0, c = 0; i < RGB.Length; i += 3, ++c) {",
+        "\t\tRGB[i] = (byte)(color[c].r * 255.0f);",
+        "\t\tRGB[i + 1] = (byte)(color[c].g * 255.0f);",
+        "\t\tRGB[i + 2] = (byte)(color[c].b * 255.0f);",
+        "\t}",
+        "",
+        "\tDestroy(texture);",
+        "",
+        "\t// TODO: The image is upside down! \"@ares_p: in Unity all texture data starts from \"bottom\" (OpenGL convention)\"",
+        "\tm_ScreenshotHandle = SteamScreenshots.WriteScreenshot(RGB, (uint)RGB.Length, Screen.width, Screen.height);",
+        "\tprint(\"SteamScreenshots.WriteScreenshot(\" + RGB + \", \" + (uint)RGB.Length + \", \" + Screen.width + \", \" + Screen.height + \") : \" + m_ScreenshotHandle);",
+        "}",
+        "",
+        "IEnumerator AddScreenshotToLibrary() {",
+        "\twhile (true) {",
+        "\t\tif (System.IO.File.Exists(Application.dataPath + \"/screenshot.png\")) {",
+        "\t\t\tm_ScreenshotHandle = SteamScreenshots.AddScreenshotToLibrary(Application.dataPath + \"/screenshot.png\", \"\", Screen.width, Screen.height);",
+        "\t\t\tprint(\"SteamScreenshots.AddScreenshotToLibrary(\\\"screenshot.png\\\", \\\"\\\", \" + Screen.width + \", \" + Screen.height + \") : \" + m_ScreenshotHandle);",
+        "\t\t\tyield break;",
+        "\t\t}",
+        "",
+        "\t\tyield return null;",
+        "\t}",
+        "}"
     ],
 
     "variables":
@@ -80,11 +80,11 @@
         },
         {
             "name": "TagUser",
-            "args": ["m_ScreenshotHandle", "(CSteamID)76561197991230424"]
+            "args": ["m_ScreenshotHandle", "TestConstants.Instance.k_SteamId_rlabrecque"]
         },
         {
             "name": "TagPublishedFile",
-            "args": ["m_ScreenshotHandle", "(PublishedFileId_t)0"]
+            "args": ["m_ScreenshotHandle", "PublishedFileId_t.Invalid"]
         },
         {
             "name": "IsScreenshotsHooked",
@@ -92,7 +92,7 @@
         },
         {
             "name": "AddVRScreenshotToLibrary",
-            "args": ["k_EVRScreenshotType_None", "null", "null"]
+            "args": ["EVRScreenshotType.k_EVRScreenshotType_None", "null", "null"]
         }
     ]
 }

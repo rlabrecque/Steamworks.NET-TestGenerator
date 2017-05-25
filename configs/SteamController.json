@@ -1,10 +1,8 @@
 {
 	"variables":
     [
-        [
-        	"bool", "m_ControllerInitialized",
-        	"int", "m_nControllers"
-        ]
+    	["bool", "m_ControllerInitialized"],
+        ["int", "m_nControllers"]
     ],
 
 	"onenablecode": [
@@ -254,11 +252,11 @@
 		},
 		{
 			"name": "TriggerVibration",
-			"args": ["m_ControllerHandles[i]", "short.MaxValue", "short.MaxValue"]
+			"args": ["m_ControllerHandles[i]", "ushort.MaxValue", "ushort.MaxValue"]
 		},
 		{
 			"name": "SetLEDColor",
-			"args": ["m_ControllerHandles[i]", "0", "0", "255", "ESteamControllerLEDFlag.k_ESteamControllerLEDFlag_SetColor"]
+			"args": ["m_ControllerHandles[i]", "0", "0", "255", "(int)ESteamControllerLEDFlag.k_ESteamControllerLEDFlag_SetColor"]
 		},
 		{
 			"name": "GetGamepadIndexForController",

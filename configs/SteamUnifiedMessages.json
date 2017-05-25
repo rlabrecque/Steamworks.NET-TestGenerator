@@ -8,7 +8,7 @@
 	[
 		{
 			"name": "SendMethod",
-			"prebutton": [""],
+			"prebutton": ["// TODO: I don't know what I'm doing. This whole interface has essentially Zero Documentation."],
 			"args": ["\"Player.GetGameBadgeLevels#1\"", "null", "0", "1111"],
 			"postcall": ["m_ClientUnifiedMessageHandle = ret;"]
 		},

@@ -4,41 +4,22 @@
         ["CSteamID", "m_Friend"],
         ["CSteamID", "m_Clan"],
         ["CSteamID", "m_CoPlayFriend"],
-        ["Texture2D", "m_SmallAvatar"],
-        ["Texture2D", "m_MediumAvatar"],
-        ["Texture2D", "m_LargeAvatar"]
+        ["Texture2D", "m_SmallAvatar", "GUILayout.Label(m_SmallAvatar);"],
+        ["Texture2D", "m_MediumAvatar", "GUILayout.Label(m_MediumAvatar);"],
+        ["Texture2D", "m_LargeAvatar", "GUILayout.Label(m_LargeAvatar);"]
     ],
 
     "onenablecode": [
         "if (SteamFriends.GetFriendCount(EFriendFlags.k_EFriendFlagImmediate) == 0) {",
-        "\tDebug.LogError(\"You must have atleast one friend to use this Test\");",
-        "\this.enabled = false;",
+        "\tDebug.LogError(\"You must have atleast one friend to use the SteamFriends test!\");",
+        "\tenabled = false;",
         "\treturn;",
         "}",
         "",
         "if (SteamFriends.GetClanCount() == 0) {",
-        "\tDebug.LogError(\"You must have atleast one clan to use this Test\");",
+        "\tDebug.LogError(\"You must have atleast one clan to use the SteamFriends test!\");",
+        "\tenabled = false;",
         "\treturn;",
-        "}"
-    ],
-
-    "extrafunctions": [
-        "private Texture2D GetSteamImageAsTexture2D(int iImage) {",
-        "\tTexture2D ret;",
-        "\tuint ImageWidth;",
-        "\tuint ImageHeight;",
-        "\tbool ret = SteamUtils.GetImageSize(FriendAvatar, out ImageWidth, out ImageHeight);",
-        "",
-        "\tif (ret && ImageWidth > 0 && ImageHeight > 0) {",
-        "\t\tbyte[] Image = new byte[ImageWidth * ImageHeight * 4];",
-        "",
-        "\t\tret = SteamUtils.GetImageRGBA(FriendAvatar, Image, (int)(ImageWidth * ImageHeight * 4));",
-        "",
-        "\t\tret = new Texture2D((int)ImageWidth, (int)ImageHeight, TextureFormat.RGBA32, false, true);",
-        "\t\tret.LoadRawTextureData(Image);",
-        "\t\tret.Apply();",
-        "\t\treturn ret;",
-        "\t}",
         "}"
     ],
 
@@ -50,8 +31,7 @@
         },
         {
             "name": "SetPersonaName",
-            "args": ["SteamFriends.GetPersonaName()"],
-            "postcall": ["OnSetPersonaNameResponseCallResult.Set(ret);"]
+            "args": ["SteamFriends.GetPersonaName()"]
         },
         {
             "name": "GetPersonaState",
@@ -60,14 +40,13 @@
         {
             "name": "GetFriendCount",
             "label": true,
-            "args": ["k_EFriendFlagImmediate"]
+            "args": ["EFriendFlags.k_EFriendFlagImmediate"]
         },
         {
             "name": "GetFriendByIndex",
-            "override": [
-                "m_Friend = SteamFriends.GetFriendByIndex(0, k_EFriendFlagImmediate);",
-                "GUILayout.Label(\"GetFriendByIndex(0, k_EFriendFlagImmediate) : \" + m_Friend);"
-            ]
+            "label": true,
+            "args": ["0", "EFriendFlags.k_EFriendFlagImmediate"],
+            "returnname": "m_Friend"
         },
         {
             "name": "GetFriendRelationship",
@@ -153,7 +132,7 @@
         {
             "name": "HasFriend",
             "label": true,
-            "args": ["m_Friend", "k_EFriendFlagImmediate"]
+            "args": ["m_Friend", "EFriendFlags.k_EFriendFlagImmediate"]
         },
         {
             "name": "GetClanCount",
@@ -184,9 +163,9 @@
         },
         {
             "name": "DownloadClanActivityCounts",
-            "args": ["Clans", "Clans.Legnth"],
-            "precall": ["CSteamID[] Clans = { m_Clan, new CSteamID(103582791434672565) }; // m_Clan Steam Universe"],
-            "postcall": ["OnDownloadClanActivityCountsResultCallResult.Set(ret); // This call never seems to produce a callback."]
+            "args": ["Clans", "Clans.Length"],
+            "precall": ["CSteamID[] Clans = { m_Clan, TestConstants.Instance.k_SteamId_Group_SteamUniverse };"],
+            "postcall": ["OnDownloadClanActivityCountsResultCallResult.Set(handle); // This call never seems to produce the CallResult."]
         },
         {
             "name": "GetFriendCountFromSource",
@@ -220,38 +199,38 @@
         },
         {
             "name": "ActivateGameOverlayToUser",
-            "args": ["\"friendadd\"", "new CSteamID(76561197991230424)"]
+            "args": ["\"friendadd\"", "TestConstants.Instance.k_SteamId_rlabrecque"]
         },
         {
             "name": "ActivateGameOverlayToWebPage",
-            "args": ["\"http://google.com\""]
+            "args": ["\"http://steamworks.github.io\""]
         },
         {
             "name": "ActivateGameOverlayToStore",
-            "args": ["(AppId_t)440", "EOverlayToStoreFlag.k_EOverlayToStoreFlag_None"]
+            "args": ["TestConstants.Instance.k_AppId_TeamFortress2", "EOverlayToStoreFlag.k_EOverlayToStoreFlag_None"]
         },
         {
             "name": "SetPlayedWith",
-            "args": ["new CSteamID(76561197991230424)"]
+            "args": ["TestConstants.Instance.k_SteamId_rlabrecque"]
         },
         {
             "name": "ActivateGameOverlayInviteDialog",
-            "args": ["new CSteamID(76561197991230424)"]
+            "args": ["TestConstants.Instance.k_SteamId_rlabrecque"]
         },
         {
             "name": "GetSmallFriendAvatar",
             "args": ["m_Friend"],
-            "postcall": ["m_SmallAvatar = GetSteamImageAsTexture2D(ret);"]
+            "postprint": ["m_SmallAvatar = SteamUtilsTest.GetSteamImageAsTexture2D(ret);"]
         },
         {
             "name": "GetMediumFriendAvatar",
             "args": ["m_Friend"],
-            "postcall": ["m_MediumAvatar = GetSteamImageAsTexture2D(ret);"]
+            "postprint": ["m_MediumAvatar = SteamUtilsTest.GetSteamImageAsTexture2D(ret);"]
         },
         {
             "name": "GetLargeFriendAvatar",
             "args": ["m_Friend"],
-            "postcall": ["m_LargeAvatar = GetSteamImageAsTexture2D(ret);"]
+            "postprint": ["m_LargeAvatar = SteamUtilsTest.GetSteamImageAsTexture2D(ret);"]
         },
         {
             "name": "RequestUserInformation",
@@ -259,8 +238,7 @@
         },
         {
             "name": "RequestClanOfficerList",
-            "args": ["m_Clan"],
-            "postcall": ["OnFriendRichPresenceCallResult.Set(ret);"]
+            "args": ["m_Clan"]
         },
         {
             "name": "GetClanOwner",
@@ -317,23 +295,22 @@
         },
         {
             "name": "GetCoplayFriend",
-            "override": [
-                "m_CoPlayFriend = SteamFriends.GetCoplayFriend(0);",
-                "GUILayout.Label(\"GetCoplayFriend(0) : \" + m_CoPlayFriend);"
-            ]
+            "args": ["0"],
+            "returnname": "m_CoPlayFriend"
         },
         {
             "name": "GetFriendCoplayTime",
+            "args": ["m_CoPlayFriend"],
             "label": true
         },
         {
             "name": "GetFriendCoplayGame",
+            "args": ["m_CoPlayFriend"],
             "label": true
         },
         {
             "name": "JoinClanChatRoom",
-            "args": ["m_Clan"],
-            "postcall": ["OnJoinClanChatRoomCompletionResultCallResult.Set(ret);"]
+            "args": ["m_Clan"]
         },
         {
             "name": "LeaveClanChatRoom",
@@ -360,7 +337,7 @@
         {
             "name": "IsClanChatAdmin",
             "label": true,
-            "args": ["m_Clan", "0"]
+            "args": ["m_Clan", "m_Friend"]
         },
         {
             "name": "IsClanChatWindowOpenInSteam",
@@ -389,18 +366,15 @@
         },
         {
             "name": "GetFollowerCount",
-            "args": ["SteamUser.GetSteamID()"],
-            "postcall": ["OnFriendsGetFollowerCountCallResult.Set(ret);"]
+            "args": ["SteamUser.GetSteamID()"]
         },
         {
             "name": "IsFollowing",
-            "args": ["m_Friend"],
-            "postcall": ["OnFriendsIsFollowingCallResult.Set(ret);"]
+            "args": ["m_Friend"]
         },
         {
             "name": "EnumerateFollowingList",
-            "args": ["0"],
-            "postcall": ["OnFriendsEnumerateFollowingListCallResult.Set(ret);"]
+            "args": ["0"]
         }
     ],
 

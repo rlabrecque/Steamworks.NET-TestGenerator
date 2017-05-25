@@ -33,7 +33,7 @@
         {
             "name": "BIsDlcInstalled",
             "label": true,
-            "args": ["(AppId_t)110902"]
+            "args": ["TestConstants.Instance.k_AppId_PieterwTestDLC"]
         },
         {
             "name": "GetEarliestPurchaseUnixTime",
@@ -63,11 +63,11 @@
         },
         {
             "name": "InstallDLC",
-            "args": ["(AppId_t)110902"]
+            "args": ["TestConstants.Instance.k_AppId_PieterwTestDLC"]
         },
         {
             "name": "UninstallDLC",
-            "args": ["(AppId_t)110902"]
+            "args": ["TestConstants.Instance.k_AppId_PieterwTestDLC"]
         },
         {
             "name": "RequestAppProofOfPurchaseKey",
@@ -123,26 +123,25 @@
         {
             "name": "GetLaunchQueryParam",
             "label": true,
-            "precall": ["// Run the test and then use steam://run/480//?test=testing;param2=value2; in your browser to try this out"]
+            "precall": ["// Run the test and then use steam://run/480//?test=testing;param2=value2; in your browser to try this out"],
+            "args": ["\"test\""]
         },
         {
             "name": "GetDlcDownloadProgress",
             "label": true,
             "outargs": [["ulong", "BytesDownloaded"], ["ulong", "BytesTotal"]],
-            "args": ["(AppId_t)110902", "out BytesDownloaded", "out BytesTotal"]
+            "args": ["TestConstants.Instance.k_AppId_PieterwTestDLC", "out BytesDownloaded", "out BytesTotal"]
         },
         {
             "name": "GetAppBuildId",
             "label": true
         },
         {
-            "name": "RequestAllProofOfPurchaseKeys",
-            "label": true
+            "name": "RequestAllProofOfPurchaseKeys"
         },
         {
             "name": "GetFileDetails",
-            "args": ["\"steam_api.dll\""],
-            "postcall": ["OnFileDetailsResultCallResult.Set(ret);"]
+            "args": ["\"steam_api.dll\""]
         }
     ],
 
