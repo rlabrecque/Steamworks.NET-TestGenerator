@@ -375,6 +375,16 @@
         {
             "name": "EnumerateFollowingList",
             "args": ["0"]
+        },
+        {
+            "name": "IsClanPublic",
+            "label": true,
+            "args": ["m_Clan"]
+        },
+        {
+            "name": "IsClanOfficialGameGroup",
+            "label": true,
+            "args": ["m_Clan"]
         }
     ],
 

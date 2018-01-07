@@ -337,6 +337,22 @@
         {
             "name": "RemoveDependency",
             "args": ["m_PublishedFileId", "TestConstants.Instance.k_PublishedFileId_Champions"]
+        },
+        {
+            "name": "AddAppDependency",
+            "args": ["m_PublishedFileId", "SteamUtils.GetAppID()"]
+        },
+        {
+            "name": "RemoveAppDependency",
+            "args": ["m_PublishedFileId", "SteamUtils.GetAppID()"]
+        },
+        {
+            "name": "GetAppDependencies",
+            "args": ["m_PublishedFileId"]
+        },
+        {
+            "name": "DeleteItem",
+            "args": ["m_PublishedFileId"]
         }
     ],
 
@@ -352,7 +368,11 @@
         "StartPlaytimeTrackingResult_t",
         "StopPlaytimeTrackingResult_t",
         "AddUGCDependencyResult_t",
-        "RemoveUGCDependencyResult_t"
+        "RemoveUGCDependencyResult_t",
+        "AddAppDependencyResult_t",
+        "RemoveAppDependencyResult_t",
+        "GetAppDependenciesResult_t",
+        "DeleteItemResult_t"
     ],
 
     "callbacks":

@@ -252,6 +252,54 @@
         {
             "name": "GetEligiblePromoItemDefinitionIDs",
             "skip": "Should be handled within the SteamInventoryEligiblePromoItemDefIDs_t CallResult!"
+        },
+        {
+            "name": "StartPurchase",
+            "skip": "TODO"
+        },
+        {
+            "name": "RequestPrices",
+            "skip": "TODO"
+        },
+        {
+            "name": "GetNumItemsWithPrices",
+            "skip": "TODO"
+        },
+        {
+            "name": "GetItemsWithPrices",
+            "skip": "TODO"
+        },
+        {
+            "name": "GetItemPrice",
+            "skip": "TODO"
+        },
+        {
+            "name": "StartUpdateProperties",
+            "skip": "TODO"
+        },
+        {
+            "name": "RemoveProperty",
+            "skip": "TODO"
+        },
+        {
+            "name": "SetProperty",
+            "skip": "TODO"
+        },
+        {
+            "name": "SetProperty",
+            "skip": "TODO"
+        },
+        {
+            "name": "SetProperty",
+            "skip": "TODO"
+        },
+        {
+            "name": "SetProperty",
+            "skip": "TODO"
+        },
+        {
+            "name": "SubmitUpdateProperties",
+            "skip": "TODO"
         }
     ],
 

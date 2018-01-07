@@ -170,6 +170,22 @@
 			"indent": -1
 		},
 		{
+			"name": "ActivateActionSetLayer",
+			"skip": "TODO"
+		},
+		{
+			"name": "DeactivateActionSetLayer",
+			"skip": "TODO"
+		},
+		{
+			"name": "DeactivateAllActionSetLayers",
+			"skip": "TODO"
+		},
+		{
+			"name": "GetActiveActionSetLayers",
+			"skip": "TODO"
+		},
+		{
 			"name": "GetDigitalActionHandle",
 			"skip": "Called in Precache()"
 		},
@@ -292,6 +308,10 @@
 			"name": "GetGlyphForActionOrigin",
 			"label": true,
 			"args": ["EControllerActionOrigin.k_EControllerActionOrigin_XBoxOne_A"]
+		},
+		{
+			"name": "GetInputTypeForHandle",
+			"skip": "TODO"
 		}
 	]
 }

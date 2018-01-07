@@ -104,10 +104,6 @@
             "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMHTTP_INTERFACE_VERSION"]
         },
         {
-            "name": "GetISteamUnifiedMessages",
-            "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMUNIFIEDMESSAGES_INTERFACE_VERSION"]
-        },
-        {
             "name": "GetISteamController",
             "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMCONTROLLER_INTERFACE_VERSION"]
         },
@@ -138,6 +134,10 @@
         {
             "name": "GetISteamVideo",
             "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMVIDEO_INTERFACE_VERSION"]
+        },
+        {
+            "name": "GetISteamParentalSettings",
+            "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMPARENTALSETTINGS_INTERFACE_VERSION"]
         }
     ]
 }

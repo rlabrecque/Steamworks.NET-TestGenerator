@@ -1,8 +1,25 @@
 #!/usr/bin/env python3
+
 import os
 import sys
 import json
 from SteamworksParser import steamworksparser
+
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
+def print_warning(msg):
+	print(bcolors.WARNING + "[WARNING] " + msg + bcolors.ENDC)
+
+def print_error(msg):
+	print(bcolors.FAIL + "[ERROR] " + msg + bcolors.ENDC)
 
 g_skippedfiles = (
 	"isteamappticket.h",
@@ -17,7 +34,9 @@ g_csharptypemap = {
 	'void *': 'System.IntPtr'
 }
 
-g_skipScroll = ( 'SteamHTMLSurface' )
+g_skipScroll = (
+	'SteamHTMLSurface'
+)
 
 class State:
 	def __init__(self):
@@ -134,7 +153,7 @@ class State:
 
 	def ParseFunctions(self, interface):
 		if 'functions' not in self.config:
-			print("[ERROR] {0} has no 'functions' block in the config!".format(self.interfacename))
+			print_error("{0} has no 'functions' block in the config!".format(self.interfacename))
 			return
 
 		if self.interfacename not in g_skipScroll:
@@ -151,12 +170,12 @@ class State:
 			curFunctionIndex = i - numPrivateFunctions
 
 			if curFunctionIndex >= len(self.config['functions']):
-				print("[ERROR] Function missing from the config: {0}".format(func.name))
+				print_error("Function missing from the config: {0}".format(func.name))
 				return
 
 			funcconfig = self.config['functions'][curFunctionIndex]
 			if func.name != funcconfig['name']:
-				print("[ERROR] Function missmatch, expected: {0} but got {1} instead!".format(func.name, funcconfig['name']))
+				print_error("Function missmatch, expected: {0} but got {1} instead!".format(func.name, funcconfig['name']))
 				return
 
 			if 'indent' in funcconfig:
@@ -170,7 +189,7 @@ class State:
 			self.csharp_functions.append('\t\tGUILayout.EndVertical();')
 
 		if len(self.config['functions']) != len(interface.functions) - numPrivateFunctions:
-			print("[WARNING] The number of functions in the config does not match the number of non private functions in the interface. Interface: {0}, Config: {1}".format(len(interface.functions) - numPrivateFunctions, len(self.config['functions'])))
+			print_warning("The number of functions in the config does not match the number of non private functions in the interface. Interface: {0}, Config: {1}".format(len(interface.functions) - numPrivateFunctions, len(self.config['functions'])))
 
 	def ParseFunctionCSharp(self, func, funcconfig, indentLevel):
 		args = ''
@@ -283,7 +302,7 @@ class State:
 					postcall += indent + '\t' + 'On' + attrib.value[:-2] + 'CallResult.Set(handle);' + '\n'
 					break
 			else:
-				print('[WARNING] Function {} returns a SteamAPICall_t but does not have attrib CALL_RESULT!'.format(func.name))
+				print_warning('Function {} returns a SteamAPICall_t but does not have attrib CALL_RESULT!'.format(func.name))
 		elif func.returntype.startswith("ISteam"):
 			ret = 'System.IntPtr ret = '
 			printadditional = ' : " + ret'
@@ -395,7 +414,7 @@ def main(parser, configDir, outputDir):
 			print("[INFO] Parsing Interface: {}".format(interface.name))
 			state.interfacename = interface.name[1:]
 			if not state.LoadConfig(configDir):
-				print("[WARNING] Interface config does not exist: {}.json".format(state.interfacename))
+				print_warning("Interface config does not exist: {}.json".format(state.interfacename))
 				continue
 			state.ParseConstants()
 			state.ParseVariables()

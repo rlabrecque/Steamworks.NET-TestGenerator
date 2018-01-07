@@ -220,6 +220,10 @@
             "postprint": ["m_BackgroundMode = !m_BackgroundMode;"]
         },
         {
+            "name": "SetDPIScalingFactor",
+            "args": ["m_HHTMLBrowser", "1.0f"]
+        },
+        {
             "name": "AllowStartRequest",
             "skip": ["N/A - You MUST call this in response to a HTML_StartRequest_t callback"]
         },
