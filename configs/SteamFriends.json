@@ -385,6 +385,10 @@
             "name": "IsClanOfficialGameGroup",
             "label": true,
             "args": ["m_Clan"]
+        },
+        {
+            "name": "GetNumChatsWithUnreadPriorityMessages",
+            "label": true
         }
     ],
 

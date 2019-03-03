@@ -298,11 +298,11 @@ class State:
 			printadditional = ' : " + handle'
 
 			for attrib in func.attributes:
-				if attrib.name == 'CALL_RESULT':
+				if attrib.name == 'STEAM_CALL_RESULT':
 					postcall += indent + '\t' + 'On' + attrib.value[:-2] + 'CallResult.Set(handle);' + '\n'
 					break
 			else:
-				print_warning('Function {} returns a SteamAPICall_t but does not have attrib CALL_RESULT!'.format(func.name))
+				print_warning('Function {} returns a SteamAPICall_t but does not have attrib STEAM_CALL_RESULT!'.format(func.name))
 		elif func.returntype.startswith("ISteam"):
 			ret = 'System.IntPtr ret = '
 			printadditional = ' : " + ret'

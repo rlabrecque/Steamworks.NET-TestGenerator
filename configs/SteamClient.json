@@ -89,6 +89,10 @@
             "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMSCREENSHOTS_INTERFACE_VERSION"]
         },
         {
+            "name": "GetISteamGameSearch",
+            "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMGAMESEARCH_INTERFACE_VERSION"]
+        },
+        {
             "name": "GetIPCCallCount",
             "label": true
         },
@@ -138,6 +142,14 @@
         {
             "name": "GetISteamParentalSettings",
             "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMPARENTALSETTINGS_INTERFACE_VERSION"]
+        },
+        {
+            "name": "GetISteamInput",
+            "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMINPUT_INTERFACE_VERSION"]
+        },
+        {
+            "name": "GetISteamParties",
+            "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMPARTIES_INTERFACE_VERSION"]
         }
     ]
 }

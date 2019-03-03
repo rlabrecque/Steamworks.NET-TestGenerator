@@ -192,13 +192,17 @@
         {
             "name": "BIsPhoneRequiringVerification",
             "label": true
+        },
+        {
+            "name": "GetMarketEligibility"
         }
     ],
 
     "callresults":
     [
         "EncryptedAppTicketResponse_t",
-        "StoreAuthURLResponse_t"
+        "StoreAuthURLResponse_t",
+        "MarketEligibilityResponse_t"
     ],
 
     "callbacks":

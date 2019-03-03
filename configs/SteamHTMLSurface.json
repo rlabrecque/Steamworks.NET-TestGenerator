@@ -224,6 +224,10 @@
             "args": ["m_HHTMLBrowser", "1.0f"]
         },
         {
+            "name": "OpenDeveloperTools",
+            "args": ["m_HHTMLBrowser"]
+        },
+        {
             "name": "AllowStartRequest",
             "skip": ["N/A - You MUST call this in response to a HTML_StartRequest_t callback"]
         },

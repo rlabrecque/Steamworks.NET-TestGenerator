@@ -137,18 +137,6 @@
 			"args": ["m_ControllerHandles"]
 		},
 		{
-			"name": "ShowBindingPanel",
-			"args": ["m_ControllerHandles[i]"],
-			"preindent": [
-				"for (int i = 0; i < m_nControllers; ++i) {"
-			],
-			"prebutton": [
-				"GUILayout.Label(\"Controller \" + i + \" - \" + m_ControllerHandles[i]);",
-				""
-			],
-			"indent": 1
-		},
-		{
 			"name": "GetActionSetHandle",
 			"skip": "Called in Precache()"
 		},
@@ -246,6 +234,14 @@
 			"indent": -1
 		},
 		{
+			"name": "GetGlyphForActionOrigin",
+			"args": ["EControllerActionOrigin.k_EControllerActionOrigin_XBoxOne_A"]
+		},
+		{
+			"name": "GetStringForActionOrigin",
+			"args": ["EControllerActionOrigin.k_EControllerActionOrigin_XBoxOne_A"]
+		},
+		{
 			"name": "StopAnalogActionMomentum",
 			"preindent": [
 				"GUILayout.Label(\"InGameControls Analog Actions:\");",
@@ -258,9 +254,13 @@
 			"indent": 1
 		},
 		{
-			"name": "TriggerHapticPulse",
-			"args": ["m_ControllerHandles[i]", "ESteamControllerPad.k_ESteamControllerPad_Right", "5000"],
+			"name": "GetMotionData",
+			"args": ["m_ControllerHandles[i]"],
 			"indent": -1
+		},
+		{
+			"name": "TriggerHapticPulse",
+			"args": ["m_ControllerHandles[i]", "ESteamControllerPad.k_ESteamControllerPad_Right", "5000"]
 		},
 		{
 			"name": "TriggerRepeatedHapticPulse",
@@ -275,9 +275,22 @@
 			"args": ["m_ControllerHandles[i]", "0", "0", "255", "(int)ESteamControllerLEDFlag.k_ESteamControllerLEDFlag_SetColor"]
 		},
 		{
-			"name": "GetGamepadIndexForController",
+			"name": "ShowBindingPanel",
+			"args": ["m_ControllerHandles[i]"],
+			"preindent": [
+				"for (int i = 0; i < m_nControllers; ++i) {"
+			],
+			"prebutton": [
+				"GUILayout.Label(\"Controller \" + i + \" - \" + m_ControllerHandles[i]);",
+				""
+			],
+			"indent": 1
+		},
+		{
+			"name": "GetInputTypeForHandle",
 			"label": true,
-			"args": ["m_ControllerHandles[i]"]
+			"args": ["m_ControllerHandles[i]"],
+			"indent": -1
 		},
 		{
 			"name": "GetControllerForGamepadIndex",
@@ -285,33 +298,25 @@
 			"args": ["0"]
 		},
 		{
-			"name": "GetMotionData",
+			"name": "GetGamepadIndexForController",
 			"label": true,
 			"args": ["m_ControllerHandles[i]"]
 		},
 		{
-			"name": "ShowDigitalActionOrigins",
-			"args": ["m_ControllerHandles[i]", "m_InGameControlsDigitalActions[0]", "1", "0", "0"]
+			"name": "GetStringForXboxOrigin",
+			"args": ["EXboxOrigin.k_EXboxOrigin_A"]
 		},
 		{
-			"name": "ShowAnalogActionOrigins",
-			"args": ["m_ControllerHandles[i]", "m_InGameControlsAnalogActions[0]", "1", "0", "0"]
+			"name": "GetGlyphForXboxOrigin",
+			"args": ["EXboxOrigin.k_EXboxOrigin_A"]
 		},
 		{
-			"name": "GetStringForActionOrigin",
-			"label": true,
-			"args": ["EControllerActionOrigin.k_EControllerActionOrigin_XBoxOne_A"],
-			"prebutton": ["}", ""],
-			"indent": -1
+			"name": "GetActionOriginFromXboxOrigin",
+			"args": ["m_ControllerHandles[i]", "EXboxOrigin.k_EXboxOrigin_A"]
 		},
 		{
-			"name": "GetGlyphForActionOrigin",
-			"label": true,
-			"args": ["EControllerActionOrigin.k_EControllerActionOrigin_XBoxOne_A"]
-		},
-		{
-			"name": "GetInputTypeForHandle",
-			"skip": "TODO"
+			"name": "TranslateActionOrigin",
+			"args": ["m_ControllerHandles[i]", "EControllerActionOrigin.k_EControllerActionOrigin_PS4_X"]
 		}
 	]
 }

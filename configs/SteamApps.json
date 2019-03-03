@@ -142,6 +142,21 @@
         {
             "name": "GetFileDetails",
             "args": ["\"steam_api.dll\""]
+        },
+        {
+            "name": "GetLaunchCommandLine",
+            "label": true,
+            "outargs": [["string", "CommandLine"]],
+            "args": ["out CommandLine", "260"],
+            "postcall": [
+                "if (CommandLine == null) {",
+                "\tCommandLine = \"\";",
+                "}"
+            ]
+        },
+        {
+            "name": "BIsSubscribedFromFamilySharing",
+            "label": true
         }
     ],
 

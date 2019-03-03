@@ -43,6 +43,11 @@
             "returnname": "m_UGCQueryHandle"
         },
         {
+            "name": "CreateQueryAllUGCRequest",
+            "args": ["EUGCQuery.k_EUGCQuery_RankedByPublicationDate", "EUGCMatchingUGCType.k_EUGCMatchingUGCType_Items", "AppId_t.Invalid", "SteamUtils.GetAppID()", "null"],
+            "returnname": "m_UGCQueryHandle"
+        },
+        {
             "name": "CreateQueryUGCDetailsRequest",
             "precall": [
                 "PublishedFileId_t[] PublishedFileIDs = new PublishedFileId_t[] { TestConstants.Instance.k_PublishedFileId_Champions };"
@@ -216,6 +221,10 @@
         {
             "name": "SetItemPreview",
             "args": ["m_UGCUpdateHandle", "Application.dataPath + \"/PreviewImage.jpg\""]
+        },
+        {
+            "name": "SetAllowLegacyUpload",
+            "args": ["m_UGCUpdateHandle", "true"]
         },
         {
             "name": "RemoveItemKeyValueTags",
