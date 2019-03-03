@@ -144,12 +144,15 @@
 			"name": "ActivateActionSet",
 			"args": ["m_ControllerHandles[i]", "m_ActionSets[j]"],
 			"preindent": [
-				"for (int j = 0; j < m_nActionSets; ++j) {"
+				"for (int i = 0; i < m_nControllers; ++i) {",
+				"\tGUILayout.Label(\"Controller \" + i + \" - \" + m_ControllerHandles[i]);",
+				"",
+				"\tfor (int j = 0; j < m_nActionSets; ++j) {"
 			],
 			"postindent": [
-				"}"
+				"\t}"
 			],
-			"indent": 1
+			"indent": 2
 		},
 		{
 			"name": "GetCurrentActionSet",
@@ -276,21 +279,12 @@
 		},
 		{
 			"name": "ShowBindingPanel",
-			"args": ["m_ControllerHandles[i]"],
-			"preindent": [
-				"for (int i = 0; i < m_nControllers; ++i) {"
-			],
-			"prebutton": [
-				"GUILayout.Label(\"Controller \" + i + \" - \" + m_ControllerHandles[i]);",
-				""
-			],
-			"indent": 1
+			"args": ["m_ControllerHandles[i]"]
 		},
 		{
 			"name": "GetInputTypeForHandle",
 			"label": true,
-			"args": ["m_ControllerHandles[i]"],
-			"indent": -1
+			"args": ["m_ControllerHandles[i]"]
 		},
 		{
 			"name": "GetControllerForGamepadIndex",
@@ -312,11 +306,13 @@
 		},
 		{
 			"name": "GetActionOriginFromXboxOrigin",
-			"args": ["m_ControllerHandles[i]", "EXboxOrigin.k_EXboxOrigin_A"]
+			"args": ["m_ControllerHandles[i]", "EXboxOrigin.k_EXboxOrigin_A"],
+			"postbutton": ["}", ""]
 		},
 		{
 			"name": "TranslateActionOrigin",
-			"args": ["m_ControllerHandles[i]", "EControllerActionOrigin.k_EControllerActionOrigin_PS4_X"]
+			"args": ["ESteamInputType.k_ESteamInputType_XBoxOneController", "EControllerActionOrigin.k_EControllerActionOrigin_XBoxOne_A"],
+			"indent": -1
 		}
 	]
 }
