@@ -1,0 +1,33 @@
+{
+	"functions":
+	[
+		{
+			"name": "BIsParentalLockEnabled",
+			"label": true
+		},
+		{
+			"name": "BIsParentalLockLocked",
+			"label": true
+		},
+		{
+			"name": "BIsAppBlocked",
+			"args": ["SteamUtils.GetAppID()"],
+			"label": true
+		},
+		{
+			"name": "BIsAppInBlockList",
+			"args": ["SteamUtils.GetAppID()"],
+			"label": true
+		},
+		{
+			"name": "BIsFeatureBlocked",
+			"args": ["EParentalFeature.k_EFeatureTest"],
+			"label": true
+		},
+		{
+			"name": "BIsFeatureInBlockList",
+			"args": ["EParentalFeature.k_EFeatureTest"],
+			"label": true
+		}
+	]
+}
