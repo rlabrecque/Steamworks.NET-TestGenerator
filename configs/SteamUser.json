@@ -195,6 +195,9 @@
         },
         {
             "name": "GetMarketEligibility"
+        },
+        {
+            "name": "GetDurationControl"
         }
     ],
 
@@ -202,7 +205,8 @@
     [
         "EncryptedAppTicketResponse_t",
         "StoreAuthURLResponse_t",
-        "MarketEligibilityResponse_t"
+        "MarketEligibilityResponse_t",
+        "DurationControl_t"
     ],
 
     "callbacks":

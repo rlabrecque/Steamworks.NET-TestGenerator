@@ -105,6 +105,11 @@
             "args": ["m_UGCQueryHandle", "0", "0", "out Key", "260", "out Value", "260"]
         },
         {
+            "name": "GetQueryUGCKeyValueTag",
+            "outargs": [["string", "Value"]],
+            "args": ["m_UGCQueryHandle", "0", "\"TestKey\"", "out Value", "260"]
+        },
+        {
             "name": "ReleaseQueryUGCRequest",
             "args": ["m_UGCQueryHandle"]
         },
@@ -225,6 +230,10 @@
         {
             "name": "SetAllowLegacyUpload",
             "args": ["m_UGCUpdateHandle", "true"]
+        },
+        {
+            "name": "RemoveAllItemKeyValueTags",
+            "args": ["m_UGCUpdateHandle"]
         },
         {
             "name": "RemoveItemKeyValueTags",

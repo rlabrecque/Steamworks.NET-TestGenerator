@@ -306,13 +306,17 @@
 		},
 		{
 			"name": "GetActionOriginFromXboxOrigin",
-			"args": ["m_ControllerHandles[i]", "EXboxOrigin.k_EXboxOrigin_A"],
-			"postbutton": ["}", ""]
+			"args": ["m_ControllerHandles[i]", "EXboxOrigin.k_EXboxOrigin_A"]
 		},
 		{
 			"name": "TranslateActionOrigin",
-			"args": ["ESteamInputType.k_ESteamInputType_XBoxOneController", "EControllerActionOrigin.k_EControllerActionOrigin_XBoxOne_A"],
-			"indent": -1
+			"args": ["ESteamInputType.k_ESteamInputType_XBoxOneController", "EControllerActionOrigin.k_EControllerActionOrigin_XBoxOne_A"]
+		},
+		{
+			"name": "GetControllerBindingRevision",
+            "outargs": [["int", "pMajor"], ["int", "pMinor"]],
+			"args": ["m_ControllerHandles[i]", "out pMajor", "out pMinor"],
+			"postbutton": ["}"]
 		}
 	]
 }

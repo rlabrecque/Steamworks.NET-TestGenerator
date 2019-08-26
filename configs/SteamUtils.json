@@ -1,7 +1,13 @@
 {
     "variables":
     [
-        ["Texture2D", "m_Image", "GUILayout.Label(m_Image);"]
+        ["Texture2D", "m_Image", "GUILayout.Label(m_Image);"],
+        ["string", "m_FilterTextInputMessage", "m_FilterTextInputMessage = GUILayout.TextField(m_FilterTextInputMessage, 40);"]
+    ],
+
+    "onenablecode":
+    [
+        "m_FilterTextInputMessage = \"test, fuck, sorry\";"
     ],
 
     "extrafunctions":
@@ -178,6 +184,18 @@
         {
             "name": "SetVRHeadsetStreamingEnabled",
             "args": ["!SteamUtils.IsVRHeadsetStreamingEnabled()"]
+        },
+        {
+            "name": "IsSteamChinaLauncher",
+            "label": true
+        },
+        {
+            "name": "InitFilterText"
+        },
+        {
+            "name": "FilterText",
+            "outargs": [["string", "OutFilteredText"]],
+            "args": ["out OutFilteredText", "(uint)m_FilterTextInputMessage.Length", "m_FilterTextInputMessage", "false"]
         }
     ],
 
