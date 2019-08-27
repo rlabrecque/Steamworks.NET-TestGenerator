@@ -150,6 +150,10 @@
         {
             "name": "GetISteamParties",
             "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMPARTIES_INTERFACE_VERSION"]
+        },
+        {
+            "name": "GetISteamRemotePlay",
+            "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMREMOTEPLAY_INTERFACE_VERSION"]
         }
     ]
 }
