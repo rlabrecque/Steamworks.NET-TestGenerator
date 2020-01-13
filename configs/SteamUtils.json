@@ -196,6 +196,10 @@
             "name": "FilterText",
             "outargs": [["string", "OutFilteredText"]],
             "args": ["out OutFilteredText", "(uint)m_FilterTextInputMessage.Length", "m_FilterTextInputMessage", "false"]
+        },
+        {
+            "name": "GetIPv6ConnectivityState",
+            "args": ["ESteamIPv6ConnectivityProtocol.k_ESteamIPv6ConnectivityProtocol_HTTP"]
         }
     ],
 

@@ -59,9 +59,9 @@
             "name": "AddScreenshotToLibrary",
             "override":
             [
-                "if (GUILayout.Button(\"AddScreenshotToLibrary(Application.dataPath + \\\"/screenshot.png\\\", \\\"\\\", Screen.width, Screen.height)\")) {",
-                "\tApplication.CaptureScreenshot(\"screenshot.png\");",
-                "\t// Application.CaptureScreenshot is asyncronous, therefore we have to wait until the screenshot is created.",
+                "if (GUILayout.Button(\"AddScreenshotToLibrary(ScreenCapture.dataPath + \\\"/screenshot.png\\\", \\\"\\\", Screen.width, Screen.height)\")) {",
+                "\tScreenCapture.CaptureScreenshot(\"screenshot.png\");",
+                "\t// ScreenCapture.CaptureScreenshot is asyncronous, therefore we have to wait until the screenshot is created.",
                 "\tStartCoroutine(AddScreenshotToLibrary());",
                 "}"
             ]

@@ -118,6 +118,10 @@
             "args": ["m_UGCQueryHandle", "\"Co-op\""]
         },
         {
+            "name": "AddRequiredTagGroup",
+            "args": ["m_UGCQueryHandle",  "new string[] {\"Sorry\"}"]
+        },
+        {
             "name": "AddExcludedTag",
             "args": ["m_UGCQueryHandle", "\"Co-op\""]
         },

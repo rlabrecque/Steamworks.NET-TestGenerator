@@ -226,15 +226,15 @@
             "override":
             [
                 "if (GUILayout.Button(\"GetItemDefinitionIDs(ItemDefIDs, ref length)\")) {",
-                "\tuint length;",
-                "\tbool ret = SteamInventory.GetItemDefinitionIDs(null, out length);",
+                "\tuint length = 0;",
+                "\tbool ret = SteamInventory.GetItemDefinitionIDs(null, ref length);",
                 "\tif (ret) {",
                 "\t\tm_SteamItemDef = new SteamItemDef_t[length];",
-                "\t\tret = SteamInventory.GetItemDefinitionIDs(m_SteamItemDef, out length);",
-                "\t\tprint(\"SteamInventory.GetItemDefinitionIDs(m_SteamItemDef, out length) - \" + ret + \" -- \" + length);",
+                "\t\tret = SteamInventory.GetItemDefinitionIDs(m_SteamItemDef, ref length);",
+                "\t\tprint(\"SteamInventory.GetItemDefinitionIDs(m_SteamItemDef, ref length) - \" + ret + \" -- \" + length);",
                 "\t}",
                 "\telse {",
-                "\t\tprint(\"SteamInventory.GetItemDefinitionIDs(null, out length) - \" + ret + \" -- \" + length);",
+                "\t\tprint(\"SteamInventory.GetItemDefinitionIDs(null, ref length) - \" + ret + \" -- \" + length);",
                 "\t}",
                 "}"
             ]

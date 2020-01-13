@@ -151,7 +151,7 @@
         },
         {
             "name": "AdvertiseGame",
-            "args": ["CSteamID.NonSteamGS", "TestConstants.k_IpAdress127_0_0_1", "TestConstants.k_Port27015"]
+            "args": ["CSteamID.NonSteamGS", "TestConstants.k_IpAddress127_0_0_1_uint", "TestConstants.k_Port27015"]
         },
         {
             "name": "RequestEncryptedAppTicket",

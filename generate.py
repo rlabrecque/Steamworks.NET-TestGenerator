@@ -102,6 +102,11 @@ class State:
 		for callback in callbacks:
 			skipMessage = ''
 
+			# Skip callbacks for other interfaces when multiple interfaces are in the same file.
+			if 'callbackid' in self.config:
+				if self.config['callbackid'] not in callback.callbackid:
+					continue
+
 			if 'callbacks' in self.config and callback.name in self.config['callbacks']:
 				if 'skip' in self.config['callbacks'][callback.name]:
 					if self.config['callbacks'][callback.name]['skip'] == True:

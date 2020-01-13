@@ -1,0 +1,127 @@
+{
+    "variables":
+    [
+        ["uint", "m_BeaconIndex"],
+        ["PartyBeaconID_t", "m_PartyBeaconID"],
+        ["uint", "m_NumLocations"],
+        ["SteamPartyBeaconLocation_t[]", "m_BeaconLocationList"],
+        ["CSteamID", "m_OtherUsersSteamID"]
+    ],
+
+    "onenablecode":
+    [
+        "m_BeaconIndex = 0;",
+        "m_NumLocations = 0;",
+        "m_PartyBeaconID = PartyBeaconID_t.Invalid;",
+        "m_OtherUsersSteamID = CSteamID.Nil;"
+    ],
+
+    "functions":
+    [
+        {
+            "name": "GetNumActiveBeacons",
+            "label": true
+        },
+        {
+            "name": "GetBeaconByIndex",
+            "args": ["m_BeaconIndex"],
+            "returnname": "m_PartyBeaconID"
+        },
+        {
+            "name": "GetBeaconDetails",
+            "outargs": [["string", "Metadata"]],
+            "args": ["m_PartyBeaconID", "out m_OtherUsersSteamID", "out m_BeaconLocationList[0]", "out Metadata", "1024"],
+            "precall": ["m_BeaconLocationList = new SteamPartyBeaconLocation_t[1];"]
+        },
+        {
+            "name": "JoinParty",
+            "args": ["m_PartyBeaconID"]
+        },
+        {
+            "name": "GetNumAvailableBeaconLocations",
+            "args": ["out m_NumLocations"]
+        },
+        {
+            "name": "GetAvailableBeaconLocations",
+            "args": ["m_BeaconLocationList", "m_NumLocations"],
+            "precall": ["m_BeaconLocationList = new SteamPartyBeaconLocation_t[m_NumLocations];"]
+        },
+        {
+            "name": "CreateBeacon",
+            "args": ["1", "ref m_BeaconLocationList[0]", "\"TestConnectString\"", "\"TestMetadata\""]
+        },
+        {
+            "name": "OnReservationCompleted",
+            "args": ["m_PartyBeaconID", "m_OtherUsersSteamID"]
+        },
+        {
+            "name": "CancelReservation",
+            "args": ["m_PartyBeaconID", "m_OtherUsersSteamID"]
+        },
+        {
+            "name": "ChangeNumOpenSlots",
+            "args": ["m_PartyBeaconID", "2"]
+        },
+        {
+            "name": "DestroyBeacon",
+            "args": ["m_PartyBeaconID"],
+            "postcall": ["m_PartyBeaconID = PartyBeaconID_t.Invalid;"]
+        },
+        {
+            "name": "GetBeaconLocationData",
+            "outargs": [["string", "DataString"]],
+            "args": ["m_BeaconLocationList[0]", "ESteamPartyBeaconLocationData.k_ESteamPartyBeaconLocationDataName", "out DataString", "1024"]
+        }
+    ],
+
+    "callresults":
+    [
+        "JoinPartyCallback_t",
+        "CreateBeaconCallback_t",
+        "ChangeNumOpenSlotsCallback_t"
+    ],
+
+    "callbacks":
+    {
+        "JoinPartyCallback_t":
+        {
+            "customcode":
+            [
+                "if (pCallback.m_eResult == EResult.k_EResultOK) {",
+                "\tm_PartyBeaconID = pCallback.m_ulBeaconID;",
+                "\tm_OtherUsersSteamID = pCallback.m_SteamIDBeaconOwner;",
+                "}"
+            ]
+        },
+        "CreateBeaconCallback_t":
+        {
+            "customcode":
+            [
+                "if (pCallback.m_eResult == EResult.k_EResultOK) {",
+                "\tm_PartyBeaconID = pCallback.m_ulBeaconID;",
+                "}"
+            ]
+        },
+        "ReservationNotificationCallback_t":
+        {
+            "customcode":
+            [
+                "m_PartyBeaconID = pCallback.m_ulBeaconID;",
+                "m_OtherUsersSteamID = pCallback.m_steamIDJoiner;"
+            ]
+        },
+        "AvailableBeaconLocationsUpdated_t":
+        {
+            "customcode":
+            [
+                "bool ret = SteamParties.GetNumAvailableBeaconLocations(out m_NumLocations);",
+                "print(\"SteamParties.GetNumAvailableBeaconLocations(\" + \"out m_NumLocations\" + \") : \" + ret + \" -- \" + m_NumLocations);",
+                "m_BeaconLocationList = new SteamPartyBeaconLocation_t[m_NumLocations];",
+                "bool ret2 = SteamParties.GetAvailableBeaconLocations(m_BeaconLocationList, m_NumLocations);",
+                "print(\"SteamParties.GetAvailableBeaconLocations(\" + m_BeaconLocationList + \", \" + m_NumLocations + \") : \" + ret);"
+            ]
+        }
+    },
+
+    "callbackid": "k_iSteamPartiesCallbacks"
+}

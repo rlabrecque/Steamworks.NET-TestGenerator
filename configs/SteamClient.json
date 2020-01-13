@@ -42,7 +42,8 @@
         },
         {
             "name": "SetLocalIPBinding",
-            "args": ["TestConstants.k_IpAdress127_0_0_1", "TestConstants.k_Port27015"]
+            "outargs": [["SteamIPAddress_t", "IpAddress127_0_0_1 = TestConstants.Instance.k_IpAddress127_0_0_1"]],
+            "args": ["ref IpAddress127_0_0_1", "TestConstants.k_Port27015"]
         },
         {
             "name": "GetISteamFriends",
