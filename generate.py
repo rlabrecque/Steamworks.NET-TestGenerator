@@ -23,7 +23,7 @@ def print_error(msg):
 
 g_skippedfiles = (
 	"isteamappticket.h",
-	"isteamgamecoordinator.h"
+	"isteamgamecoordinator.h",
 )
 
 g_csharptypemap = {
@@ -31,11 +31,12 @@ g_csharptypemap = {
 	'int32': 'int',
 	'const char *': 'string',
 	'gameserveritem_t *': 'gameserveritem_t',
-	'void *': 'System.IntPtr'
+	'void *': 'System.IntPtr',
+	'ControllerMotionData_t': 'InputMotionData_t',
 }
 
 g_skipScroll = (
-	'SteamHTMLSurface'
+	'SteamHTMLSurface',
 )
 
 class State:

@@ -185,13 +185,13 @@
 			"override": [
 				"GUILayout.Label(\"InGameControls Digital Actions:\");",
 				"for (int j = 0; j < m_nInGameControlsDigitalActions; ++j) {",
-				"\tControllerDigitalActionData_t ret = SteamController.GetDigitalActionData(m_ControllerHandles[i], m_InGameControlsDigitalActions[j]);",
+				"\tInputDigitalActionData_t ret = SteamController.GetDigitalActionData(m_ControllerHandles[i], m_InGameControlsDigitalActions[j]);",
 				"\tGUILayout.Label(\"GetDigitalActionData(\" + m_ControllerHandles[i] + \", \" + m_InGameControlsDigitalActions[j] + \") - \" + ret.bState + \" -- \" + ret.bActive + \" -- \" + m_InGameControlsDigitalActionNames[j]);",
 				"}",
 				"",
 				"GUILayout.Label(\"MenuControls Digital Actions:\");",
 				"for (int j = 0; j < m_nMenuControlsDigitalActions; ++j) {",
-				"\tControllerDigitalActionData_t ret = SteamController.GetDigitalActionData(m_ControllerHandles[i], m_MenuControlsDigitalActions[j]);",
+				"\tInputDigitalActionData_t ret = SteamController.GetDigitalActionData(m_ControllerHandles[i], m_MenuControlsDigitalActions[j]);",
 				"\tGUILayout.Label(\"GetDigitalActionData(\" + m_ControllerHandles[i] + \", \" + m_MenuControlsDigitalActions[j] + \") - \" + ret.bState + \" -- \" + ret.bActive + \" -- \" + m_MenuControlsDigitalActionNames[j]);",
 				"}"
 			]

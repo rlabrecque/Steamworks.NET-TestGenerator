@@ -389,6 +389,10 @@
         {
             "name": "GetNumChatsWithUnreadPriorityMessages",
             "label": true
+        },
+        {
+            "name": "ActivateGameOverlayRemotePlayTogetherInviteDialog",
+            "args": ["m_Friend"]
         }
     ],
 
