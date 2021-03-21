@@ -280,20 +280,16 @@
             ]
         },
         {
-            "name": "InstallPS3Trophies",
-            "skip": "PS3 Only."
+            "name": "GetAchievementProgressLimits",
+            "label": true,
+            "outargs": [["int", "MinProgress"], ["int", "MaxProgress"]],
+            "args": ["\"ACH_WIN_100_GAMES\"", "out MinProgress", "out MaxProgress"]
         },
         {
-            "name": "GetTrophySpaceRequiredBeforeInstall",
-            "skip": "PS3 Only."
-        },
-        {
-            "name": "SetUserStatsData",
-            "skip": "PS3 Only."
-        },
-        {
-            "name": "GetUserStatsData",
-            "skip": "PS3 Only."
+            "name": "GetAchievementProgressLimits",
+            "label": true,
+            "outargs": [["float", "MinProgress"], ["float", "MaxProgress"]],
+            "args": ["\"ACH_TRAVEL_FAR_ACCUM\"", "out MinProgress", "out MaxProgress"]
         }
     ],
 

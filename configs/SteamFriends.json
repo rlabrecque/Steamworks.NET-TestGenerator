@@ -393,6 +393,14 @@
         {
             "name": "ActivateGameOverlayRemotePlayTogetherInviteDialog",
             "args": ["m_Friend"]
+        },
+        {
+            "name": "RegisterProtocolInOverlayBrowser",
+            "args": ["\"test\""]
+        },
+        {
+            "name": "ActivateGameOverlayInviteDialogConnectString",
+            "args": ["\"test\""]
         }
     ],
 

@@ -198,6 +198,10 @@
         },
         {
             "name": "GetDurationControl"
+        },
+        {
+            "name": "BSetDurationControlOnlineState",
+            "args": ["EDurationControlOnlineState.k_EDurationControlOnlineState_Offline"]
         }
     ],
 

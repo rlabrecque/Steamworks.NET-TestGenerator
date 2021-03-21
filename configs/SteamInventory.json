@@ -300,6 +300,10 @@
         {
             "name": "SubmitUpdateProperties",
             "skip": "TODO"
+        },
+        {
+            "name": "InspectItem",
+            "skip": "TODO"
         }
     ],
 

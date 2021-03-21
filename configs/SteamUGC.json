@@ -66,6 +66,20 @@
             "postcall": ["print(Details.m_nPublishedFileId + \" -- \" + Details.m_eResult + \" -- \" + Details.m_eFileType + \" -- \" + Details.m_nCreatorAppID + \" -- \" + Details.m_nConsumerAppID + \" -- \" + Details.m_rgchTitle + \" -- \" + Details.m_rgchDescription + \" -- \" + Details.m_ulSteamIDOwner + \" -- \" + Details.m_rtimeCreated + \" -- \" + Details.m_rtimeUpdated + \" -- \" + Details.m_rtimeAddedToUserList + \" -- \" + Details.m_eVisibility + \" -- \" + Details.m_bBanned + \" -- \" + Details.m_bAcceptedForUse + \" -- \" + Details.m_bTagsTruncated + \" -- \" + Details.m_rgchTags + \" -- \" + Details.m_hFile + \" -- \" + Details.m_hPreviewFile + \" -- \" + Details.m_pchFileName + \" -- \" + Details.m_nFileSize + \" -- \" + Details.m_nPreviewFileSize + \" -- \" + Details.m_rgchURL + \" -- \" + Details.m_unVotesUp + \" -- \" + Details.m_unVotesDown + \" -- \" + Details.m_flScore + \" -- \" + Details.m_unNumChildren);"]
         },
         {
+            "name": "GetQueryUGCNumTags",
+            "args": ["m_UGCQueryHandle", "0"]
+        },
+        {
+            "name": "GetQueryUGCTag",
+            "outargs": [["string", "Tag"]],
+            "args": ["m_UGCQueryHandle", "0", "0", "out Tag", "1024"]
+        },
+        {
+            "name": "GetQueryUGCTagDisplayName",
+            "outargs": [["string", "DisplayName"]],
+            "args": ["m_UGCQueryHandle", "0", "0", "out DisplayName", "1024"]
+        },
+        {
             "name": "GetQueryUGCPreviewURL",
             "outargs": [["string", "URL"]],
             "args": ["m_UGCQueryHandle", "0", "out URL", "1024"]

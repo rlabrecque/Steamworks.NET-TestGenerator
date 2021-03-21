@@ -86,12 +86,6 @@
             ]
         },
         {
-            "name": "GetCSERIPPort",
-            "label": true,
-            "outargs": [["uint", "IP"], ["ushort", "Port"]],
-            "args": ["out IP", "out Port"]
-        },
-        {
             "name": "GetCurrentBatteryPower",
             "label": true
         },
@@ -194,8 +188,7 @@
         },
         {
             "name": "FilterText",
-            "outargs": [["string", "OutFilteredText"]],
-            "args": ["out OutFilteredText", "(uint)m_FilterTextInputMessage.Length", "m_FilterTextInputMessage", "false"]
+            "skip": "Should be called inside a chat callback!"
         },
         {
             "name": "GetIPv6ConnectivityState",

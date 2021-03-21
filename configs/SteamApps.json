@@ -157,6 +157,12 @@
         {
             "name": "BIsSubscribedFromFamilySharing",
             "label": true
+        },
+        {
+            "name": "BIsTimedTrial",
+            "label": true,
+            "outargs": [["uint", "punSecondsAllowed"], ["uint", "punSecondsPlayed"]],
+            "args": ["out punSecondsAllowed", "out punSecondsPlayed"]
         }
     ],
 
