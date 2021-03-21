@@ -110,7 +110,12 @@
         },
         {
             "name": "GetISteamController",
-            "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMCONTROLLER_INTERFACE_VERSION"]
+            "override": [
+                "//if (GUILayout.Button(\"GetISteamController(SteamAPI.GetHSteamUser(), SteamAPI.GetHSteamPipe(), Constants.STEAMCONTROLLER_INTERFACE_VERSION)\")) {",
+                "//\tSystem.IntPtr ret = SteamClient.GetISteamController(SteamAPI.GetHSteamUser(), SteamAPI.GetHSteamPipe(), Constants.STEAMCONTROLLER_INTERFACE_VERSION);",
+                "//\tprint(\"SteamClient.GetISteamController(\" + SteamAPI.GetHSteamUser() + \", \" + SteamAPI.GetHSteamPipe() + \", \" + Constants.STEAMCONTROLLER_INTERFACE_VERSION + \") : \" + ret);",
+                "//}"
+            ]
         },
         {
             "name": "GetISteamUGC",
