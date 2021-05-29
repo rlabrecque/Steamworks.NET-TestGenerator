@@ -309,7 +309,8 @@
 
     "callresults":
     [
-        "SteamInventoryEligiblePromoItemDefIDs_t"
+        "SteamInventoryEligiblePromoItemDefIDs_t",
+        "SteamInventoryStartPurchaseResult_t"
     ],
 
     "callbacks":
