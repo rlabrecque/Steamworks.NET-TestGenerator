@@ -24,6 +24,7 @@ def print_error(msg):
 g_skippedfiles = (
 	"isteamappticket.h",
 	"isteamgamecoordinator.h",
+	"steamnetworkingfakeip.h",
 )
 
 g_csharptypemap = {
