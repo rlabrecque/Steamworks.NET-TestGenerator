@@ -197,11 +197,11 @@
         },
         {
             "name": "SetTimeCreatedDateRange",
-            "args": ["m_UGCQueryHandle", "RTime32(0)", "RTime32(0)"]
+            "args": ["m_UGCQueryHandle", "0", "0"]
         },
         {
             "name": "SetTimeUpdatedDateRange",
-            "args": ["m_UGCQueryHandle", "RTime32(0)", "RTime32(0)"]
+            "args": ["m_UGCQueryHandle", "0", "0"]
         },
         {
             "name": "AddRequiredKeyValueTag",
@@ -422,7 +422,8 @@
         "AddAppDependencyResult_t",
         "RemoveAppDependencyResult_t",
         "GetAppDependenciesResult_t",
-        "DeleteItemResult_t"
+        "DeleteItemResult_t",
+        "WorkshopEULAStatus_t"
     ],
 
     "callbacks":
