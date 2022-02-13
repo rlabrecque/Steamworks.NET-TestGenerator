@@ -6,7 +6,7 @@
     ],
 
 	"onenablecode": [
-		"m_InputInitialized = SteamInput.Init();",
+		"m_InputInitialized = SteamInput.Init(false);",
 		"print(\"SteamInput.Init() - \" + m_InputInitialized);",
 		"m_InputHandles = new InputHandle_t[Constants.STEAM_INPUT_MAX_COUNT];",
 		"",
