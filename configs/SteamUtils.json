@@ -2,7 +2,8 @@
     "variables":
     [
         ["Texture2D", "m_Image", "GUILayout.Label(m_Image);"],
-        ["string", "m_FilterTextInputMessage", "m_FilterTextInputMessage = GUILayout.TextField(m_FilterTextInputMessage, 40);"]
+        ["string", "m_FilterTextInputMessage", "m_FilterTextInputMessage = GUILayout.TextField(m_FilterTextInputMessage, 40);"],
+        ["bool", "m_GameLauncherMode", "m_GameLauncherMode = false;"]
     ],
 
     "onenablecode":
@@ -193,6 +194,24 @@
         {
             "name": "GetIPv6ConnectivityState",
             "args": ["ESteamIPv6ConnectivityProtocol.k_ESteamIPv6ConnectivityProtocol_HTTP"]
+        },
+        {
+            "name": "IsSteamRunningOnSteamDeck",
+            "label": true
+        },
+        {
+            "name": "ShowFloatingGamepadTextInput",
+            "args": ["EFloatingGamepadTextInputMode.k_EFloatingGamepadTextInputModeModeSingleLine", "0", "0", "0", "0"]
+        },
+        {
+            "name": "SetGameLauncherMode",
+            "args": ["!m_GameLauncherMode"],
+            "postprint": [
+                "m_GameLauncherMode = !m_GameLauncherMode;"
+            ]
+        },
+        {
+            "name": "DismissFloatingGamepadTextInput"
         }
     ],
 

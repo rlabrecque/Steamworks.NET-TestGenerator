@@ -196,6 +196,14 @@
             "args": ["m_UGCQueryHandle", "7"]
         },
         {
+            "name": "SetTimeCreatedDateRange",
+            "args": ["m_UGCQueryHandle", "RTime32(0)", "RTime32(0)"]
+        },
+        {
+            "name": "SetTimeUpdatedDateRange",
+            "args": ["m_UGCQueryHandle", "RTime32(0)", "RTime32(0)"]
+        },
+        {
             "name": "AddRequiredKeyValueTag",
             "args": ["m_UGCQueryHandle", "\"TestKey\"", "\"TestValue\""]
         },
@@ -389,6 +397,12 @@
         {
             "name": "DeleteItem",
             "args": ["m_PublishedFileId"]
+        },
+        {
+            "name": "ShowWorkshopEULA"
+        },
+        {
+            "name": "GetWorkshopEULAStatus"
         }
     ],
 

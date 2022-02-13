@@ -8,6 +8,7 @@
     [
         ["string", "m_Message", "m_Message = GUILayout.TextField(m_Message, 40);"],
         ["int", "m_FileCount"],
+        ["int", "m_FileChangeCount"],
         ["int", "m_FileSize"],
         ["ulong", "m_TotalBytes"],
         ["int", "m_FileSizeInBytes"],
@@ -246,30 +247,6 @@
             "args": ["0"]
         },
         {
-            "name": "GetFileListFromServer",
-            "skip": "PS3 Only."
-        },
-        {
-            "name": "FileFetch",
-            "skip": "PS3 Only."
-        },
-        {
-            "name": "FilePersist",
-            "skip": "PS3 Only."
-        },
-        {
-            "name": "SynchronizeToClient",
-            "skip": "PS3 Only."
-        },
-        {
-            "name": "SynchronizeToServer",
-            "skip": "PS3 Only."
-        },
-        {
-            "name": "ResetFileRequestState",
-            "skip": "PS3 Only."
-        },
-        {
             "name": "PublishWorkshopFile",
             "precall": ["string[] Tags = { \"Test1\", \"Test2\", \"Test3\" };"],
             "args": ["MESSAGE_FILE_NAME", "null", "SteamUtils.GetAppID()", "\"Title!\"", "\"Description!\"", "ERemoteStoragePublishedFileVisibility.k_ERemoteStoragePublishedFileVisibilityPublic", "Tags", "EWorkshopFileType.k_EWorkshopFileTypeCommunity"]
@@ -370,6 +347,29 @@
         {
             "name": "UGCDownloadToLocation",
             "skip": "There is absolutely no documentation on how to use this function"
+        },
+        {
+            "name": "GetLocalFileChangeCount",
+            "label": true,
+            "returnname": "m_FileChangeCount"
+        },
+        {
+            "name": "GetLocalFileChange",
+            "override":
+            [
+                "for (int i = 0; i < m_FileChangeCount; ++i) {",
+                "\tERemoteStorageLocalFileChange ChangeType = ERemoteStorageLocalFileChange.k_ERemoteStorageLocalFileChange_Invalid;",
+                "\tERemoteStorageFilePathType FilePathType = ERemoteStorageFilePathType.k_ERemoteStorageFilePathType_Invalid;",
+                "\tstring FileName = SteamRemoteStorage.GetLocalFileChange(i, out ChangeType, out FilePathType);",
+                "\tGUILayout.Label(\"GetLocalFileChange(i, out ChangeType, out FilePathType) : \" + FileName + \" -- \" + ChangeType + \" -- \" + FilePathType);",
+                "}"
+            ]
+        },
+        {
+            "name": "BeginFileWriteBatch"
+        },
+        {
+            "name": "EndFileWriteBatch"
         }
     ],
 

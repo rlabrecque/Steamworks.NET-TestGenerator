@@ -22,12 +22,12 @@
             "label": true
         },
         {
-            "name": "InitiateGameConnection",
-            "skip": "N/A - Too Hard to test like this."
+            "name": "InitiateGameConnection_DEPRECATED",
+            "skip": "N/A - DEPRECATED"
         },
         {
-            "name": "TerminateGameConnection",
-            "skip": "^"
+            "name": "TerminateGameConnection_DEPRECATED",
+            "skip": "N/A - DEPRECATED"
         },
         {
             "name": "TrackAppUsageEvent",
