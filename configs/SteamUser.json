@@ -108,26 +108,25 @@
             "name": "GetAuthSessionTicket",
             "override":
             [
-                "{",
-                "\tif (GUILayout.Button(\"GetAuthSessionTicket(Ticket, 1024, out pcbTicket)\")) {",
-                "\t\tm_Ticket = new byte[1024];",
-                "\t\tm_HAuthTicket = SteamUser.GetAuthSessionTicket(m_Ticket, 1024, out m_pcbTicket);",
-                "\t\tprint(\"SteamUser.GetAuthSessionTicket(Ticket, 1024, out pcbTicket) - \" + m_HAuthTicket + \" -- \" + m_pcbTicket);",
-                "\t}"
+                "if (GUILayout.Button(\"GetAuthSessionTicket(Ticket, 1024, out pcbTicket)\")) {",
+                "\tSteamNetworkingIdentity pSteamNetworkingIdentity = new SteamNetworkingIdentity();",
+                "\tm_Ticket = new byte[1024];",
+                "\tm_HAuthTicket = SteamUser.GetAuthSessionTicket(m_Ticket, 1024, out m_pcbTicket, ref pSteamNetworkingIdentity);",
+                "\tprint(\"SteamUser.GetAuthSessionTicket(Ticket, 1024, out pcbTicket, ref pSteamNetworkingIdentity) - \" + m_HAuthTicket + \" -- \" + m_pcbTicket);",
+                "}"
             ]
         },
         {
             "name": "BeginAuthSession",
             "override":
             [
-                "\tif (GUILayout.Button(\"BeginAuthSession(m_Ticket, (int)m_pcbTicket, SteamUser.GetSteamID())\")) {",
-                "\t\tif (m_HAuthTicket != HAuthTicket.Invalid && m_pcbTicket != 0) {",
-                "\t\t\tEBeginAuthSessionResult ret = SteamUser.BeginAuthSession(m_Ticket, (int)m_pcbTicket, SteamUser.GetSteamID());",
-                "\t\t\tprint(\"SteamUser.BeginAuthSession(m_Ticket, \" + (int)m_pcbTicket + \", \" + SteamUser.GetSteamID() + \") - \" + ret);",
-                "\t\t}",
-                "\t\telse {",
-                "\t\t\tprint(\"Call GetAuthSessionTicket first!\");",
-                "\t\t}",
+                "if (GUILayout.Button(\"BeginAuthSession(m_Ticket, (int)m_pcbTicket, SteamUser.GetSteamID())\")) {",
+                "\tif (m_HAuthTicket != HAuthTicket.Invalid && m_pcbTicket != 0) {",
+                "\t\tEBeginAuthSessionResult ret = SteamUser.BeginAuthSession(m_Ticket, (int)m_pcbTicket, SteamUser.GetSteamID());",
+                "\t\tprint(\"SteamUser.BeginAuthSession(m_Ticket, \" + (int)m_pcbTicket + \", \" + SteamUser.GetSteamID() + \") - \" + ret);",
+                "\t}",
+                "\telse {",
+                "\t\tprint(\"Call GetAuthSessionTicket first!\");",
                 "\t}",
                 "}"
             ]
