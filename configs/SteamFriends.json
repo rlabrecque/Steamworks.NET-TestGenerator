@@ -401,6 +401,25 @@
         {
             "name": "ActivateGameOverlayInviteDialogConnectString",
             "args": ["\"test\""]
+        },
+        {
+            "name": "RequestEquippedProfileItems",
+            "args": ["SteamUser.GetSteamID()"]
+        },
+        {
+            "name": "BHasEquippedProfileItem",
+            "label": true,
+            "args": ["SteamUser.GetSteamID()", "ECommunityProfileItemType.k_ECommunityProfileItemType_AvatarFrame"]
+        },
+        {
+            "name": "GetProfileItemPropertyString",
+            "label": true,
+            "args": ["SteamUser.GetSteamID()", "ECommunityProfileItemType.k_ECommunityProfileItemType_AvatarFrame", "ECommunityProfileItemProperty.k_ECommunityProfileItemProperty_Title"]
+        },
+        {
+            "name": "GetProfileItemPropertyUint",
+            "label": true,
+            "args": ["SteamUser.GetSteamID()", "ECommunityProfileItemType.k_ECommunityProfileItemType_AvatarFrame", "ECommunityProfileItemProperty.k_ECommunityProfileItemProperty_AppID"]
         }
     ],
 
@@ -412,7 +431,8 @@
         "FriendsGetFollowerCount_t",
         "FriendsIsFollowing_t",
         "FriendsEnumerateFollowingList_t",
-        "SetPersonaNameResponse_t"
+        "SetPersonaNameResponse_t",
+        "EquippedProfileItems_t"
     ],
 
     "callbacks":

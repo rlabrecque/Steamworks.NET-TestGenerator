@@ -106,7 +106,7 @@
         {
             "name": "GetQueryUGCAdditionalPreview",
             "outargs": [["string", "pchURLOrVideoID"], ["string", "pchOriginalFileName"], ["EItemPreviewType", "pPreviewType"]],
-            "precall": ["// Should check GetQueryUGCNumAdditionalPreviews first."],
+            "precall": ["// Should check GetQueryUGCNumAdditionalPreviews first. Expect this to fail if that returns 0."],
             "args": ["m_UGCQueryHandle", "0", "0", "out pchURLOrVideoID", "1024", "out pchOriginalFileName", "260", "out pPreviewType"]
         },
         {
@@ -122,6 +122,21 @@
             "name": "GetQueryUGCKeyValueTag",
             "outargs": [["string", "Value"]],
             "args": ["m_UGCQueryHandle", "0", "\"TestKey\"", "out Value", "260"]
+        },
+        {
+            "name": "GetNumSupportedGameVersions",
+            "args": ["m_UGCQueryHandle", "0"]
+        },
+        {
+            "name": "GetSupportedGameVersionData",
+            "outargs": [["string", "pchGameBranchMin"], ["string", "pchGameBranchMax"]],
+            "precall": ["// Should check GetNumSupportedGameVersions first. Expect this to fail if that returns 0."],
+            "args": ["m_UGCQueryHandle", "0", "0", "out pchGameBranchMin", "out pchGameBranchMax", "128"]
+        },
+        {
+            "name": "GetQueryUGCContentDescriptors",
+            "outargs": [["EUGCContentDescriptorID[]", "pvecDescriptors = new EUGCContentDescriptorID[100]"]],
+            "args": ["m_UGCQueryHandle", "0", "pvecDescriptors", "(uint)pvecDescriptors.Length"]
         },
         {
             "name": "ReleaseQueryUGCRequest",
@@ -178,6 +193,10 @@
         {
             "name": "SetAllowCachedResponse",
             "args": ["m_UGCQueryHandle", "5"]
+        },
+        {
+            "name": "SetAdminQuery",
+            "args": ["m_UGCUpdateHandle", "true"]
         },
         {
             "name": "SetCloudFileNameFilter",
@@ -288,6 +307,18 @@
         {
             "name": "RemoveItemPreview",
             "args": ["m_UGCUpdateHandle", "0"]
+        },
+        {
+            "name": "AddContentDescriptor",
+            "args": ["m_UGCUpdateHandle", "EUGCContentDescriptorID.k_EUGCContentDescriptor_AnyMatureContent"]
+        },
+        {
+            "name": "RemoveContentDescriptor",
+            "args": ["m_UGCUpdateHandle", "EUGCContentDescriptorID.k_EUGCContentDescriptor_AnyMatureContent"]
+        },
+        {
+            "name": "SetRequiredGameVersions",
+            "args": ["m_UGCUpdateHandle", "\"\"", "\"\""]
         },
         {
             "name": "SubmitItemUpdate",
@@ -403,6 +434,11 @@
         },
         {
             "name": "GetWorkshopEULAStatus"
+        },
+        {
+            "name": "GetUserContentDescriptorPreferences",
+            "outargs": [["EUGCContentDescriptorID[]", "pvecDescriptors = new EUGCContentDescriptorID[100]"]],
+            "args": ["pvecDescriptors", "(uint)pvecDescriptors.Length"]
         }
     ],
 

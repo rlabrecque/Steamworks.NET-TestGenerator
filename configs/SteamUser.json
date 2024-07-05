@@ -117,6 +117,10 @@
             ]
         },
         {
+            "name": "GetAuthTicketForWebApi",
+            "args": ["null"]
+        },
+        {
             "name": "BeginAuthSession",
             "override":
             [

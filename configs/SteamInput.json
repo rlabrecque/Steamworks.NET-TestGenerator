@@ -374,6 +374,10 @@
 		{
 			"name": "GetSessionInputConfigurationSettings",
 			"label": true
+		},
+		{
+			"name": "SetDualSenseTriggerEffect",
+			"skip": "Nearly unsupported as it relies on proprietary code."
 		}
 	]
 }

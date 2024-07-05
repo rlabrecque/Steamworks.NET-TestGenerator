@@ -1,6 +1,5 @@
 {
-    "functions":
-    [
+    "functions": [
         {
             "name": "BIsSubscribed",
             "label": true
@@ -163,6 +162,22 @@
             "label": true,
             "outargs": [["uint", "punSecondsAllowed"], ["uint", "punSecondsPlayed"]],
             "args": ["out punSecondsAllowed", "out punSecondsPlayed"]
+        },
+        {
+            "name": "SetDlcContext",
+            "args": ["(AppId_t)0"]
+        },
+        {
+            "name": "GetNumBetas",
+            "skip": "Crashes the Steam client."
+        },
+        {
+            "name": "GetBetaInfo",
+            "skip": "[Probably] Crashes the Steam client."
+        },
+        {
+            "name": "SetActiveBeta",
+            "skip": "[Probably] Crashes the Steam client."
         }
     ],
 
