@@ -168,22 +168,24 @@ class State:
 			self.csharp_functions.append('\t\tm_ScrollPos = GUILayout.BeginScrollView(m_ScrollPos, GUILayout.Width(Screen.width - 215), GUILayout.Height(Screen.height - 33));\n')
 
 		numPrivateFunctions = 0
+		mismatchedFunctions = 0
 		indentLevel = 2
 		for i, func in enumerate(interface.functions):
 			if func.private:
 				numPrivateFunctions += 1
 				continue
 
-			curFunctionIndex = i - numPrivateFunctions
+			curFunctionIndex = i - numPrivateFunctions - mismatchedFunctions
 
 			if curFunctionIndex >= len(self.config['functions']):
 				print_error("Function missing from the config: {0}".format(func.name))
-				return
+				continue
 
 			funcconfig = self.config['functions'][curFunctionIndex]
 			if func.name != funcconfig['name']:
-				print_error("Function missmatch, expected: {0} but got {1} instead!".format(func.name, funcconfig['name']))
-				return
+				print_error("Function missing from the config: {0} but found {1} instead!".format(func.name, funcconfig['name']))
+				mismatchedFunctions += 1
+				continue
 
 			if 'indent' in funcconfig:
 				indentLevel += funcconfig['indent']
