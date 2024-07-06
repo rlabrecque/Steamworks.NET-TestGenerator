@@ -1,0 +1,31 @@
+{
+    "functions": [
+        {
+            "name": "SetTimelineStateDescription",
+            "args": [
+                "\"Description\"",
+                "0.0f"
+            ]
+        },
+        {
+            "name": "ClearTimelineStateDescription",
+            "args": [ "0.0f" ]
+        },
+        {
+            "name": "AddTimelineEvent",
+            "args": [
+                "\"steam_marker\"",
+                "\"Test Event\"",
+                "\"Test Description\"",
+                "0",
+                "-5.0f",
+                "5.0f",
+                "ETimelineEventClipPriority.k_ETimelineEventClipPriority_Standard"
+            ]
+        },
+        {
+            "name": "SetTimelineGameMode",
+            "args": [ "ETimelineGameMode.k_ETimelineGameMode_Playing" ]
+        }
+    ]
+}
