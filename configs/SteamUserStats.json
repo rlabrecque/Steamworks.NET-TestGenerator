@@ -12,9 +12,6 @@
     "functions":
     [
         {
-            "name": "RequestCurrentStats"
-        },
-        {
             "name": "GetStat",
             "label": true,
             "args": ["\"NumGames\"", "out m_NumGamesStat"]

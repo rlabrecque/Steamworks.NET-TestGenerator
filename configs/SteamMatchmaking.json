@@ -172,10 +172,6 @@
         {
             "name": "SetLinkedLobby",
             "args": ["m_Lobby", "m_Lobby"]
-        },
-        {
-            "name": "CheckForPSNGameBootInvite",
-            "skip": "PS3 Only."
         }
     ],
 

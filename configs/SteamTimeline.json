@@ -1,31 +1,126 @@
 {
+    "variables":
+    [
+        ["TimelineEventHandle_t", "m_RangeEvent"]
+    ],
+
+    "callresults":
+    [
+        "SteamTimelineEventRecordingExists_t",
+        "SteamTimelineGamePhaseRecordingExists_t"
+    ],
+
     "functions": [
         {
-            "name": "SetTimelineStateDescription",
+            "name": "SetTimelineTooltip",
             "args": [
-                "\"Description\"",
+                "\"Tooltip Description\"",
                 "0.0f"
             ]
         },
         {
-            "name": "ClearTimelineStateDescription",
+            "name": "ClearTimelineTooltip",
             "args": [ "0.0f" ]
         },
         {
-            "name": "AddTimelineEvent",
+            "name": "SetTimelineGameMode",
+            "args": [ "ETimelineGameMode.k_ETimelineGameMode_Menus" ]
+        },
+        {
+            "name": "AddInstantaneousTimelineEvent",
             "args": [
-                "\"steam_marker\"",
-                "\"Test Event\"",
-                "\"Test Description\"",
-                "0",
-                "-5.0f",
-                "5.0f",
-                "ETimelineEventClipPriority.k_ETimelineEventClipPriority_Standard"
+                "\"Test Inst Event\"",
+                "\"Test Inst Description\"",
+                "\"\"",
+                "0"
             ]
         },
         {
-            "name": "SetTimelineGameMode",
-            "args": [ "ETimelineGameMode.k_ETimelineGameMode_Playing" ]
+            "name": "AddRangeTimelineEvent",
+            "args": [
+                "\"Test Range Event\"",
+                "\"Test Range Description\"",
+                "\"\"",
+                "0"
+            ],
+            "returnname": "m_RangeEvent"
+        },
+        {
+            "name": "StartRangeTimelineEvent",
+            "args": [
+                "\"Test Range Event\"",
+                "\"Test Range Description\"",
+                "\"\"",
+                "0",
+                "0.0f",
+                "ETimelineEventClipPriority.k_ETimelineEventClipPriority_None"
+            ],
+            "returnname": "m_RangeEvent"
+        },
+        {
+            "name": "UpdateRangeTimelineEvent",
+            "args": [
+                "m_RangeEvent",
+                "\"Test Updated Event\"",
+                "\"Test Updated Description\"",
+                "\"\"",
+                "0",
+                "ETimelineEventClipPriority.k_ETimelineEventClipPriority_None"
+            ]
+        },
+        {
+            "name": "EndRangeTimelineEvent",
+            "args": [
+                "m_RangeEvent",
+                "0.0f"
+            ]
+        },
+        {
+            "name": "RemoveTimelineEvent",
+            "args": [ "m_RangeEvent" ]
+        },
+        {
+            "name": "DoesEventRecordingExist",
+            "args": [ "m_RangeEvent" ]
+        },
+        {
+            "name": "StartGamePhase"
+        },
+        {
+            "name": "EndGamePhase"
+        },
+        {
+            "name": "SetGamePhaseID",
+            "args": [ "\"Test Game Phase\"" ]
+        },
+        {
+            "name": "DoesGamePhaseRecordingExist",
+            "args": [ "\"Test Game Phase\"" ]
+        },
+        {
+            "name": "AddGamePhaseTag",
+            "args": [
+                "\"Tag\"",
+                "\"\"",
+                "\"Tag Group\"",
+                "0"
+            ]
+        },
+        {
+            "name": "SetGamePhaseAttribute",
+            "args": [
+                "\"Attr Group\"",
+                "\"Attr Value\"",
+                "0"
+            ]
+        },
+        {
+            "name": "OpenOverlayToGamePhase",
+            "args": [ "\"Test Game Phase\"" ]
+        },
+        {
+            "name": "OpenOverlayToTimelineEvent",
+            "args": [ "m_RangeEvent" ]
         }
     ]
 }

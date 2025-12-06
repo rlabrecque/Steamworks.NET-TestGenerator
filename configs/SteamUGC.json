@@ -439,6 +439,16 @@
             "name": "GetUserContentDescriptorPreferences",
             "outargs": [["EUGCContentDescriptorID[]", "pvecDescriptors = new EUGCContentDescriptorID[100]"]],
             "args": ["pvecDescriptors", "(uint)pvecDescriptors.Length"]
+        },
+        {
+            "name": "SetItemsDisabledLocally",
+            "precall": ["PublishedFileId_t[] PublishedFileIds = new PublishedFileId_t[] { TestConstants.Instance.k_PublishedFileId_Champions };"],
+            "args": ["PublishedFileIds", "(uint)PublishedFileIds.Length", "false"]
+        },
+        {
+            "name": "SetSubscriptionsLoadOrder",
+            "precall": ["PublishedFileId_t[] PublishedFileIds = new PublishedFileId_t[] { TestConstants.Instance.k_PublishedFileId_Champions };"],
+            "args": ["PublishedFileIds", "(uint)PublishedFileIds.Length"]
         }
     ],
 
