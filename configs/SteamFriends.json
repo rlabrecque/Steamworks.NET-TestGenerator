@@ -30,10 +30,6 @@
             "label": true
         },
         {
-            "name": "SetPersonaName",
-            "args": ["SteamFriends.GetPersonaName()"]
-        },
-        {
             "name": "GetPersonaState",
             "label": true
         },
@@ -254,10 +250,6 @@
             "name": "GetClanOfficerByIndex",
             "label": true,
             "args": ["m_Clan", "0"]
-        },
-        {
-            "name": "GetUserRestrictions",
-            "label": true
         },
         {
             "name": "SetRichPresence",

@@ -90,10 +90,6 @@
             "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMSCREENSHOTS_INTERFACE_VERSION"]
         },
         {
-            "name": "GetISteamGameSearch",
-            "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMGAMESEARCH_INTERFACE_VERSION"]
-        },
-        {
             "name": "GetIPCCallCount",
             "label": true
         },
@@ -124,10 +120,6 @@
         {
             "name": "GetISteamMusic",
             "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMMUSIC_INTERFACE_VERSION"]
-        },
-        {
-            "name": "GetISteamMusicRemote",
-            "args": ["SteamAPI.GetHSteamUser()", "SteamAPI.GetHSteamPipe()", "Constants.STEAMMUSICREMOTE_INTERFACE_VERSION"]
         },
         {
             "name": "GetISteamHTMLSurface",
